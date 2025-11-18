@@ -50,8 +50,7 @@ public class StatisticsService {
     @Transactional
     public void recordVariantStockUpdated(KafkaVariantStockUpdatedEvent event) {
         Delivery delivery = Delivery.builder()
-                .id(UUID.randomUUID())
-                .eventId(UUID.fromString(event.eventId()))
+                .id(UUID.fromString(event.eventId()))
                 .variantId(UUID.fromString(event.variantId()))
                 .deliveredQuantity(event.deliveredQuantity())
                 .deliveredAt(LocalDateTime.parse(event.deliveredAt()))

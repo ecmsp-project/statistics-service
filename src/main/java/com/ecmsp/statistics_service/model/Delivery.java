@@ -21,9 +21,6 @@ public class Delivery {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "event_id", nullable = false)
-    private UUID eventId;
-
     @Column(name = "variant_id", nullable = false)
     private UUID variantId;
 

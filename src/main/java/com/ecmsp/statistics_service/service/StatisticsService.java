@@ -1,5 +1,7 @@
 package com.ecmsp.statistics_service.service;
 
+import com.ecmsp.statistics_service.api.kafka.KafkaVariantSoldEvent;
+import com.ecmsp.statistics_service.api.kafka.KafkaVariantStockUpdatedEvent;
 import com.ecmsp.statistics_service.dto.*;
 import com.ecmsp.statistics_service.model.Delivery;
 import com.ecmsp.statistics_service.model.Sold;
@@ -7,21 +9,57 @@ import com.ecmsp.statistics_service.repository.DeliveryRepository;
 import com.ecmsp.statistics_service.repository.SoldRepository;
 import com.ecmsp.statistics_service.service.util.LinearRegressionCalculator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StatisticsService {
 
     private final SoldRepository soldRepository;
     private final DeliveryRepository deliveryRepository;
+
+    @Transactional
+    public void recordVariantSold(KafkaVariantSoldEvent event) {
+        Sold sold = Sold.builder()
+                .id(UUID.fromString(event.eventId()))
+                .variantId(UUID.fromString(event.variantId()))
+                .productId(UUID.fromString(event.productId()))
+                .productName(event.productName())
+                .price(event.soldAt())
+                .quantity(event.quantitySold())
+                .margin(event.margin())
+                .stockRemaining(event.stockRemaining())
+                .date(LocalDateTime.now())
+                .build();
+
+        soldRepository.save(sold);
+        log.info("Recorded sold event for variant: {}, quantity: {}", event.variantId(), event.quantitySold());
+    }
+
+    @Transactional
+    public void recordVariantStockUpdated(KafkaVariantStockUpdatedEvent event) {
+        Delivery delivery = Delivery.builder()
+                .id(UUID.randomUUID())
+                .eventId(UUID.fromString(event.eventId()))
+                .variantId(UUID.fromString(event.variantId()))
+                .deliveredQuantity(event.deliveredQuantity())
+                .deliveredAt(LocalDateTime.parse(event.deliveredAt()))
+                .build();
+
+        deliveryRepository.save(delivery);
+        log.info("Recorded delivery event for variant: {}, quantity: {}", event.variantId(), event.deliveredQuantity());
+    }
 
     public VariantSalesOverTimeDTO getVariantSalesOverTime(UUID variantId, LocalDate fromDate, LocalDate toDate, Integer trendDays) {
         LocalDateTime fromDateTime = fromDate.atStartOfDay();

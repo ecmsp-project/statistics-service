@@ -1,4 +1,4 @@
-package com.ecmsp.statistics_service.controller;
+package com.ecmsp.statistics_service.api.controller;
 
 import com.ecmsp.statistics_service.dto.StockLevelOverTimeDTO;
 import com.ecmsp.statistics_service.dto.VariantSalesOverTimeDTO;

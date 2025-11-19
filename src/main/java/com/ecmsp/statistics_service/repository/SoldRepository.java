@@ -22,4 +22,26 @@ public interface SoldRepository extends JpaRepository<Sold, UUID> {
 
     @Query("SELECT s FROM Sold s WHERE s.variantId = :variantId ORDER BY s.date ASC")
     List<Sold> findByVariantIdOrderByDateAsc(@Param("variantId") UUID variantId);
+
+    /**
+     * Find all distinct variants that have sales data
+     * Returns: [variantId, productId, productName]
+     */
+    @Query("SELECT DISTINCT s.variantId, s.productId, s.productName FROM Sold s")
+    List<Object[]> findDistinctVariants();
+
+    /**
+     * Find the last sale date for each variant
+     * Returns: [variantId, maxDate]
+     */
+    @Query("SELECT s.variantId, MAX(s.date) FROM Sold s GROUP BY s.variantId")
+    List<Object[]> findLastSaleDates();
+
+    /**
+     * Find the most recent stock level for each variant
+     * Returns: [variantId, stockRemaining] from the most recent sale
+     */
+    @Query("SELECT s.variantId, s.stockRemaining FROM Sold s WHERE s.date = " +
+           "(SELECT MAX(s2.date) FROM Sold s2 WHERE s2.variantId = s.variantId)")
+    List<Object[]> findCurrentStockLevels();
 }

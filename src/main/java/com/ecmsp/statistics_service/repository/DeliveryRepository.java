@@ -22,4 +22,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
 
     @Query("SELECT d FROM Delivery d WHERE d.variantId = :variantId ORDER BY d.deliveredAt ASC")
     List<Delivery> findByVariantIdOrderByDeliveredAtAsc(@Param("variantId") UUID variantId);
+
+    @Query("SELECT DISTINCT d.variantId FROM Delivery d")
+    List<UUID> findDistinctVariantIds();
 }

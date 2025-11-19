@@ -1,135 +1,3 @@
-CREATE TABLE SOLD (
-                      ID UUID PRIMARY KEY,
-                      VARIANT_ID UUID NOT NULL,
-                      PRODUCT_ID UUID NOT NULL,
-                      PRODUCT_NAME VARCHAR(255) NOT NULL,
-                      PRICE DECIMAL(19, 4) NOT NULL,
-                      QUANTITY INT NOT NULL,
-                      MARGIN DECIMAL(19, 4),
-                      STOCK_REMAINING INT,
-                      DATE TIMESTAMP NOT NULL
-);
-
-CREATE INDEX idx_sold_variant_id ON SOLD (VARIANT_ID);
-
-CREATE INDEX idx_sold_product_id ON SOLD (PRODUCT_ID);
-
-CREATE INDEX idx_sold_product_name ON SOLD (PRODUCT_NAME);
-
-CREATE INDEX idx_sold_date ON SOLD (DATE);
-
-
-
-CREATE TABLE DELIVERY (
-                          ID UUID PRIMARY KEY,
-                          VARIANT_ID UUID NOT NULL,
-                          DELIVERED_QUANTITY INT NOT NULL,
-                          DELIVERED_AT TIMESTAMP NOT NULL
-);
-
-CREATE INDEX idx_delivery_variant_id ON DELIVERY (VARIANT_ID);
-
-CREATE INDEX idx_delivery_delivered_at ON DELIVERY (DELIVERED_AT);
-
-
--- ============================================
--- DUMMY DATA FOR ANALYTICS & STATISTICS
--- ============================================
--- Period: Last 6 months (2025-05-18 to 2025-11-18)
--- Products: 12 variants across different categories
--- Scenarios: Bestsellers, Slow-moving, Trending up/down, Seasonal
--- ============================================
-
--- Product Variant UUIDs (consistent with product-service if needed)
--- Variant 1: "Premium Laptop 15inch" - BESTSELLER
--- Variant 2: "Gaming Mouse RGB" - BESTSELLER
--- Variant 3: "Wireless Keyboard" - STEADY SALES
--- Variant 4: "USB-C Hub" - TRENDING UP
--- Variant 5: "Monitor 27inch 4K" - SLOW MOVING
--- Variant 6: "Webcam 1080p" - DEPLETING STOCK
--- Variant 7: "Headphones Wireless" - SEASONAL (higher in Q4)
--- Variant 8: "External SSD 1TB" - OVERSTOCKED
--- Variant 9: "Phone Case Premium" - HIGH TURNOVER
--- Variant 10: "Charging Cable 2m" - STEADY
--- Variant 11: "Desk Mat XL" - TRENDING DOWN
--- Variant 12: "LED Strip 5m" - NEW PRODUCT (last 2 months only)
-
--- ============================================
--- DELIVERIES (DELIVERY TABLE)
--- ============================================
--- Initial stock deliveries and periodic restocks
-
--- Variant 1: Premium Laptop (regular restocks every 3 weeks)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 150, '2025-05-18 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 120, '2025-06-10 10:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 140, '2025-07-02 09:15:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 160, '2025-07-25 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 180, '2025-08-16 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 200, '2025-09-08 09:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 150, '2025-10-01 10:15:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-1111-1111-1111-111111111111'::uuid, 170, '2025-10-24 09:45:00');
-
--- Variant 2: Gaming Mouse (frequent small deliveries)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 300, '2025-05-20 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 250, '2025-06-15 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 280, '2025-07-10 10:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 320, '2025-08-05 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 300, '2025-08-30 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 350, '2025-09-25 11:15:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-2222-2222-2222-222222222222'::uuid, 280, '2025-10-20 10:00:00');
-
--- Variant 3: Wireless Keyboard
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-3333-3333-3333-333333333333'::uuid, 200, '2025-05-22 09:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-3333-3333-3333-333333333333'::uuid, 180, '2025-07-01 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-3333-3333-3333-333333333333'::uuid, 200, '2025-08-15 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-3333-3333-3333-333333333333'::uuid, 220, '2025-10-01 09:30:00');
-
--- Variant 4: USB-C Hub (trending up - increasing delivery sizes)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-4444-4444-4444-444444444444'::uuid, 100, '2025-05-25 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-4444-4444-4444-444444444444'::uuid, 150, '2025-07-05 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-4444-4444-4444-444444444444'::uuid, 200, '2025-08-20 10:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-4444-4444-4444-444444444444'::uuid, 250, '2025-10-10 09:00:00');
-
--- Variant 5: Monitor 27inch (slow moving - infrequent large deliveries)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'eeeeeeee-5555-5555-5555-555555555555'::uuid, 80, '2025-06-01 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'eeeeeeee-5555-5555-5555-555555555555'::uuid, 60, '2025-09-15 10:00:00');
-
--- Variant 6: Webcam (depleting - NO recent deliveries!)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'ffffffff-6666-6666-6666-666666666666'::uuid, 120, '2025-05-28 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'ffffffff-6666-6666-6666-666666666666'::uuid, 80, '2025-07-15 11:00:00');
-
--- Variant 7: Headphones (seasonal - bigger deliveries in Q4)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-7777-7777-7777-777777777777'::uuid, 150, '2025-05-30 09:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-7777-7777-7777-777777777777'::uuid, 120, '2025-07-20 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-7777-7777-7777-777777777777'::uuid, 250, '2025-09-20 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'aaaaaaaa-7777-7777-7777-777777777777'::uuid, 300, '2025-10-25 10:30:00');
-
--- Variant 8: External SSD (overstocked - large delivery, low sales)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-8888-8888-8888-888888888888'::uuid, 500, '2025-06-05 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'bbbbbbbb-8888-8888-8888-888888888888'::uuid, 400, '2025-10-15 10:00:00');
-
--- Variant 9: Phone Case (high turnover - frequent small deliveries)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 400, '2025-05-19 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 350, '2025-06-12 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 380, '2025-07-08 10:30:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 420, '2025-08-02 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 400, '2025-08-26 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 450, '2025-09-20 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'cccccccc-9999-9999-9999-999999999999'::uuid, 380, '2025-10-15 10:15:00');
-
--- Variant 10: Charging Cable
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-0000-0000-0000-000000000000'::uuid, 500, '2025-05-21 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-0000-0000-0000-000000000000'::uuid, 450, '2025-07-12 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'dddddddd-0000-0000-0000-000000000000'::uuid, 480, '2025-09-05 11:00:00');
-
--- Variant 11: Desk Mat (trending down)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'eeeeeeee-1111-1111-1111-111111111111'::uuid, 200, '2025-05-24 10:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'eeeeeeee-1111-1111-1111-111111111111'::uuid, 150, '2025-07-18 11:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'eeeeeeee-1111-1111-1111-111111111111'::uuid, 100, '2025-09-28 10:30:00');
-
--- Variant 12: LED Strip (new product - recent deliveries only)
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'ffffffff-2222-2222-2222-222222222222'::uuid, 180, '2025-09-15 09:00:00');
-INSERT INTO DELIVERY VALUES (gen_random_uuid(), 'ffffffff-2222-2222-2222-222222222222'::uuid, 220, '2025-10-28 10:00:00');
 -- ============================================
 -- SALES DATA (SOLD TABLE)
 -- ============================================
@@ -144,7 +12,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     281,
-    '2025-05-18 18:34:00'
+    '2024-05-18 18:34:00'
 );
 INSERT INTO SOLD VALUES (
     '48ebb30d-b70a-4cf3-9e5e-77e05d105395'::uuid,
@@ -155,7 +23,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     199,
-    '2025-05-18 12:56:00'
+    '2024-05-18 12:56:00'
 );
 INSERT INTO SOLD VALUES (
     '5f0108ae-88f5-46b7-b30e-224358a4040d'::uuid,
@@ -166,7 +34,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     94,
-    '2025-05-18 16:43:00'
+    '2024-05-18 16:43:00'
 );
 INSERT INTO SOLD VALUES (
     '6ad7f65f-f60c-420b-aeb4-003c2d9717cd'::uuid,
@@ -177,7 +45,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     79,
-    '2025-05-18 11:24:00'
+    '2024-05-18 11:24:00'
 );
 INSERT INTO SOLD VALUES (
     'd3650d5c-7432-43ac-91cd-102eea5bf7c3'::uuid,
@@ -188,7 +56,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     116,
-    '2025-05-18 09:20:00'
+    '2024-05-18 09:20:00'
 );
 INSERT INTO SOLD VALUES (
     'aa1a5dfb-0a92-444d-8d25-0c0624490740'::uuid,
@@ -199,7 +67,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     143,
-    '2025-05-18 14:05:00'
+    '2024-05-18 14:05:00'
 );
 INSERT INTO SOLD VALUES (
     'b8eb5502-837b-4954-ade3-3abec8624e58'::uuid,
@@ -210,7 +78,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     498,
-    '2025-05-18 20:37:00'
+    '2024-05-18 20:37:00'
 );
 INSERT INTO SOLD VALUES (
     '7b4f7bbd-4858-42a4-b638-d75fec5d3bce'::uuid,
@@ -221,7 +89,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     382,
-    '2025-05-18 19:52:00'
+    '2024-05-18 19:52:00'
 );
 INSERT INTO SOLD VALUES (
     '9ad01c17-5622-4f8c-ad32-19ef46bdec20'::uuid,
@@ -232,7 +100,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     483,
-    '2025-05-18 11:17:00'
+    '2024-05-18 11:17:00'
 );
 INSERT INTO SOLD VALUES (
     '35e2a50f-4228-4b38-b86e-fec12d584248'::uuid,
@@ -243,7 +111,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     198,
-    '2025-05-18 13:16:00'
+    '2024-05-18 13:16:00'
 );
 INSERT INTO SOLD VALUES (
     'e6e71c49-b348-475c-98e8-ef62bd671e1a'::uuid,
@@ -254,7 +122,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     149,
-    '2025-05-19 19:03:00'
+    '2024-05-19 19:03:00'
 );
 INSERT INTO SOLD VALUES (
     '05d7d492-adfb-4739-ba6a-320765905a69'::uuid,
@@ -265,7 +133,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     260,
-    '2025-05-19 11:25:00'
+    '2024-05-19 11:25:00'
 );
 INSERT INTO SOLD VALUES (
     '0569d31c-ba97-47b2-96e2-4f0c70073068'::uuid,
@@ -276,7 +144,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     192,
-    '2025-05-19 15:29:00'
+    '2024-05-19 15:29:00'
 );
 INSERT INTO SOLD VALUES (
     '62a44b06-7672-43c2-a708-7400d806d1ec'::uuid,
@@ -287,7 +155,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     88,
-    '2025-05-19 11:49:00'
+    '2024-05-19 11:49:00'
 );
 INSERT INTO SOLD VALUES (
     '31b39fd8-c48e-4b0a-b701-0af8fb3b9454'::uuid,
@@ -298,7 +166,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     78,
-    '2025-05-19 15:04:00'
+    '2024-05-19 15:04:00'
 );
 INSERT INTO SOLD VALUES (
     'f859310c-ac19-4052-9801-6fa0f9323712'::uuid,
@@ -309,7 +177,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     134,
-    '2025-05-19 18:49:00'
+    '2024-05-19 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     'f66b8395-f566-4014-8193-7c411586fd0f'::uuid,
@@ -320,7 +188,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     496,
-    '2025-05-19 09:40:00'
+    '2024-05-19 09:40:00'
 );
 INSERT INTO SOLD VALUES (
     '4909c632-1b43-4e56-aede-2bc5e6fc3d13'::uuid,
@@ -331,7 +199,7 @@ INSERT INTO SOLD VALUES (
     33,
     12.0,
     367,
-    '2025-05-19 13:23:00'
+    '2024-05-19 13:23:00'
 );
 INSERT INTO SOLD VALUES (
     '907159e5-bb94-47f4-927a-e91c2c824783'::uuid,
@@ -342,7 +210,7 @@ INSERT INTO SOLD VALUES (
     1,
     8.0,
     482,
-    '2025-05-19 09:33:00'
+    '2024-05-19 09:33:00'
 );
 INSERT INTO SOLD VALUES (
     'b0ee32bc-cbe1-4602-ab7f-9ad0b399b34d'::uuid,
@@ -353,7 +221,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     192,
-    '2025-05-19 10:57:00'
+    '2024-05-19 10:57:00'
 );
 INSERT INTO SOLD VALUES (
     'eacf048b-5803-4fbd-a7d1-b4c9f7e1d7f0'::uuid,
@@ -364,7 +232,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     144,
-    '2025-05-20 16:12:00'
+    '2024-05-20 16:12:00'
 );
 INSERT INTO SOLD VALUES (
     'a6767670-e6e3-4ac9-ab84-b77fe24979c1'::uuid,
@@ -375,7 +243,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     288,
-    '2025-05-20 18:19:00'
+    '2024-05-20 18:19:00'
 );
 INSERT INTO SOLD VALUES (
     'de25798e-9823-49ed-a0dc-bba3f9e791bf'::uuid,
@@ -386,7 +254,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     188,
-    '2025-05-20 20:55:00'
+    '2024-05-20 20:55:00'
 );
 INSERT INTO SOLD VALUES (
     '0999a339-76e3-46ba-9ff3-8d8be14f5a0c'::uuid,
@@ -397,7 +265,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     84,
-    '2025-05-20 12:32:00'
+    '2024-05-20 12:32:00'
 );
 INSERT INTO SOLD VALUES (
     'f824a33a-6e90-4003-8837-9f696dcc4b2e'::uuid,
@@ -408,7 +276,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     113,
-    '2025-05-20 16:50:00'
+    '2024-05-20 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     'a1588359-eaa0-4b5f-b0c7-c0446d6a3154'::uuid,
@@ -419,7 +287,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     132,
-    '2025-05-20 11:19:00'
+    '2024-05-20 11:19:00'
 );
 INSERT INTO SOLD VALUES (
     '54b8cc21-7699-4ca8-a95e-a866404f8dc0'::uuid,
@@ -430,7 +298,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     495,
-    '2025-05-20 12:15:00'
+    '2024-05-20 12:15:00'
 );
 INSERT INTO SOLD VALUES (
     'a355e309-1ef5-4c2e-a6b4-a76b507a8b80'::uuid,
@@ -441,7 +309,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     346,
-    '2025-05-20 20:43:00'
+    '2024-05-20 20:43:00'
 );
 INSERT INTO SOLD VALUES (
     'd825639d-6522-4d58-a446-0b253a59111e'::uuid,
@@ -452,7 +320,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     472,
-    '2025-05-20 17:38:00'
+    '2024-05-20 17:38:00'
 );
 INSERT INTO SOLD VALUES (
     '7613b10b-a576-4c79-9752-8aa254ad91f8'::uuid,
@@ -463,7 +331,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     190,
-    '2025-05-20 17:29:00'
+    '2024-05-20 17:29:00'
 );
 INSERT INTO SOLD VALUES (
     '5954ca4c-bbf5-4cad-9ab8-979cc4b0f706'::uuid,
@@ -474,7 +342,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     142,
-    '2025-05-21 19:36:00'
+    '2024-05-21 19:36:00'
 );
 INSERT INTO SOLD VALUES (
     '6f3ab802-7f96-4764-9f49-fe63c0d67677'::uuid,
@@ -485,7 +353,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     273,
-    '2025-05-21 10:38:00'
+    '2024-05-21 10:38:00'
 );
 INSERT INTO SOLD VALUES (
     '7c207c1a-74ab-4a36-b2c8-5352b0efb650'::uuid,
@@ -496,7 +364,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     82,
-    '2025-05-21 20:08:00'
+    '2024-05-21 20:08:00'
 );
 INSERT INTO SOLD VALUES (
     '6cdd89b7-0bfe-4141-840b-fc0ab9ec8a74'::uuid,
@@ -507,7 +375,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     110,
-    '2025-05-21 11:19:00'
+    '2024-05-21 11:19:00'
 );
 INSERT INTO SOLD VALUES (
     'e2dc84a6-157e-4266-b351-d21000614f76'::uuid,
@@ -518,7 +386,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     128,
-    '2025-05-21 16:17:00'
+    '2024-05-21 16:17:00'
 );
 INSERT INTO SOLD VALUES (
     '9769c643-78be-4297-bf88-6f44723b5f1e'::uuid,
@@ -529,7 +397,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     493,
-    '2025-05-21 15:50:00'
+    '2024-05-21 15:50:00'
 );
 INSERT INTO SOLD VALUES (
     '1c106ca2-0909-401d-a362-bb5312297daa'::uuid,
@@ -540,7 +408,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     322,
-    '2025-05-21 10:28:00'
+    '2024-05-21 10:28:00'
 );
 INSERT INTO SOLD VALUES (
     '2d96e4fe-656b-4009-9d97-d76e440e5671'::uuid,
@@ -551,7 +419,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     490,
-    '2025-05-21 16:16:00'
+    '2024-05-21 16:16:00'
 );
 INSERT INTO SOLD VALUES (
     '12a866ab-f63e-4b73-a388-63d867d5b179'::uuid,
@@ -562,7 +430,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     184,
-    '2025-05-21 11:14:00'
+    '2024-05-21 11:14:00'
 );
 INSERT INTO SOLD VALUES (
     '4bb2d872-5521-477a-8e2d-606add97171d'::uuid,
@@ -573,7 +441,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     134,
-    '2025-05-22 14:09:00'
+    '2024-05-22 14:09:00'
 );
 INSERT INTO SOLD VALUES (
     '61261bb8-1a54-4227-bd8b-74a33473b809'::uuid,
@@ -584,7 +452,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     256,
-    '2025-05-22 17:03:00'
+    '2024-05-22 17:03:00'
 );
 INSERT INTO SOLD VALUES (
     '6b6bc61c-e8a9-471e-b3e8-91fd092405f8'::uuid,
@@ -595,7 +463,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     199,
-    '2025-05-22 18:25:00'
+    '2024-05-22 18:25:00'
 );
 INSERT INTO SOLD VALUES (
     '41b67366-1f7a-4096-85ab-be8171c6b29c'::uuid,
@@ -606,7 +474,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     79,
-    '2025-05-22 12:44:00'
+    '2024-05-22 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     '2a37bbda-b951-456a-b87c-a393feb67dea'::uuid,
@@ -617,7 +485,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     77,
-    '2025-05-22 15:23:00'
+    '2024-05-22 15:23:00'
 );
 INSERT INTO SOLD VALUES (
     '015933d9-25d4-4b52-816b-0ad9b280c718'::uuid,
@@ -628,7 +496,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     107,
-    '2025-05-22 16:33:00'
+    '2024-05-22 16:33:00'
 );
 INSERT INTO SOLD VALUES (
     '51b0c6ba-6d4b-49a0-b02d-2153e89353bd'::uuid,
@@ -639,7 +507,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     122,
-    '2025-05-22 11:29:00'
+    '2024-05-22 11:29:00'
 );
 INSERT INTO SOLD VALUES (
     'd2dc4882-0182-4084-a063-c9f1f7dbdb95'::uuid,
@@ -650,7 +518,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     492,
-    '2025-05-22 14:48:00'
+    '2024-05-22 14:48:00'
 );
 INSERT INTO SOLD VALUES (
     'eb8f4701-d5ce-4d34-b4a8-c1c740e5ad62'::uuid,
@@ -661,7 +529,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     302,
-    '2025-05-22 19:48:00'
+    '2024-05-22 19:48:00'
 );
 INSERT INTO SOLD VALUES (
     'c00228a4-b699-467b-a0bc-896beb066666'::uuid,
@@ -672,7 +540,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     179,
-    '2025-05-22 11:10:00'
+    '2024-05-22 11:10:00'
 );
 INSERT INTO SOLD VALUES (
     '6212740b-4be6-4a72-a445-47a4729fd174'::uuid,
@@ -683,7 +551,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     128,
-    '2025-05-23 17:42:00'
+    '2024-05-23 17:42:00'
 );
 INSERT INTO SOLD VALUES (
     'c09730ce-790e-4566-abde-698cc5eb4043'::uuid,
@@ -694,7 +562,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     238,
-    '2025-05-23 16:08:00'
+    '2024-05-23 16:08:00'
 );
 INSERT INTO SOLD VALUES (
     '251f368c-166b-4a82-ad71-3fb6562154a3'::uuid,
@@ -705,7 +573,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     196,
-    '2025-05-23 20:58:00'
+    '2024-05-23 20:58:00'
 );
 INSERT INTO SOLD VALUES (
     '9e1b4fc1-f648-4583-9f35-7056ba430205'::uuid,
@@ -716,7 +584,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     76,
-    '2025-05-23 20:00:00'
+    '2024-05-23 20:00:00'
 );
 INSERT INTO SOLD VALUES (
     'c0699809-aba5-47d4-b967-95381bc2782a'::uuid,
@@ -727,7 +595,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     105,
-    '2025-05-23 19:56:00'
+    '2024-05-23 19:56:00'
 );
 INSERT INTO SOLD VALUES (
     '7669d942-b2ae-4280-990d-5d2bd2b502e8'::uuid,
@@ -738,7 +606,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     116,
-    '2025-05-23 13:23:00'
+    '2024-05-23 13:23:00'
 );
 INSERT INTO SOLD VALUES (
     'ceae852b-fb7f-4b74-96e4-b123f56de2f8'::uuid,
@@ -749,7 +617,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     491,
-    '2025-05-23 20:19:00'
+    '2024-05-23 20:19:00'
 );
 INSERT INTO SOLD VALUES (
     '485e503f-e9eb-441c-b41a-c87df3ca1fd1'::uuid,
@@ -760,7 +628,7 @@ INSERT INTO SOLD VALUES (
     2,
     12.0,
     300,
-    '2025-05-23 13:05:00'
+    '2024-05-23 13:05:00'
 );
 INSERT INTO SOLD VALUES (
     'e6c5f66f-940f-40d8-8427-a40f7b8bb0b5'::uuid,
@@ -771,7 +639,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     481,
-    '2025-05-23 18:33:00'
+    '2024-05-23 18:33:00'
 );
 INSERT INTO SOLD VALUES (
     '1c2282d9-a774-406b-9e00-f7663d1658db'::uuid,
@@ -782,7 +650,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     175,
-    '2025-05-23 15:05:00'
+    '2024-05-23 15:05:00'
 );
 INSERT INTO SOLD VALUES (
     '6f381e4a-9782-4311-bdcc-45edbc1511ef'::uuid,
@@ -793,7 +661,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     116,
-    '2025-05-24 10:18:00'
+    '2024-05-24 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     'a98e59da-47e7-4d98-9b98-f726a09f7bca'::uuid,
@@ -804,7 +672,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     217,
-    '2025-05-24 19:06:00'
+    '2024-05-24 19:06:00'
 );
 INSERT INTO SOLD VALUES (
     'c48c1de8-51fe-4c01-a65a-759f840d77bd'::uuid,
@@ -815,7 +683,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     190,
-    '2025-05-24 12:28:00'
+    '2024-05-24 12:28:00'
 );
 INSERT INTO SOLD VALUES (
     '729cdd87-3055-4eb9-ba9f-b6c03c1518ab'::uuid,
@@ -826,7 +694,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     75,
-    '2025-05-24 20:34:00'
+    '2024-05-24 20:34:00'
 );
 INSERT INTO SOLD VALUES (
     '2c5e97a1-7cc0-455d-8ead-72a2d0570858'::uuid,
@@ -837,7 +705,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     75,
-    '2025-05-24 19:59:00'
+    '2024-05-24 19:59:00'
 );
 INSERT INTO SOLD VALUES (
     'de9085a9-82ff-4d4a-8784-d5290e657178'::uuid,
@@ -848,7 +716,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     111,
-    '2025-05-24 15:49:00'
+    '2024-05-24 15:49:00'
 );
 INSERT INTO SOLD VALUES (
     'bac74e52-39ea-4d62-863d-f293293226e6'::uuid,
@@ -859,7 +727,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     489,
-    '2025-05-24 17:04:00'
+    '2024-05-24 17:04:00'
 );
 INSERT INTO SOLD VALUES (
     'd52b1681-a9de-4bc0-bd28-706eb78c8528'::uuid,
@@ -870,7 +738,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     277,
-    '2025-05-24 19:27:00'
+    '2024-05-24 19:27:00'
 );
 INSERT INTO SOLD VALUES (
     '01a4c1c0-b605-452d-95e6-3054f75ef9e2'::uuid,
@@ -881,7 +749,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     464,
-    '2025-05-24 20:55:00'
+    '2024-05-24 20:55:00'
 );
 INSERT INTO SOLD VALUES (
     '79bc560e-2657-46ca-a383-410978cb7709'::uuid,
@@ -892,7 +760,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     193,
-    '2025-05-24 14:28:00'
+    '2024-05-24 14:28:00'
 );
 INSERT INTO SOLD VALUES (
     '1c7a0489-506a-4b1b-9015-32cebbd6f590'::uuid,
@@ -903,7 +771,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     107,
-    '2025-05-25 19:47:00'
+    '2024-05-25 19:47:00'
 );
 INSERT INTO SOLD VALUES (
     '29b5c240-6d53-4bdd-b867-f0c64faf2465'::uuid,
@@ -914,7 +782,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     196,
-    '2025-05-25 17:04:00'
+    '2024-05-25 17:04:00'
 );
 INSERT INTO SOLD VALUES (
     '563b46da-bfeb-4854-a9d5-bf28b845a5f0'::uuid,
@@ -925,7 +793,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     93,
-    '2025-05-25 15:54:00'
+    '2024-05-25 15:54:00'
 );
 INSERT INTO SOLD VALUES (
     'a24b0c38-0570-422a-9545-6d4c0718d68c'::uuid,
@@ -936,7 +804,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     74,
-    '2025-05-25 09:48:00'
+    '2024-05-25 09:48:00'
 );
 INSERT INTO SOLD VALUES (
     '7fa9558b-beea-4a79-a9d4-ed075c75a361'::uuid,
@@ -947,7 +815,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     102,
-    '2025-05-25 15:32:00'
+    '2024-05-25 15:32:00'
 );
 INSERT INTO SOLD VALUES (
     'def7e825-041a-4716-8d4d-1da5ae1aabbe'::uuid,
@@ -958,7 +826,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     102,
-    '2025-05-25 19:22:00'
+    '2024-05-25 19:22:00'
 );
 INSERT INTO SOLD VALUES (
     'b272e15c-bee7-48dc-a818-95a7f9a76444'::uuid,
@@ -969,7 +837,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     488,
-    '2025-05-25 12:30:00'
+    '2024-05-25 12:30:00'
 );
 INSERT INTO SOLD VALUES (
     '1232c26d-85ef-4c64-bb09-f910c3e371f6'::uuid,
@@ -980,7 +848,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     256,
-    '2025-05-25 09:10:00'
+    '2024-05-25 09:10:00'
 );
 INSERT INTO SOLD VALUES (
     '2546720b-590b-4c7b-9a6a-5769c6065828'::uuid,
@@ -991,7 +859,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     445,
-    '2025-05-25 10:18:00'
+    '2024-05-25 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     '797ca875-d2f8-42c8-9a18-3e435db5215f'::uuid,
@@ -1002,7 +870,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     187,
-    '2025-05-25 18:31:00'
+    '2024-05-25 18:31:00'
 );
 INSERT INTO SOLD VALUES (
     '29ad2464-de34-4779-98e8-dcaef7166954'::uuid,
@@ -1013,7 +881,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     98,
-    '2025-05-26 20:01:00'
+    '2024-05-26 20:01:00'
 );
 INSERT INTO SOLD VALUES (
     'd77168fd-adad-4993-867f-ba5796ef7c95'::uuid,
@@ -1024,7 +892,7 @@ INSERT INTO SOLD VALUES (
     22,
     25.0,
     174,
-    '2025-05-26 19:54:00'
+    '2024-05-26 19:54:00'
 );
 INSERT INTO SOLD VALUES (
     '71d56950-7eb9-43cb-9819-acbf674ba950'::uuid,
@@ -1035,7 +903,7 @@ INSERT INTO SOLD VALUES (
     8,
     30.0,
     182,
-    '2025-05-26 15:22:00'
+    '2024-05-26 15:22:00'
 );
 INSERT INTO SOLD VALUES (
     'a980f1a4-af99-4421-8e71-e96184d07954'::uuid,
@@ -1046,7 +914,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     87,
-    '2025-05-26 13:44:00'
+    '2024-05-26 13:44:00'
 );
 INSERT INTO SOLD VALUES (
     '2b1b2032-5434-4d29-bae8-b7fa2676371b'::uuid,
@@ -1057,7 +925,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     73,
-    '2025-05-26 19:57:00'
+    '2024-05-26 19:57:00'
 );
 INSERT INTO SOLD VALUES (
     '130fa2c7-163e-4784-b503-3235fdaaadde'::uuid,
@@ -1068,7 +936,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     99,
-    '2025-05-26 16:43:00'
+    '2024-05-26 16:43:00'
 );
 INSERT INTO SOLD VALUES (
     '24f0ecf7-b07a-43bf-8c9e-7317728855c9'::uuid,
@@ -1079,7 +947,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     95,
-    '2025-05-26 09:17:00'
+    '2024-05-26 09:17:00'
 );
 INSERT INTO SOLD VALUES (
     '715ebd08-25ba-4bdd-883a-e69116d28a5a'::uuid,
@@ -1090,7 +958,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     485,
-    '2025-05-26 13:47:00'
+    '2024-05-26 13:47:00'
 );
 INSERT INTO SOLD VALUES (
     '41261217-bbb2-4b63-9868-af5d068d7489'::uuid,
@@ -1101,7 +969,7 @@ INSERT INTO SOLD VALUES (
     27,
     12.0,
     229,
-    '2025-05-26 15:37:00'
+    '2024-05-26 15:37:00'
 );
 INSERT INTO SOLD VALUES (
     '912c24f0-f749-479b-9e2b-5792f57f5b62'::uuid,
@@ -1112,7 +980,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     432,
-    '2025-05-26 17:14:00'
+    '2024-05-26 17:14:00'
 );
 INSERT INTO SOLD VALUES (
     '33ef3a18-8c38-4d96-ab3c-d904f16f23f5'::uuid,
@@ -1123,7 +991,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     180,
-    '2025-05-26 12:58:00'
+    '2024-05-26 12:58:00'
 );
 INSERT INTO SOLD VALUES (
     '61b8ffbf-628f-4ba3-867a-2cc15db3e83c'::uuid,
@@ -1134,7 +1002,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     96,
-    '2025-05-27 18:01:00'
+    '2024-05-27 18:01:00'
 );
 INSERT INTO SOLD VALUES (
     'd238cb12-c483-4639-82ab-da72c084e801'::uuid,
@@ -1145,7 +1013,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     163,
-    '2025-05-27 13:40:00'
+    '2024-05-27 13:40:00'
 );
 INSERT INTO SOLD VALUES (
     'f192bc09-f2db-43d6-a92e-db8795c15e80'::uuid,
@@ -1156,7 +1024,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     178,
-    '2025-05-27 12:36:00'
+    '2024-05-27 12:36:00'
 );
 INSERT INTO SOLD VALUES (
     'f826b3a9-563f-4bf9-8bc1-f0224aec6fbb'::uuid,
@@ -1167,7 +1035,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     72,
-    '2025-05-27 10:55:00'
+    '2024-05-27 10:55:00'
 );
 INSERT INTO SOLD VALUES (
     '03c27619-b51c-41df-ba9b-8da695770ebb'::uuid,
@@ -1178,7 +1046,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     97,
-    '2025-05-27 13:44:00'
+    '2024-05-27 13:44:00'
 );
 INSERT INTO SOLD VALUES (
     '63e95597-a8c6-4cc1-8604-6ec84012f724'::uuid,
@@ -1189,7 +1057,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     88,
-    '2025-05-27 17:27:00'
+    '2024-05-27 17:27:00'
 );
 INSERT INTO SOLD VALUES (
     '508badcb-372a-4a56-9741-1eca88981b3b'::uuid,
@@ -1200,7 +1068,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     483,
-    '2025-05-27 09:21:00'
+    '2024-05-27 09:21:00'
 );
 INSERT INTO SOLD VALUES (
     '9793fa00-62e7-4b11-b69f-9270c30543f8'::uuid,
@@ -1211,7 +1079,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     206,
-    '2025-05-27 15:28:00'
+    '2024-05-27 15:28:00'
 );
 INSERT INTO SOLD VALUES (
     '661aeae2-049c-4816-b4a0-b721c24078f7'::uuid,
@@ -1222,7 +1090,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     424,
-    '2025-05-27 20:25:00'
+    '2024-05-27 20:25:00'
 );
 INSERT INTO SOLD VALUES (
     '498eebd5-10e1-4366-8e53-2a41da708ea7'::uuid,
@@ -1233,7 +1101,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     178,
-    '2025-05-27 12:19:00'
+    '2024-05-27 12:19:00'
 );
 INSERT INTO SOLD VALUES (
     'b2732674-06cd-492b-bf18-2a60221959c2'::uuid,
@@ -1244,7 +1112,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     88,
-    '2025-05-28 09:41:00'
+    '2024-05-28 09:41:00'
 );
 INSERT INTO SOLD VALUES (
     '8b075f40-41a7-4209-b66b-e598ab99e8ea'::uuid,
@@ -1255,7 +1123,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     150,
-    '2025-05-28 11:37:00'
+    '2024-05-28 11:37:00'
 );
 INSERT INTO SOLD VALUES (
     'e533706a-4b73-4ed5-8e18-ca9b3df42e8c'::uuid,
@@ -1266,7 +1134,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     174,
-    '2025-05-28 17:22:00'
+    '2024-05-28 17:22:00'
 );
 INSERT INTO SOLD VALUES (
     'e434beeb-a042-4e06-8ab1-2c111c4bbd04'::uuid,
@@ -1277,7 +1145,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     83,
-    '2025-05-28 19:29:00'
+    '2024-05-28 19:29:00'
 );
 INSERT INTO SOLD VALUES (
     '97b53646-e30b-4fdd-a033-78953f4dcb2b'::uuid,
@@ -1288,7 +1156,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     71,
-    '2025-05-28 17:06:00'
+    '2024-05-28 17:06:00'
 );
 INSERT INTO SOLD VALUES (
     'ab11add3-3d75-4527-abf5-cfd7a900e2a8'::uuid,
@@ -1299,7 +1167,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     118,
-    '2025-05-28 09:08:00'
+    '2024-05-28 09:08:00'
 );
 INSERT INTO SOLD VALUES (
     '50c96737-4f49-4198-a945-fee250ab0532'::uuid,
@@ -1310,7 +1178,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     84,
-    '2025-05-28 10:51:00'
+    '2024-05-28 10:51:00'
 );
 INSERT INTO SOLD VALUES (
     'de981c2a-aa59-417f-804f-d9a779eae539'::uuid,
@@ -1321,7 +1189,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     482,
-    '2025-05-28 15:30:00'
+    '2024-05-28 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     '42231e05-1d98-4041-8408-641d56f8b679'::uuid,
@@ -1332,7 +1200,7 @@ INSERT INTO SOLD VALUES (
     17,
     12.0,
     189,
-    '2025-05-28 20:58:00'
+    '2024-05-28 20:58:00'
 );
 INSERT INTO SOLD VALUES (
     '22f26a86-840c-4b0c-9b44-0bb9e97e6e06'::uuid,
@@ -1343,7 +1211,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     416,
-    '2025-05-28 16:33:00'
+    '2024-05-28 16:33:00'
 );
 INSERT INTO SOLD VALUES (
     '42b2e00a-bbf0-44d3-a840-efd99b1d8f81'::uuid,
@@ -1354,7 +1222,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     175,
-    '2025-05-28 14:43:00'
+    '2024-05-28 14:43:00'
 );
 INSERT INTO SOLD VALUES (
     '854edca9-f7bd-43e4-8e23-487872dd5b63'::uuid,
@@ -1365,7 +1233,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     83,
-    '2025-05-29 20:50:00'
+    '2024-05-29 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     '8990e3cd-1838-494e-baf1-b93dcb9fbbf7'::uuid,
@@ -1376,7 +1244,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     134,
-    '2025-05-29 14:37:00'
+    '2024-05-29 14:37:00'
 );
 INSERT INTO SOLD VALUES (
     'b96d1255-f7d9-4954-ae8a-a59356450b34'::uuid,
@@ -1387,7 +1255,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     169,
-    '2025-05-29 14:36:00'
+    '2024-05-29 14:36:00'
 );
 INSERT INTO SOLD VALUES (
     '53f19c6d-af9e-4473-8b6f-e86fba8f865c'::uuid,
@@ -1398,7 +1266,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     78,
-    '2025-05-29 10:39:00'
+    '2024-05-29 10:39:00'
 );
 INSERT INTO SOLD VALUES (
     'ad36e942-1d6c-4f02-a80d-9a9b927466e5'::uuid,
@@ -1409,7 +1277,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     70,
-    '2025-05-29 10:21:00'
+    '2024-05-29 10:21:00'
 );
 INSERT INTO SOLD VALUES (
     '1e445736-4a9a-48c8-9c58-8ec5445572b4'::uuid,
@@ -1420,7 +1288,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     117,
-    '2025-05-29 15:42:00'
+    '2024-05-29 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     '76e332a9-be93-415e-9110-d1d52d7e90a3'::uuid,
@@ -1431,7 +1299,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     83,
-    '2025-05-29 12:48:00'
+    '2024-05-29 12:48:00'
 );
 INSERT INTO SOLD VALUES (
     '2adf484d-768d-4f0e-91f5-20280e2d1f61'::uuid,
@@ -1442,7 +1310,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     480,
-    '2025-05-29 14:44:00'
+    '2024-05-29 14:44:00'
 );
 INSERT INTO SOLD VALUES (
     '5320f05c-d182-4246-9438-1ae6104c8eae'::uuid,
@@ -1453,7 +1321,7 @@ INSERT INTO SOLD VALUES (
     17,
     12.0,
     172,
-    '2025-05-29 17:01:00'
+    '2024-05-29 17:01:00'
 );
 INSERT INTO SOLD VALUES (
     '30b6b04d-d193-4638-bd2f-4d6e6073b663'::uuid,
@@ -1464,7 +1332,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     405,
-    '2025-05-29 14:54:00'
+    '2024-05-29 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     '2aa6c80c-5106-480f-86bd-1d5a8b7905a8'::uuid,
@@ -1475,7 +1343,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     170,
-    '2025-05-29 14:04:00'
+    '2024-05-29 14:04:00'
 );
 INSERT INTO SOLD VALUES (
     'e5b2c4eb-1c08-44d4-ba11-c90dec18778c'::uuid,
@@ -1486,7 +1354,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     82,
-    '2025-05-30 09:19:00'
+    '2024-05-30 09:19:00'
 );
 INSERT INTO SOLD VALUES (
     'cf689fd9-cb85-42f7-8a1a-bc3e558e1b3e'::uuid,
@@ -1497,7 +1365,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     116,
-    '2025-05-30 17:26:00'
+    '2024-05-30 17:26:00'
 );
 INSERT INTO SOLD VALUES (
     'd39d5c28-3b48-49f2-be4b-69ef955781a7'::uuid,
@@ -1508,7 +1376,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     163,
-    '2025-05-30 10:58:00'
+    '2024-05-30 10:58:00'
 );
 INSERT INTO SOLD VALUES (
     '915ee2a7-664c-47f4-9224-4a37da7c85d5'::uuid,
@@ -1519,7 +1387,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     73,
-    '2025-05-30 14:07:00'
+    '2024-05-30 14:07:00'
 );
 INSERT INTO SOLD VALUES (
     'ebccf3a5-25ea-4ffd-9081-7615af1c2e0b'::uuid,
@@ -1530,7 +1398,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     115,
-    '2025-05-30 12:16:00'
+    '2024-05-30 12:16:00'
 );
 INSERT INTO SOLD VALUES (
     '068090cc-1e72-4ee6-8f11-dd61412758d2'::uuid,
@@ -1541,7 +1409,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     143,
-    '2025-05-30 20:01:00'
+    '2024-05-30 20:01:00'
 );
 INSERT INTO SOLD VALUES (
     '03f01cb4-bca2-4102-9b92-4c1401936832'::uuid,
@@ -1552,7 +1420,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     479,
-    '2025-05-30 09:03:00'
+    '2024-05-30 09:03:00'
 );
 INSERT INTO SOLD VALUES (
     '156e82df-30a8-4770-afbc-de18eb76e985'::uuid,
@@ -1563,7 +1431,7 @@ INSERT INTO SOLD VALUES (
     17,
     12.0,
     155,
-    '2025-05-30 14:45:00'
+    '2024-05-30 14:45:00'
 );
 INSERT INTO SOLD VALUES (
     'e7f4ef2b-c0b5-4f28-8fe8-aa817c98cb91'::uuid,
@@ -1574,7 +1442,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     393,
-    '2025-05-30 09:44:00'
+    '2024-05-30 09:44:00'
 );
 INSERT INTO SOLD VALUES (
     'e6a014a6-4395-4192-baa4-53f3f4f20105'::uuid,
@@ -1585,7 +1453,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     167,
-    '2025-05-30 14:21:00'
+    '2024-05-30 14:21:00'
 );
 INSERT INTO SOLD VALUES (
     'e58c45f8-89e8-48b1-8c27-eb29e2ed32d9'::uuid,
@@ -1596,7 +1464,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     80,
-    '2025-05-31 17:58:00'
+    '2024-05-31 17:58:00'
 );
 INSERT INTO SOLD VALUES (
     '84b68d39-0298-42b0-bfee-13755b4831d4'::uuid,
@@ -1607,7 +1475,7 @@ INSERT INTO SOLD VALUES (
     20,
     25.0,
     96,
-    '2025-05-31 11:46:00'
+    '2024-05-31 11:46:00'
 );
 INSERT INTO SOLD VALUES (
     'b08476fc-c282-4349-9544-abf49d80d1ef'::uuid,
@@ -1618,7 +1486,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     156,
-    '2025-05-31 10:47:00'
+    '2024-05-31 10:47:00'
 );
 INSERT INTO SOLD VALUES (
     '619f87be-5b42-431d-bfc1-41728a895883'::uuid,
@@ -1629,7 +1497,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     68,
-    '2025-05-31 20:40:00'
+    '2024-05-31 20:40:00'
 );
 INSERT INTO SOLD VALUES (
     '905162d5-bde8-4ae1-8995-1b0c0cf2f2d5'::uuid,
@@ -1640,7 +1508,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     112,
-    '2025-05-31 18:20:00'
+    '2024-05-31 18:20:00'
 );
 INSERT INTO SOLD VALUES (
     'ddc433a0-50ef-475a-9650-13d68a7f7f05'::uuid,
@@ -1651,7 +1519,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     134,
-    '2025-05-31 11:06:00'
+    '2024-05-31 11:06:00'
 );
 INSERT INTO SOLD VALUES (
     '2485cad4-f886-4a2a-9630-b9c5e3026839'::uuid,
@@ -1662,7 +1530,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     477,
-    '2025-05-31 10:47:00'
+    '2024-05-31 10:47:00'
 );
 INSERT INTO SOLD VALUES (
     'cab5a28c-cb08-4b3b-ad4c-58aafc4f0623'::uuid,
@@ -1673,7 +1541,7 @@ INSERT INTO SOLD VALUES (
     33,
     12.0,
     122,
-    '2025-05-31 11:18:00'
+    '2024-05-31 11:18:00'
 );
 INSERT INTO SOLD VALUES (
     '240cc8e4-1a28-48ea-830e-eea7f2e7deaa'::uuid,
@@ -1684,7 +1552,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     380,
-    '2025-05-31 18:41:00'
+    '2024-05-31 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     '0e51bdcd-0099-42f1-9faf-a8edcfd7ba62'::uuid,
@@ -1695,7 +1563,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     163,
-    '2025-05-31 09:16:00'
+    '2024-05-31 09:16:00'
 );
 INSERT INTO SOLD VALUES (
     '4a9dc925-b814-4a74-8829-e2e263c7eb72'::uuid,
@@ -1706,7 +1574,7 @@ INSERT INTO SOLD VALUES (
     13,
     250.0,
     67,
-    '2025-06-01 20:14:00'
+    '2024-06-01 20:14:00'
 );
 INSERT INTO SOLD VALUES (
     'f7a14e85-cccf-4f1c-a6ab-311f72e77e05'::uuid,
@@ -1717,7 +1585,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     95,
-    '2025-06-01 11:53:00'
+    '2024-06-01 11:53:00'
 );
 INSERT INTO SOLD VALUES (
     '97927867-31db-41db-8da4-b0a20ff51b6e'::uuid,
@@ -1728,7 +1596,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     150,
-    '2025-06-01 15:30:00'
+    '2024-06-01 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     'd36416b8-8b39-4dd4-bf09-6ce7ee8b7c5c'::uuid,
@@ -1739,7 +1607,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     63,
-    '2025-06-01 09:14:00'
+    '2024-06-01 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     'c281265a-fe04-4538-a6af-f898cbc7dd44'::uuid,
@@ -1750,7 +1618,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     79,
-    '2025-06-01 14:10:00'
+    '2024-06-01 14:10:00'
 );
 INSERT INTO SOLD VALUES (
     'b4809cc8-c76d-4749-81e9-0e819fa26d75'::uuid,
@@ -1761,7 +1629,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     108,
-    '2025-06-01 09:25:00'
+    '2024-06-01 09:25:00'
 );
 INSERT INTO SOLD VALUES (
     '5c5dcbdb-435e-4b7f-8396-30bbe740d81f'::uuid,
@@ -1772,7 +1640,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     126,
-    '2025-06-01 12:31:00'
+    '2024-06-01 12:31:00'
 );
 INSERT INTO SOLD VALUES (
     'dc8f82a5-9a60-417d-9524-d399977983d4'::uuid,
@@ -1783,7 +1651,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     476,
-    '2025-06-01 12:26:00'
+    '2024-06-01 12:26:00'
 );
 INSERT INTO SOLD VALUES (
     'fdd47877-a3e5-4134-b25f-d07a55d6eec6'::uuid,
@@ -1794,7 +1662,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     104,
-    '2025-06-01 10:30:00'
+    '2024-06-01 10:30:00'
 );
 INSERT INTO SOLD VALUES (
     '2bf4a6f7-44f3-422c-9f78-ba4c9bc0f39c'::uuid,
@@ -1805,7 +1673,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     363,
-    '2025-06-01 17:09:00'
+    '2024-06-01 17:09:00'
 );
 INSERT INTO SOLD VALUES (
     '47240eb4-5894-4e2c-921d-0688203ca3aa'::uuid,
@@ -1816,7 +1684,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     56,
-    '2025-06-02 13:34:00'
+    '2024-06-02 13:34:00'
 );
 INSERT INTO SOLD VALUES (
     '74795dd3-cd21-48cc-9eee-9641dc730ca1'::uuid,
@@ -1827,7 +1695,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     76,
-    '2025-06-02 11:23:00'
+    '2024-06-02 11:23:00'
 );
 INSERT INTO SOLD VALUES (
     'a67559a3-2dfd-4449-8a33-4db05a68686c'::uuid,
@@ -1838,7 +1706,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     145,
-    '2025-06-02 11:06:00'
+    '2024-06-02 11:06:00'
 );
 INSERT INTO SOLD VALUES (
     'ffca11d1-a866-49ea-8d45-2e5c6bdfc2c4'::uuid,
@@ -1849,7 +1717,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     59,
-    '2025-06-02 15:01:00'
+    '2024-06-02 15:01:00'
 );
 INSERT INTO SOLD VALUES (
     '564541b2-bd0a-4e41-8914-615d4311d3d7'::uuid,
@@ -1860,7 +1728,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     78,
-    '2025-06-02 14:53:00'
+    '2024-06-02 14:53:00'
 );
 INSERT INTO SOLD VALUES (
     'baed96bb-345e-4abf-93bc-380927c40e90'::uuid,
@@ -1871,7 +1739,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     104,
-    '2025-06-02 12:36:00'
+    '2024-06-02 12:36:00'
 );
 INSERT INTO SOLD VALUES (
     '1dab4d92-09dd-4947-a54b-fb24389963be'::uuid,
@@ -1882,7 +1750,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     118,
-    '2025-06-02 11:38:00'
+    '2024-06-02 11:38:00'
 );
 INSERT INTO SOLD VALUES (
     '9f6591f3-643d-4ff7-bf17-5d21c4588b81'::uuid,
@@ -1893,7 +1761,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     475,
-    '2025-06-02 19:34:00'
+    '2024-06-02 19:34:00'
 );
 INSERT INTO SOLD VALUES (
     '6a2f05f8-b949-43c9-bec1-3e50446a3573'::uuid,
@@ -1904,7 +1772,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     84,
-    '2025-06-02 15:54:00'
+    '2024-06-02 15:54:00'
 );
 INSERT INTO SOLD VALUES (
     'ce32706d-470e-437b-aa59-ecf69138669f'::uuid,
@@ -1915,7 +1783,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     344,
-    '2025-06-02 16:45:00'
+    '2024-06-02 16:45:00'
 );
 INSERT INTO SOLD VALUES (
     '46ef046d-6d0f-4f18-884d-c05dc2410e06'::uuid,
@@ -1926,7 +1794,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     157,
-    '2025-06-02 10:37:00'
+    '2024-06-02 10:37:00'
 );
 INSERT INTO SOLD VALUES (
     '9e70c68c-52fe-49da-855b-f6aa3a6c2886'::uuid,
@@ -1937,7 +1805,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     49,
-    '2025-06-03 13:20:00'
+    '2024-06-03 13:20:00'
 );
 INSERT INTO SOLD VALUES (
     '4c9a14ae-78cb-4d81-bbd2-438ba5e7344f'::uuid,
@@ -1948,7 +1816,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     59,
-    '2025-06-03 17:36:00'
+    '2024-06-03 17:36:00'
 );
 INSERT INTO SOLD VALUES (
     '91c49110-d458-42a7-bab9-c586d105446f'::uuid,
@@ -1959,7 +1827,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     139,
-    '2025-06-03 18:52:00'
+    '2024-06-03 18:52:00'
 );
 INSERT INTO SOLD VALUES (
     '7d77d8f3-350e-44ae-a282-62c6fcb1f6b0'::uuid,
@@ -1970,7 +1838,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     54,
-    '2025-06-03 16:33:00'
+    '2024-06-03 16:33:00'
 );
 INSERT INTO SOLD VALUES (
     'ac33cd7a-e7b4-4228-b93b-b2206f7874b6'::uuid,
@@ -1981,7 +1849,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     76,
-    '2025-06-03 16:21:00'
+    '2024-06-03 16:21:00'
 );
 INSERT INTO SOLD VALUES (
     '32c53f9b-fd96-4aa5-8440-aff839a3169b'::uuid,
@@ -1992,7 +1860,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     114,
-    '2025-06-03 17:47:00'
+    '2024-06-03 17:47:00'
 );
 INSERT INTO SOLD VALUES (
     '72e2ecf5-9f51-4745-979d-17fa3c4fbd33'::uuid,
@@ -2003,7 +1871,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     474,
-    '2025-06-03 19:11:00'
+    '2024-06-03 19:11:00'
 );
 INSERT INTO SOLD VALUES (
     '69cac379-6696-4cac-b3de-765efe9b4755'::uuid,
@@ -2014,7 +1882,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     334,
-    '2025-06-03 11:48:00'
+    '2024-06-03 11:48:00'
 );
 INSERT INTO SOLD VALUES (
     '35d63f6a-1c1e-4c3e-a4e4-e33b9d366700'::uuid,
@@ -2025,7 +1893,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     155,
-    '2025-06-03 20:43:00'
+    '2024-06-03 20:43:00'
 );
 INSERT INTO SOLD VALUES (
     '9f35e354-e85a-476c-8533-e970ba2b3064'::uuid,
@@ -2036,7 +1904,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     43,
-    '2025-06-04 10:17:00'
+    '2024-06-04 10:17:00'
 );
 INSERT INTO SOLD VALUES (
     '1fe4ef88-fa0b-4af2-a955-41fd92dadeca'::uuid,
@@ -2047,7 +1915,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     41,
-    '2025-06-04 09:08:00'
+    '2024-06-04 09:08:00'
 );
 INSERT INTO SOLD VALUES (
     '01760ad3-8f61-45a6-945a-47965f7fba6f'::uuid,
@@ -2058,7 +1926,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     136,
-    '2025-06-04 18:09:00'
+    '2024-06-04 18:09:00'
 );
 INSERT INTO SOLD VALUES (
     '4457e464-4a5a-4cd7-a2f2-f07d99eb4c67'::uuid,
@@ -2069,7 +1937,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     50,
-    '2025-06-04 10:08:00'
+    '2024-06-04 10:08:00'
 );
 INSERT INTO SOLD VALUES (
     '9dbc0cda-bb21-410e-a774-c5b21d010d02'::uuid,
@@ -2080,7 +1948,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     75,
-    '2025-06-04 14:22:00'
+    '2024-06-04 14:22:00'
 );
 INSERT INTO SOLD VALUES (
     'c66629c7-793d-4b18-b8a8-3530f572bed0'::uuid,
@@ -2091,7 +1959,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     101,
-    '2025-06-04 19:44:00'
+    '2024-06-04 19:44:00'
 );
 INSERT INTO SOLD VALUES (
     'de4b2c4b-64a4-4463-a2d3-714de4666706'::uuid,
@@ -2102,7 +1970,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     107,
-    '2025-06-04 19:20:00'
+    '2024-06-04 19:20:00'
 );
 INSERT INTO SOLD VALUES (
     'a3f55daf-c19f-4711-b863-76e585780de4'::uuid,
@@ -2113,7 +1981,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     473,
-    '2025-06-04 20:30:00'
+    '2024-06-04 20:30:00'
 );
 INSERT INTO SOLD VALUES (
     '156a66a4-33ca-4ad2-9383-98419c1c0d6b'::uuid,
@@ -2124,7 +1992,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     83,
-    '2025-06-04 20:38:00'
+    '2024-06-04 20:38:00'
 );
 INSERT INTO SOLD VALUES (
     '4f1e545e-4d3d-4f36-a849-685ac955ae04'::uuid,
@@ -2135,7 +2003,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     152,
-    '2025-06-04 20:26:00'
+    '2024-06-04 20:26:00'
 );
 INSERT INTO SOLD VALUES (
     '8d3fd0ac-2be9-4e47-a7af-08012983d880'::uuid,
@@ -2146,7 +2014,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     34,
-    '2025-06-05 12:50:00'
+    '2024-06-05 12:50:00'
 );
 INSERT INTO SOLD VALUES (
     '643269b5-7556-4a88-824f-31a03309eb67'::uuid,
@@ -2157,7 +2025,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     132,
-    '2025-06-05 13:48:00'
+    '2024-06-05 13:48:00'
 );
 INSERT INTO SOLD VALUES (
     '4f5a05d1-f0e0-4c28-a6ec-30ddce1ef6e1'::uuid,
@@ -2168,7 +2036,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     45,
-    '2025-06-05 17:06:00'
+    '2024-06-05 17:06:00'
 );
 INSERT INTO SOLD VALUES (
     'e94a55c0-2e23-485d-a240-cfe5317a28a1'::uuid,
@@ -2179,7 +2047,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     74,
-    '2025-06-05 09:18:00'
+    '2024-06-05 09:18:00'
 );
 INSERT INTO SOLD VALUES (
     '0d25405f-40b1-4189-ad65-46b9cd818c78'::uuid,
@@ -2190,7 +2058,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     98,
-    '2025-06-05 12:48:00'
+    '2024-06-05 12:48:00'
 );
 INSERT INTO SOLD VALUES (
     '1b40f81e-1cc1-4550-9c53-a48f126fb044'::uuid,
@@ -2201,7 +2069,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     103,
-    '2025-06-05 09:28:00'
+    '2024-06-05 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     '16da3d23-497a-40fd-bae5-5e26dcf36c02'::uuid,
@@ -2212,7 +2080,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     499,
-    '2025-06-05 10:34:00'
+    '2024-06-05 10:34:00'
 );
 INSERT INTO SOLD VALUES (
     'eb960365-9a7f-4719-9452-65501b247d57'::uuid,
@@ -2223,7 +2091,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     82,
-    '2025-06-05 12:10:00'
+    '2024-06-05 12:10:00'
 );
 INSERT INTO SOLD VALUES (
     'ee617a1b-fa6f-4393-ab0e-6f31b45ed5ac'::uuid,
@@ -2234,7 +2102,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     322,
-    '2025-06-05 18:44:00'
+    '2024-06-05 18:44:00'
 );
 INSERT INTO SOLD VALUES (
     'a4db6fc8-6dae-4c92-bbbd-ced4f639d8d7'::uuid,
@@ -2245,7 +2113,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     149,
-    '2025-06-05 09:31:00'
+    '2024-06-05 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     '3858faed-2a11-49f5-9391-4bea19ca41cc'::uuid,
@@ -2256,7 +2124,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     25,
-    '2025-06-06 11:20:00'
+    '2024-06-06 11:20:00'
 );
 INSERT INTO SOLD VALUES (
     '38dd96ae-56c1-4a82-b0b2-98d1c8b125d2'::uuid,
@@ -2267,7 +2135,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     31,
-    '2025-06-06 19:13:00'
+    '2024-06-06 19:13:00'
 );
 INSERT INTO SOLD VALUES (
     '4bd39c13-f32b-4d50-b1e2-9ee83b52bb20'::uuid,
@@ -2278,7 +2146,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     127,
-    '2025-06-06 15:10:00'
+    '2024-06-06 15:10:00'
 );
 INSERT INTO SOLD VALUES (
     '996b01e7-829d-4cb4-a3b0-13fde97bb49e'::uuid,
@@ -2289,7 +2157,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     41,
-    '2025-06-06 20:16:00'
+    '2024-06-06 20:16:00'
 );
 INSERT INTO SOLD VALUES (
     '041785e7-21c5-474e-92f2-8ea6852716b1'::uuid,
@@ -2300,7 +2168,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     97,
-    '2025-06-06 09:23:00'
+    '2024-06-06 09:23:00'
 );
 INSERT INTO SOLD VALUES (
     'a5faaf88-09c1-4886-bf26-a374df7ebf87'::uuid,
@@ -2311,7 +2179,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     101,
-    '2025-06-06 17:32:00'
+    '2024-06-06 17:32:00'
 );
 INSERT INTO SOLD VALUES (
     'e4b77ae9-a7f8-48bf-a149-73984178ad4c'::uuid,
@@ -2322,7 +2190,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     497,
-    '2025-06-06 13:57:00'
+    '2024-06-06 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     'ac5ca8a5-95ea-4ae7-bf18-810ca5fbd2f2'::uuid,
@@ -2333,7 +2201,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     64,
-    '2025-06-06 13:37:00'
+    '2024-06-06 13:37:00'
 );
 INSERT INTO SOLD VALUES (
     'e388a8cf-87e1-48a2-a521-2267b350ba2c'::uuid,
@@ -2344,7 +2212,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     309,
-    '2025-06-06 10:01:00'
+    '2024-06-06 10:01:00'
 );
 INSERT INTO SOLD VALUES (
     '01d311ea-837b-4cab-a985-20930c9f2709'::uuid,
@@ -2355,7 +2223,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     144,
-    '2025-06-06 19:09:00'
+    '2024-06-06 19:09:00'
 );
 INSERT INTO SOLD VALUES (
     'def07a00-971a-4f65-b186-e1407d51c8fc'::uuid,
@@ -2366,7 +2234,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     14,
-    '2025-06-07 11:03:00'
+    '2024-06-07 11:03:00'
 );
 INSERT INTO SOLD VALUES (
     'c0940920-f23f-4cfc-a5b3-d8363483cf3d'::uuid,
@@ -2377,7 +2245,7 @@ INSERT INTO SOLD VALUES (
     25,
     25.0,
     6,
-    '2025-06-07 18:41:00'
+    '2024-06-07 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     '420dbb6d-8a04-457c-a6eb-b0de0a1d8b9e'::uuid,
@@ -2388,7 +2256,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     120,
-    '2025-06-07 10:02:00'
+    '2024-06-07 10:02:00'
 );
 INSERT INTO SOLD VALUES (
     '15cfa59b-1c8e-4eaa-8aec-d0d2c3d1ae97'::uuid,
@@ -2399,7 +2267,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     35,
-    '2025-06-07 17:27:00'
+    '2024-06-07 17:27:00'
 );
 INSERT INTO SOLD VALUES (
     'ddf9f5bf-4477-4737-b098-bd451780c866'::uuid,
@@ -2410,7 +2278,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     73,
-    '2025-06-07 09:12:00'
+    '2024-06-07 09:12:00'
 );
 INSERT INTO SOLD VALUES (
     '4d45d6c1-0f3c-43dd-98b1-440a4f4cbf63'::uuid,
@@ -2421,7 +2289,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     95,
-    '2025-06-07 13:36:00'
+    '2024-06-07 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     'c032d6c3-e8af-4bea-8c95-a8e04dda4c33'::uuid,
@@ -2432,7 +2300,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     494,
-    '2025-06-07 19:42:00'
+    '2024-06-07 19:42:00'
 );
 INSERT INTO SOLD VALUES (
     'f66c17b4-e166-4afc-90ec-0319224b7b50'::uuid,
@@ -2443,7 +2311,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     39,
-    '2025-06-07 09:33:00'
+    '2024-06-07 09:33:00'
 );
 INSERT INTO SOLD VALUES (
     'b8719a15-b116-419b-a4f0-50fb555a9cab'::uuid,
@@ -2454,7 +2322,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     294,
-    '2025-06-07 15:51:00'
+    '2024-06-07 15:51:00'
 );
 INSERT INTO SOLD VALUES (
     'b705f2d7-1294-40d9-8020-4ad729a9dd1b'::uuid,
@@ -2465,7 +2333,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     139,
-    '2025-06-07 12:47:00'
+    '2024-06-07 12:47:00'
 );
 INSERT INTO SOLD VALUES (
     'b8d27c65-a440-40b4-adbf-9fba9130b57a'::uuid,
@@ -2476,7 +2344,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     4,
-    '2025-06-08 09:10:00'
+    '2024-06-08 09:10:00'
 );
 INSERT INTO SOLD VALUES (
     'fb72adfb-1b6b-4481-b488-ec78e49e4433'::uuid,
@@ -2487,7 +2355,7 @@ INSERT INTO SOLD VALUES (
     2,
     25.0,
     4,
-    '2025-06-08 09:42:00'
+    '2024-06-08 09:42:00'
 );
 INSERT INTO SOLD VALUES (
     '2e83e0a7-7585-4dd5-82d2-f35b308a997b'::uuid,
@@ -2498,7 +2366,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     114,
-    '2025-06-08 09:17:00'
+    '2024-06-08 09:17:00'
 );
 INSERT INTO SOLD VALUES (
     'e50184f6-607f-433a-9058-58b89dac6364'::uuid,
@@ -2509,7 +2377,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     30,
-    '2025-06-08 11:43:00'
+    '2024-06-08 11:43:00'
 );
 INSERT INTO SOLD VALUES (
     '777cbc7b-f071-4885-b00f-b2ae84615f4e'::uuid,
@@ -2520,7 +2388,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     72,
-    '2025-06-08 16:29:00'
+    '2024-06-08 16:29:00'
 );
 INSERT INTO SOLD VALUES (
     'f8040ecc-e404-4387-acb7-00f9b9a5ea93'::uuid,
@@ -2531,7 +2399,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     93,
-    '2025-06-08 20:14:00'
+    '2024-06-08 20:14:00'
 );
 INSERT INTO SOLD VALUES (
     '397d6f3b-f6e4-4a28-96a2-7a224bbf6f50'::uuid,
@@ -2542,7 +2410,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     94,
-    '2025-06-08 16:30:00'
+    '2024-06-08 16:30:00'
 );
 INSERT INTO SOLD VALUES (
     '0a395d76-0cb3-4f25-8cc1-825725774c32'::uuid,
@@ -2553,7 +2421,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     283,
-    '2025-06-08 20:40:00'
+    '2024-06-08 20:40:00'
 );
 INSERT INTO SOLD VALUES (
     '91117070-db92-42ec-944e-70e62c474e51'::uuid,
@@ -2564,7 +2432,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     135,
-    '2025-06-08 13:07:00'
+    '2024-06-08 13:07:00'
 );
 INSERT INTO SOLD VALUES (
     '1896b63e-fc3e-49d5-976b-16cc4ad85399'::uuid,
@@ -2575,7 +2443,7 @@ INSERT INTO SOLD VALUES (
     4,
     250.0,
     0,
-    '2025-06-09 17:18:00'
+    '2024-06-09 17:18:00'
 );
 INSERT INTO SOLD VALUES (
     '8b511279-4ff6-410b-a5c5-acabd64cbdde'::uuid,
@@ -2586,7 +2454,7 @@ INSERT INTO SOLD VALUES (
     4,
     25.0,
     0,
-    '2025-06-09 18:28:00'
+    '2024-06-09 18:28:00'
 );
 INSERT INTO SOLD VALUES (
     '400ffcd9-f686-4937-ab06-f7b91537f007'::uuid,
@@ -2597,7 +2465,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     107,
-    '2025-06-09 13:29:00'
+    '2024-06-09 13:29:00'
 );
 INSERT INTO SOLD VALUES (
     'c828044e-2eb5-4b87-811e-775a31653f6f'::uuid,
@@ -2608,7 +2476,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     28,
-    '2025-06-09 17:26:00'
+    '2024-06-09 17:26:00'
 );
 INSERT INTO SOLD VALUES (
     'da11a731-f9e5-495e-aef2-179415f734ab'::uuid,
@@ -2619,7 +2487,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     71,
-    '2025-06-09 13:08:00'
+    '2024-06-09 13:08:00'
 );
 INSERT INTO SOLD VALUES (
     '3b98940a-4dba-4b06-91e9-19d1750758f4'::uuid,
@@ -2630,7 +2498,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     85,
-    '2025-06-09 10:53:00'
+    '2024-06-09 10:53:00'
 );
 INSERT INTO SOLD VALUES (
     '949ec545-3c1c-4b65-9c69-535e51ea227c'::uuid,
@@ -2641,7 +2509,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     21,
-    '2025-06-09 13:55:00'
+    '2024-06-09 13:55:00'
 );
 INSERT INTO SOLD VALUES (
     '4ccae92c-fa7d-4fbe-877b-10c38d0e5d64'::uuid,
@@ -2652,7 +2520,7 @@ INSERT INTO SOLD VALUES (
     20,
     8.0,
     263,
-    '2025-06-09 16:54:00'
+    '2024-06-09 16:54:00'
 );
 INSERT INTO SOLD VALUES (
     '155aa3d1-a565-46ab-9909-da292f916974'::uuid,
@@ -2663,7 +2531,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     131,
-    '2025-06-09 19:40:00'
+    '2024-06-09 19:40:00'
 );
 INSERT INTO SOLD VALUES (
     'fbf603fe-14af-45ce-8536-36efa80669e7'::uuid,
@@ -2674,7 +2542,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     118,
-    '2025-06-10 15:15:00'
+    '2024-06-10 15:15:00'
 );
 INSERT INTO SOLD VALUES (
     '546d27a4-cadf-45f1-a540-6b61b4a5be5f'::uuid,
@@ -2685,7 +2553,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     101,
-    '2025-06-10 16:45:00'
+    '2024-06-10 16:45:00'
 );
 INSERT INTO SOLD VALUES (
     'ca5cbe7e-8544-4211-b9bd-aee7f3834040'::uuid,
@@ -2696,7 +2564,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     24,
-    '2025-06-10 14:21:00'
+    '2024-06-10 14:21:00'
 );
 INSERT INTO SOLD VALUES (
     '76e14483-363a-46f7-908a-a92dc367519d'::uuid,
@@ -2707,7 +2575,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     70,
-    '2025-06-10 17:51:00'
+    '2024-06-10 17:51:00'
 );
 INSERT INTO SOLD VALUES (
     'c44927f5-d946-4333-a3cb-da282d122158'::uuid,
@@ -2718,7 +2586,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     91,
-    '2025-06-10 16:20:00'
+    '2024-06-10 16:20:00'
 );
 INSERT INTO SOLD VALUES (
     '213b3da6-f70a-4fb7-b513-9d7f8dd90d53'::uuid,
@@ -2729,7 +2597,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     78,
-    '2025-06-10 15:47:00'
+    '2024-06-10 15:47:00'
 );
 INSERT INTO SOLD VALUES (
     'eea738f4-7d92-4045-97c0-3aa2d6b0986c'::uuid,
@@ -2740,7 +2608,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     492,
-    '2025-06-10 20:05:00'
+    '2024-06-10 20:05:00'
 );
 INSERT INTO SOLD VALUES (
     '2ef432ac-00ee-4e33-9534-0f8657aee09d'::uuid,
@@ -2751,7 +2619,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     0,
-    '2025-06-10 11:49:00'
+    '2024-06-10 11:49:00'
 );
 INSERT INTO SOLD VALUES (
     '077d474a-d79d-478a-a508-d7ddd7a737db'::uuid,
@@ -2762,7 +2630,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     254,
-    '2025-06-10 12:17:00'
+    '2024-06-10 12:17:00'
 );
 INSERT INTO SOLD VALUES (
     '4e289764-260d-40c3-a913-43aad25e6c0e'::uuid,
@@ -2773,7 +2641,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     126,
-    '2025-06-10 15:48:00'
+    '2024-06-10 15:48:00'
 );
 INSERT INTO SOLD VALUES (
     '8e8b768c-2780-4e84-864b-6d1bb43e9552'::uuid,
@@ -2784,7 +2652,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     117,
-    '2025-06-11 10:50:00'
+    '2024-06-11 10:50:00'
 );
 INSERT INTO SOLD VALUES (
     'b44683fe-3e9f-4d0d-9478-f0c660322f36'::uuid,
@@ -2795,7 +2663,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     96,
-    '2025-06-11 11:56:00'
+    '2024-06-11 11:56:00'
 );
 INSERT INTO SOLD VALUES (
     'bca80277-43dc-491a-afce-e25962d99a0a'::uuid,
@@ -2806,7 +2674,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     19,
-    '2025-06-11 20:49:00'
+    '2024-06-11 20:49:00'
 );
 INSERT INTO SOLD VALUES (
     '97fa2930-49fc-4054-ba62-2be705c9e1c9'::uuid,
@@ -2817,7 +2685,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     90,
-    '2025-06-11 12:44:00'
+    '2024-06-11 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     'bdea8935-dd97-4c6f-bd72-1885d2e50764'::uuid,
@@ -2828,7 +2696,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     72,
-    '2025-06-11 15:13:00'
+    '2024-06-11 15:13:00'
 );
 INSERT INTO SOLD VALUES (
     '7e761f2e-cf5f-460e-9449-3e30a02c28c0'::uuid,
@@ -2839,7 +2707,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     490,
-    '2025-06-11 10:33:00'
+    '2024-06-11 10:33:00'
 );
 INSERT INTO SOLD VALUES (
     '2ca9f4cc-6dea-466b-8d8d-9ae8a4c20ba2'::uuid,
@@ -2850,7 +2718,7 @@ INSERT INTO SOLD VALUES (
     2,
     8.0,
     252,
-    '2025-06-11 16:30:00'
+    '2024-06-11 16:30:00'
 );
 INSERT INTO SOLD VALUES (
     '4f985eb3-d809-47b8-90d1-85dce79dd754'::uuid,
@@ -2861,7 +2729,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     122,
-    '2025-06-11 14:44:00'
+    '2024-06-11 14:44:00'
 );
 INSERT INTO SOLD VALUES (
     '9456b8b2-5cc7-4f9b-82ad-af284f5188b7'::uuid,
@@ -2872,7 +2740,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     110,
-    '2025-06-12 15:24:00'
+    '2024-06-12 15:24:00'
 );
 INSERT INTO SOLD VALUES (
     '39b95e0a-6f91-42fb-bbca-3dacef82efa5'::uuid,
@@ -2883,7 +2751,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     91,
-    '2025-06-12 19:05:00'
+    '2024-06-12 19:05:00'
 );
 INSERT INTO SOLD VALUES (
     '7860ae72-fafb-4ab8-b734-bc3d692c1163'::uuid,
@@ -2894,7 +2762,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     13,
-    '2025-06-12 17:31:00'
+    '2024-06-12 17:31:00'
 );
 INSERT INTO SOLD VALUES (
     '7caed3f4-4727-4373-a9ef-3d840751a6e8'::uuid,
@@ -2905,7 +2773,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     87,
-    '2025-06-12 14:25:00'
+    '2024-06-12 14:25:00'
 );
 INSERT INTO SOLD VALUES (
     '4494aa3e-4c0c-40e4-9297-a650ab2bfc40'::uuid,
@@ -2916,7 +2784,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     65,
-    '2025-06-12 13:30:00'
+    '2024-06-12 13:30:00'
 );
 INSERT INTO SOLD VALUES (
     '02635c53-126c-4435-871f-06a19c3157bc'::uuid,
@@ -2927,7 +2795,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     488,
-    '2025-06-12 12:10:00'
+    '2024-06-12 12:10:00'
 );
 INSERT INTO SOLD VALUES (
     '2f605b77-bfd2-4efd-aee5-5d612ba7e61e'::uuid,
@@ -2938,7 +2806,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     325,
-    '2025-06-12 12:13:00'
+    '2024-06-12 12:13:00'
 );
 INSERT INTO SOLD VALUES (
     'fdedee30-f6c5-44d1-9a00-07f0dc711f2b'::uuid,
@@ -2949,7 +2817,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     243,
-    '2025-06-12 13:33:00'
+    '2024-06-12 13:33:00'
 );
 INSERT INTO SOLD VALUES (
     'fbc9161b-de72-49c4-b985-aa10609a7bcf'::uuid,
@@ -2960,7 +2828,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     118,
-    '2025-06-12 20:09:00'
+    '2024-06-12 20:09:00'
 );
 INSERT INTO SOLD VALUES (
     'fbe63ce4-ef4e-4f2a-a712-fe4209e7b762'::uuid,
@@ -2971,7 +2839,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     101,
-    '2025-06-13 13:49:00'
+    '2024-06-13 13:49:00'
 );
 INSERT INTO SOLD VALUES (
     '7f06cb45-4305-4cbd-a9ba-c0b102a22009'::uuid,
@@ -2982,7 +2850,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     85,
-    '2025-06-13 19:07:00'
+    '2024-06-13 19:07:00'
 );
 INSERT INTO SOLD VALUES (
     '827e7a89-1a58-44a4-93c2-3f698c597c7a'::uuid,
@@ -2993,7 +2861,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     7,
-    '2025-06-13 13:02:00'
+    '2024-06-13 13:02:00'
 );
 INSERT INTO SOLD VALUES (
     'c0194293-91ff-4ea5-b829-a8e89b90ac78'::uuid,
@@ -3004,7 +2872,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     69,
-    '2025-06-13 11:39:00'
+    '2024-06-13 11:39:00'
 );
 INSERT INTO SOLD VALUES (
     '32953bdf-7101-46f8-a5a3-7aab93ef92e7'::uuid,
@@ -3015,7 +2883,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     84,
-    '2025-06-13 18:08:00'
+    '2024-06-13 18:08:00'
 );
 INSERT INTO SOLD VALUES (
     '3c8b4cb6-5733-4292-928a-038c52f2ab5d'::uuid,
@@ -3026,7 +2894,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     61,
-    '2025-06-13 15:17:00'
+    '2024-06-13 15:17:00'
 );
 INSERT INTO SOLD VALUES (
     '9ce8adc2-b81a-451d-874a-feae7c55722e'::uuid,
@@ -3037,7 +2905,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     487,
-    '2025-06-13 20:32:00'
+    '2024-06-13 20:32:00'
 );
 INSERT INTO SOLD VALUES (
     '767b71e6-e799-4a1a-abe8-6c4f83fef48d'::uuid,
@@ -3048,7 +2916,7 @@ INSERT INTO SOLD VALUES (
     22,
     12.0,
     303,
-    '2025-06-13 15:19:00'
+    '2024-06-13 15:19:00'
 );
 INSERT INTO SOLD VALUES (
     'd3cc9d0a-8805-4fbf-94d8-2be690905b0c'::uuid,
@@ -3059,7 +2927,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     233,
-    '2025-06-13 14:04:00'
+    '2024-06-13 14:04:00'
 );
 INSERT INTO SOLD VALUES (
     'e714757b-c325-48c4-8014-483caa1e6dc6'::uuid,
@@ -3070,7 +2938,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     113,
-    '2025-06-13 17:53:00'
+    '2024-06-13 17:53:00'
 );
 INSERT INTO SOLD VALUES (
     '67df58ae-85a7-454f-8279-113391031edc'::uuid,
@@ -3081,7 +2949,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     90,
-    '2025-06-14 16:50:00'
+    '2024-06-14 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     'eab7eba9-f733-4d0b-b7af-bda9ce36b100'::uuid,
@@ -3092,7 +2960,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     80,
-    '2025-06-14 18:49:00'
+    '2024-06-14 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     'd36e61c6-c66b-4d38-a1ed-8d4837b97607'::uuid,
@@ -3103,7 +2971,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     2,
-    '2025-06-14 10:42:00'
+    '2024-06-14 10:42:00'
 );
 INSERT INTO SOLD VALUES (
     '9e830135-cd72-471f-9d1f-4298db159be9'::uuid,
@@ -3114,7 +2982,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     68,
-    '2025-06-14 11:44:00'
+    '2024-06-14 11:44:00'
 );
 INSERT INTO SOLD VALUES (
     '20cc81d4-5799-4f0b-93c9-aa4b859bcdf5'::uuid,
@@ -3125,7 +2993,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     82,
-    '2025-06-14 15:15:00'
+    '2024-06-14 15:15:00'
 );
 INSERT INTO SOLD VALUES (
     'd21d7bdc-e4e3-4b96-a06f-aa561a120715'::uuid,
@@ -3136,7 +3004,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     52,
-    '2025-06-14 20:55:00'
+    '2024-06-14 20:55:00'
 );
 INSERT INTO SOLD VALUES (
     'a5ac999b-345f-4e7e-9437-9f61a54835b6'::uuid,
@@ -3147,7 +3015,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     484,
-    '2025-06-14 13:22:00'
+    '2024-06-14 13:22:00'
 );
 INSERT INTO SOLD VALUES (
     '2d00eafa-77f8-4901-8db3-910012b4850d'::uuid,
@@ -3158,7 +3026,7 @@ INSERT INTO SOLD VALUES (
     27,
     12.0,
     276,
-    '2025-06-14 12:53:00'
+    '2024-06-14 12:53:00'
 );
 INSERT INTO SOLD VALUES (
     'b9e10a75-d4e7-45fd-b338-d4b17ca3c83b'::uuid,
@@ -3169,7 +3037,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     219,
-    '2025-06-14 15:12:00'
+    '2024-06-14 15:12:00'
 );
 INSERT INTO SOLD VALUES (
     'c443260f-20c8-4179-83ec-6ab05b3d2076'::uuid,
@@ -3180,7 +3048,7 @@ INSERT INTO SOLD VALUES (
     13,
     250.0,
     77,
-    '2025-06-15 17:36:00'
+    '2024-06-15 17:36:00'
 );
 INSERT INTO SOLD VALUES (
     '7fbd36b1-62c2-4a62-a47f-44e163895cdf'::uuid,
@@ -3191,7 +3059,7 @@ INSERT INTO SOLD VALUES (
     2,
     25.0,
     248,
-    '2025-06-15 15:29:00'
+    '2024-06-15 15:29:00'
 );
 INSERT INTO SOLD VALUES (
     '691d7cc4-4b60-4d16-abd4-f3ab67a762ad'::uuid,
@@ -3202,7 +3070,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     75,
-    '2025-06-15 20:33:00'
+    '2024-06-15 20:33:00'
 );
 INSERT INTO SOLD VALUES (
     '3f3b80bc-3b8c-40b4-9341-a9dfac8b884c'::uuid,
@@ -3213,7 +3081,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     0,
-    '2025-06-15 20:45:00'
+    '2024-06-15 20:45:00'
 );
 INSERT INTO SOLD VALUES (
     '10067743-7580-4f37-9f72-43ed39d9ddd8'::uuid,
@@ -3224,7 +3092,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     67,
-    '2025-06-15 15:51:00'
+    '2024-06-15 15:51:00'
 );
 INSERT INTO SOLD VALUES (
     '865a6913-fd8c-48dd-8996-07b8a4847362'::uuid,
@@ -3235,7 +3103,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     79,
-    '2025-06-15 16:24:00'
+    '2024-06-15 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     'c79ae15e-e1e9-4eba-9bb2-59aeed66bc1a'::uuid,
@@ -3246,7 +3114,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     47,
-    '2025-06-15 20:50:00'
+    '2024-06-15 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     '37242acc-ea76-4026-9e10-fe1c9c3c9415'::uuid,
@@ -3257,7 +3125,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     482,
-    '2025-06-15 11:30:00'
+    '2024-06-15 11:30:00'
 );
 INSERT INTO SOLD VALUES (
     'dfefe83f-790d-44ad-8f75-d8269fac0d9e'::uuid,
@@ -3268,7 +3136,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     258,
-    '2025-06-15 20:16:00'
+    '2024-06-15 20:16:00'
 );
 INSERT INTO SOLD VALUES (
     'ed39e222-e5c4-435f-92f9-a5b6f8b59523'::uuid,
@@ -3279,7 +3147,7 @@ INSERT INTO SOLD VALUES (
     2,
     8.0,
     217,
-    '2025-06-15 20:22:00'
+    '2024-06-15 20:22:00'
 );
 INSERT INTO SOLD VALUES (
     'df707f28-707e-4eed-8fff-97b26aa1e305'::uuid,
@@ -3290,7 +3158,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     107,
-    '2025-06-15 13:58:00'
+    '2024-06-15 13:58:00'
 );
 INSERT INTO SOLD VALUES (
     'bc4741ca-3d14-442c-8f78-faf47ac9cb82'::uuid,
@@ -3301,7 +3169,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     68,
-    '2025-06-16 09:45:00'
+    '2024-06-16 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     '2154b937-06ab-4cef-b38c-852dcc418a01'::uuid,
@@ -3312,7 +3180,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     227,
-    '2025-06-16 17:56:00'
+    '2024-06-16 17:56:00'
 );
 INSERT INTO SOLD VALUES (
     '4bf09227-e783-4be8-9df3-da9944906fbd'::uuid,
@@ -3323,7 +3191,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     66,
-    '2025-06-16 12:09:00'
+    '2024-06-16 12:09:00'
 );
 INSERT INTO SOLD VALUES (
     'a5dc4da3-5466-42a9-944c-90a7341b7b36'::uuid,
@@ -3334,7 +3202,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     75,
-    '2025-06-16 18:41:00'
+    '2024-06-16 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     '2677b5c4-789a-47da-879d-1a23a8e47882'::uuid,
@@ -3345,7 +3213,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     38,
-    '2025-06-16 20:45:00'
+    '2024-06-16 20:45:00'
 );
 INSERT INTO SOLD VALUES (
     '69937c20-64cf-4734-89bd-0f4d8833f6ec'::uuid,
@@ -3356,7 +3224,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     480,
-    '2025-06-16 13:46:00'
+    '2024-06-16 13:46:00'
 );
 INSERT INTO SOLD VALUES (
     '950d943f-8a21-45d0-86bc-4135e0b43a7b'::uuid,
@@ -3367,7 +3235,7 @@ INSERT INTO SOLD VALUES (
     22,
     12.0,
     236,
-    '2025-06-16 12:11:00'
+    '2024-06-16 12:11:00'
 );
 INSERT INTO SOLD VALUES (
     '7e205adc-a61c-4bdf-8c57-5371b62e70fb'::uuid,
@@ -3378,7 +3246,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     206,
-    '2025-06-16 17:14:00'
+    '2024-06-16 17:14:00'
 );
 INSERT INTO SOLD VALUES (
     '9cc90cab-e8d4-4963-a385-a991fceb0da3'::uuid,
@@ -3389,7 +3257,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     103,
-    '2025-06-16 17:24:00'
+    '2024-06-16 17:24:00'
 );
 INSERT INTO SOLD VALUES (
     '5b31205f-37a2-4a04-b012-9d87d9a6b35e'::uuid,
@@ -3400,7 +3268,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     67,
-    '2025-06-17 12:41:00'
+    '2024-06-17 12:41:00'
 );
 INSERT INTO SOLD VALUES (
     'dcef1b38-8e6e-4b36-b7bf-a5d76f3e2015'::uuid,
@@ -3411,7 +3279,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     217,
-    '2025-06-17 13:26:00'
+    '2024-06-17 13:26:00'
 );
 INSERT INTO SOLD VALUES (
     '4d47b4b4-00d5-4b49-bc52-0af078465fa4'::uuid,
@@ -3422,7 +3290,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     71,
-    '2025-06-17 12:36:00'
+    '2024-06-17 12:36:00'
 );
 INSERT INTO SOLD VALUES (
     'e48c729c-e478-4b2d-a82b-8879cf1afbbd'::uuid,
@@ -3433,7 +3301,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     73,
-    '2025-06-17 18:24:00'
+    '2024-06-17 18:24:00'
 );
 INSERT INTO SOLD VALUES (
     'd3f189e5-77e4-42ff-a054-9a1d5ccf2bf3'::uuid,
@@ -3444,7 +3312,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     32,
-    '2025-06-17 19:40:00'
+    '2024-06-17 19:40:00'
 );
 INSERT INTO SOLD VALUES (
     '9ac0ecfd-0e4f-48c2-b4f9-8c95d940c205'::uuid,
@@ -3455,7 +3323,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     478,
-    '2025-06-17 12:15:00'
+    '2024-06-17 12:15:00'
 );
 INSERT INTO SOLD VALUES (
     '565fbccb-0c36-4f4a-a766-89018bcee6ab'::uuid,
@@ -3466,7 +3334,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     218,
-    '2025-06-17 18:29:00'
+    '2024-06-17 18:29:00'
 );
 INSERT INTO SOLD VALUES (
     '52f1e6a4-ed8f-42b3-a22a-f08cd4f96d98'::uuid,
@@ -3477,7 +3345,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     193,
-    '2025-06-17 17:15:00'
+    '2024-06-17 17:15:00'
 );
 INSERT INTO SOLD VALUES (
     '9152bee7-256c-4bcf-8ed9-c78c959a993e'::uuid,
@@ -3488,7 +3356,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     99,
-    '2025-06-17 11:07:00'
+    '2024-06-17 11:07:00'
 );
 INSERT INTO SOLD VALUES (
     '2a390fd4-874e-4cd1-966a-4b882d89ed04'::uuid,
@@ -3499,7 +3367,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     60,
-    '2025-06-18 10:28:00'
+    '2024-06-18 10:28:00'
 );
 INSERT INTO SOLD VALUES (
     '9149b7f9-8bf1-45cc-9bb6-20eab3ef75d1'::uuid,
@@ -3510,7 +3378,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     199,
-    '2025-06-18 17:11:00'
+    '2024-06-18 17:11:00'
 );
 INSERT INTO SOLD VALUES (
     'da457ed8-d1c5-4fb7-a82d-873406e3ed44'::uuid,
@@ -3521,7 +3389,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     67,
-    '2025-06-18 09:45:00'
+    '2024-06-18 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     '77575059-3395-4835-b698-8069b2345dd7'::uuid,
@@ -3532,7 +3400,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     71,
-    '2025-06-18 12:48:00'
+    '2024-06-18 12:48:00'
 );
 INSERT INTO SOLD VALUES (
     '2c4a3a9a-2a36-4254-832e-650a96be5a1c'::uuid,
@@ -3543,7 +3411,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     31,
-    '2025-06-18 16:52:00'
+    '2024-06-18 16:52:00'
 );
 INSERT INTO SOLD VALUES (
     '74c7ffb7-8667-472b-bd25-83758b2ebb14'::uuid,
@@ -3554,7 +3422,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     477,
-    '2025-06-18 10:02:00'
+    '2024-06-18 10:02:00'
 );
 INSERT INTO SOLD VALUES (
     '279b8794-ff1e-4255-8f89-3ccfc14cdb29'::uuid,
@@ -3565,7 +3433,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     198,
-    '2025-06-18 18:34:00'
+    '2024-06-18 18:34:00'
 );
 INSERT INTO SOLD VALUES (
     'cf1c2627-a633-4cf0-bd78-29c6fb9df7b8'::uuid,
@@ -3576,7 +3444,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     182,
-    '2025-06-18 16:02:00'
+    '2024-06-18 16:02:00'
 );
 INSERT INTO SOLD VALUES (
     '6f34dc45-0849-4b07-8be1-283341f879a1'::uuid,
@@ -3587,7 +3455,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     95,
-    '2025-06-18 19:27:00'
+    '2024-06-18 19:27:00'
 );
 INSERT INTO SOLD VALUES (
     'b8b47b99-78e6-48ff-9f46-dcbd3bdc4088'::uuid,
@@ -3598,7 +3466,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     52,
-    '2025-06-19 19:23:00'
+    '2024-06-19 19:23:00'
 );
 INSERT INTO SOLD VALUES (
     'b3e49e4b-3547-40db-9fc5-6d35c8a51389'::uuid,
@@ -3609,7 +3477,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     189,
-    '2025-06-19 09:50:00'
+    '2024-06-19 09:50:00'
 );
 INSERT INTO SOLD VALUES (
     '2aa8a654-166a-46cf-bf39-f98d25c2412a'::uuid,
@@ -3620,7 +3488,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     61,
-    '2025-06-19 17:35:00'
+    '2024-06-19 17:35:00'
 );
 INSERT INTO SOLD VALUES (
     '52b0d5e4-43aa-4a81-9dc6-627283cb9d75'::uuid,
@@ -3631,7 +3499,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     68,
-    '2025-06-19 16:50:00'
+    '2024-06-19 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     '26b600f8-e46f-4304-8f31-c312ec9bcc8a'::uuid,
@@ -3642,7 +3510,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     29,
-    '2025-06-19 14:54:00'
+    '2024-06-19 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     '30f76e71-2b9d-4d25-9d94-1c6b11b4124c'::uuid,
@@ -3653,7 +3521,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     476,
-    '2025-06-19 20:45:00'
+    '2024-06-19 20:45:00'
 );
 INSERT INTO SOLD VALUES (
     '83902b0c-1ca0-41e1-a910-a8740dc4b26b'::uuid,
@@ -3664,7 +3532,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     173,
-    '2025-06-19 11:04:00'
+    '2024-06-19 11:04:00'
 );
 INSERT INTO SOLD VALUES (
     'dbd9d411-6c7a-4672-bff7-483d5e668b42'::uuid,
@@ -3675,7 +3543,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     172,
-    '2025-06-19 09:27:00'
+    '2024-06-19 09:27:00'
 );
 INSERT INTO SOLD VALUES (
     'f049c00c-9b8e-4219-9dde-536d6123ccec'::uuid,
@@ -3686,7 +3554,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     91,
-    '2025-06-19 15:20:00'
+    '2024-06-19 15:20:00'
 );
 INSERT INTO SOLD VALUES (
     '312a6e23-71c1-4d7e-b8a9-25ba92f94b08'::uuid,
@@ -3697,7 +3565,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     46,
-    '2025-06-20 18:59:00'
+    '2024-06-20 18:59:00'
 );
 INSERT INTO SOLD VALUES (
     'a5cbec0e-7a41-4eff-aa57-013394511f89'::uuid,
@@ -3708,7 +3576,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     179,
-    '2025-06-20 19:32:00'
+    '2024-06-20 19:32:00'
 );
 INSERT INTO SOLD VALUES (
     '1eff4f36-d4bc-4932-bbf6-4ab41b8ea4fc'::uuid,
@@ -3719,7 +3587,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     56,
-    '2025-06-20 15:08:00'
+    '2024-06-20 15:08:00'
 );
 INSERT INTO SOLD VALUES (
     '99461851-5d95-4920-a01e-867217b085d0'::uuid,
@@ -3730,7 +3598,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     66,
-    '2025-06-20 13:40:00'
+    '2024-06-20 13:40:00'
 );
 INSERT INTO SOLD VALUES (
     '2d62d798-a994-45d9-947c-c38c06d566e7'::uuid,
@@ -3741,7 +3609,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     25,
-    '2025-06-20 10:43:00'
+    '2024-06-20 10:43:00'
 );
 INSERT INTO SOLD VALUES (
     '0092eee3-56d4-4d55-88a0-d19fa133e620'::uuid,
@@ -3752,7 +3620,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     475,
-    '2025-06-20 19:53:00'
+    '2024-06-20 19:53:00'
 );
 INSERT INTO SOLD VALUES (
     '62b5bad0-95c4-4f43-aabd-ceb23df3cd57'::uuid,
@@ -3763,7 +3631,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     149,
-    '2025-06-20 18:31:00'
+    '2024-06-20 18:31:00'
 );
 INSERT INTO SOLD VALUES (
     'f4f4c6b6-7be7-44bc-b22c-802a57c36b00'::uuid,
@@ -3774,7 +3642,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     164,
-    '2025-06-20 14:29:00'
+    '2024-06-20 14:29:00'
 );
 INSERT INTO SOLD VALUES (
     '4b5586f8-6f46-4650-988c-8406ba35c634'::uuid,
@@ -3785,7 +3653,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     90,
-    '2025-06-20 16:42:00'
+    '2024-06-20 16:42:00'
 );
 INSERT INTO SOLD VALUES (
     '7e8bffe9-6418-4c12-88bb-cca9dd645c7a'::uuid,
@@ -3796,7 +3664,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     35,
-    '2025-06-21 11:14:00'
+    '2024-06-21 11:14:00'
 );
 INSERT INTO SOLD VALUES (
     'c1c05337-4fd7-4858-b98c-93fa5cb0970e'::uuid,
@@ -3807,7 +3675,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     155,
-    '2025-06-21 18:48:00'
+    '2024-06-21 18:48:00'
 );
 INSERT INTO SOLD VALUES (
     'ae4ebe68-08f2-4803-a93b-fb79ff399f4e'::uuid,
@@ -3818,7 +3686,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     49,
-    '2025-06-21 15:37:00'
+    '2024-06-21 15:37:00'
 );
 INSERT INTO SOLD VALUES (
     'cc9a2c81-0845-45b4-a72b-45caa3648203'::uuid,
@@ -3829,7 +3697,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     65,
-    '2025-06-21 19:32:00'
+    '2024-06-21 19:32:00'
 );
 INSERT INTO SOLD VALUES (
     '13c11c6d-7325-45ae-be68-e0d26bd3eebd'::uuid,
@@ -3840,7 +3708,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     63,
-    '2025-06-21 11:23:00'
+    '2024-06-21 11:23:00'
 );
 INSERT INTO SOLD VALUES (
     '51127369-30aa-4ca2-aaa3-9d47916b4dcb'::uuid,
@@ -3851,7 +3719,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     17,
-    '2025-06-21 17:42:00'
+    '2024-06-21 17:42:00'
 );
 INSERT INTO SOLD VALUES (
     '64054117-df0f-4fb2-8d10-49842783388e'::uuid,
@@ -3862,7 +3730,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     473,
-    '2025-06-21 15:45:00'
+    '2024-06-21 15:45:00'
 );
 INSERT INTO SOLD VALUES (
     '11ddfe85-b2a2-40e3-95a6-3e9374c9b752'::uuid,
@@ -3873,7 +3741,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     125,
-    '2025-06-21 12:06:00'
+    '2024-06-21 12:06:00'
 );
 INSERT INTO SOLD VALUES (
     'b60fe391-40f3-4405-95f6-a3e3f3486b54'::uuid,
@@ -3884,7 +3752,7 @@ INSERT INTO SOLD VALUES (
     18,
     8.0,
     146,
-    '2025-06-21 11:29:00'
+    '2024-06-21 11:29:00'
 );
 INSERT INTO SOLD VALUES (
     '44e31564-d827-44d8-a872-84e09ddbdcc0'::uuid,
@@ -3895,7 +3763,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     84,
-    '2025-06-21 19:15:00'
+    '2024-06-21 19:15:00'
 );
 INSERT INTO SOLD VALUES (
     '04305ff1-7356-4c7d-b37c-964d96c004f2'::uuid,
@@ -3906,7 +3774,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     134,
-    '2025-06-22 18:43:00'
+    '2024-06-22 18:43:00'
 );
 INSERT INTO SOLD VALUES (
     '4e7a81f1-a0cc-4ab8-a1bd-a6e43ca5513e'::uuid,
@@ -3917,7 +3785,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     47,
-    '2025-06-22 14:45:00'
+    '2024-06-22 14:45:00'
 );
 INSERT INTO SOLD VALUES (
     '64ae1090-ef35-4654-8424-ef5ac3d6725d'::uuid,
@@ -3928,7 +3796,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     64,
-    '2025-06-22 11:27:00'
+    '2024-06-22 11:27:00'
 );
 INSERT INTO SOLD VALUES (
     '4dc1cb99-2d0f-43dd-9722-0d9e0b06a1ab'::uuid,
@@ -3939,7 +3807,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     59,
-    '2025-06-22 15:59:00'
+    '2024-06-22 15:59:00'
 );
 INSERT INTO SOLD VALUES (
     '2040c330-c843-491d-87b5-8b788345645c'::uuid,
@@ -3950,7 +3818,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     15,
-    '2025-06-22 19:07:00'
+    '2024-06-22 19:07:00'
 );
 INSERT INTO SOLD VALUES (
     '1521e3ec-ae24-43bc-9ac2-55dadd8657c3'::uuid,
@@ -3961,7 +3829,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     470,
-    '2025-06-22 18:40:00'
+    '2024-06-22 18:40:00'
 );
 INSERT INTO SOLD VALUES (
     'ebe4709c-7d59-4b5a-93a6-001b713fc4f6'::uuid,
@@ -3972,7 +3840,7 @@ INSERT INTO SOLD VALUES (
     26,
     12.0,
     99,
-    '2025-06-22 12:35:00'
+    '2024-06-22 12:35:00'
 );
 INSERT INTO SOLD VALUES (
     'ccc15a89-dc94-44dc-b355-ed3cfd2d63e3'::uuid,
@@ -3983,7 +3851,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     132,
-    '2025-06-22 20:57:00'
+    '2024-06-22 20:57:00'
 );
 INSERT INTO SOLD VALUES (
     '093f2431-2950-4caf-a2c1-87647914c871'::uuid,
@@ -3994,7 +3862,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     83,
-    '2025-06-22 11:50:00'
+    '2024-06-22 11:50:00'
 );
 INSERT INTO SOLD VALUES (
     '80a4e7a8-c35d-4a29-892c-03c0b620c4b4'::uuid,
@@ -4005,7 +3873,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     33,
-    '2025-06-23 17:59:00'
+    '2024-06-23 17:59:00'
 );
 INSERT INTO SOLD VALUES (
     '7eb5177c-62f8-4f53-8690-f54a9150616e'::uuid,
@@ -4016,7 +3884,7 @@ INSERT INTO SOLD VALUES (
     20,
     25.0,
     114,
-    '2025-06-23 11:38:00'
+    '2024-06-23 11:38:00'
 );
 INSERT INTO SOLD VALUES (
     '4bc4da7c-e1db-46e9-9812-7f903fa14bd0'::uuid,
@@ -4027,7 +3895,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     43,
-    '2025-06-23 13:09:00'
+    '2024-06-23 13:09:00'
 );
 INSERT INTO SOLD VALUES (
     '81d32b3e-0c96-460b-9bff-fff606193d86'::uuid,
@@ -4038,7 +3906,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     63,
-    '2025-06-23 09:19:00'
+    '2024-06-23 09:19:00'
 );
 INSERT INTO SOLD VALUES (
     '7647399a-9739-44ec-a3fc-799ca34f468f'::uuid,
@@ -4049,7 +3917,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     56,
-    '2025-06-23 16:45:00'
+    '2024-06-23 16:45:00'
 );
 INSERT INTO SOLD VALUES (
     '7d6b62ec-8550-48d5-87e3-0e8173f445c1'::uuid,
@@ -4060,7 +3928,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     8,
-    '2025-06-23 09:55:00'
+    '2024-06-23 09:55:00'
 );
 INSERT INTO SOLD VALUES (
     'ba124356-9a34-4fcd-884a-b789d4d72548'::uuid,
@@ -4071,7 +3939,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     469,
-    '2025-06-23 18:48:00'
+    '2024-06-23 18:48:00'
 );
 INSERT INTO SOLD VALUES (
     '30805d74-0409-4aaa-b4f8-b1f14196cc65'::uuid,
@@ -4082,7 +3950,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     81,
-    '2025-06-23 17:29:00'
+    '2024-06-23 17:29:00'
 );
 INSERT INTO SOLD VALUES (
     '17575063-fb20-474d-880e-badebcc35c98'::uuid,
@@ -4093,7 +3961,7 @@ INSERT INTO SOLD VALUES (
     1,
     8.0,
     131,
-    '2025-06-23 10:52:00'
+    '2024-06-23 10:52:00'
 );
 INSERT INTO SOLD VALUES (
     '8117b49a-fe02-423e-b0c5-c818777cd87d'::uuid,
@@ -4104,7 +3972,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     77,
-    '2025-06-23 18:00:00'
+    '2024-06-23 18:00:00'
 );
 INSERT INTO SOLD VALUES (
     'd99f52fa-3265-4df3-98b1-890f58ebde54'::uuid,
@@ -4115,7 +3983,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     24,
-    '2025-06-24 20:27:00'
+    '2024-06-24 20:27:00'
 );
 INSERT INTO SOLD VALUES (
     'cb9e37bd-2aef-46a2-9304-f6ddd76cb388'::uuid,
@@ -4126,7 +3994,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     101,
-    '2025-06-24 18:48:00'
+    '2024-06-24 18:48:00'
 );
 INSERT INTO SOLD VALUES (
     'c88de033-b522-407d-ac53-8e5f267df5d2'::uuid,
@@ -4137,7 +4005,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     38,
-    '2025-06-24 14:55:00'
+    '2024-06-24 14:55:00'
 );
 INSERT INTO SOLD VALUES (
     'a87f6d6c-f9dd-4f81-8fa8-a41ebb5595ad'::uuid,
@@ -4148,7 +4016,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     62,
-    '2025-06-24 14:35:00'
+    '2024-06-24 14:35:00'
 );
 INSERT INTO SOLD VALUES (
     '90f40255-f259-4ded-b8f2-341e18da76ab'::uuid,
@@ -4159,7 +4027,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     54,
-    '2025-06-24 19:01:00'
+    '2024-06-24 19:01:00'
 );
 INSERT INTO SOLD VALUES (
     'b53c912b-de88-4f9b-bcd8-1d203c1919a1'::uuid,
@@ -4170,7 +4038,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     4,
-    '2025-06-24 14:00:00'
+    '2024-06-24 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     '912f9a64-5ad2-4b98-ba11-42b3414a74d5'::uuid,
@@ -4181,7 +4049,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     467,
-    '2025-06-24 19:29:00'
+    '2024-06-24 19:29:00'
 );
 INSERT INTO SOLD VALUES (
     '997b1d0e-cdc5-4543-b41a-9028ef9a9766'::uuid,
@@ -4192,7 +4060,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     58,
-    '2025-06-24 13:48:00'
+    '2024-06-24 13:48:00'
 );
 INSERT INTO SOLD VALUES (
     'f38be983-ffaf-4b19-8d32-e7491b6a05b1'::uuid,
@@ -4203,7 +4071,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     117,
-    '2025-06-24 10:21:00'
+    '2024-06-24 10:21:00'
 );
 INSERT INTO SOLD VALUES (
     'd9a7f4d4-22e0-44b7-800c-2296990801c7'::uuid,
@@ -4214,7 +4082,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     72,
-    '2025-06-24 11:05:00'
+    '2024-06-24 11:05:00'
 );
 INSERT INTO SOLD VALUES (
     'e234f787-4aa4-4859-b794-cb767ce0c83c'::uuid,
@@ -4225,7 +4093,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     17,
-    '2025-06-25 18:51:00'
+    '2024-06-25 18:51:00'
 );
 INSERT INTO SOLD VALUES (
     '6d7caaa1-f0ff-44c0-ac63-d86ea387b452'::uuid,
@@ -4236,7 +4104,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     100,
-    '2025-06-25 16:43:00'
+    '2024-06-25 16:43:00'
 );
 INSERT INTO SOLD VALUES (
     '5e314249-2ab0-45db-a4c7-57f682153e11'::uuid,
@@ -4247,7 +4115,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     61,
-    '2025-06-25 12:05:00'
+    '2024-06-25 12:05:00'
 );
 INSERT INTO SOLD VALUES (
     'c8620563-87ed-49dd-a9b3-1763bf63ca3b'::uuid,
@@ -4258,7 +4126,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     51,
-    '2025-06-25 15:08:00'
+    '2024-06-25 15:08:00'
 );
 INSERT INTO SOLD VALUES (
     '948c2165-d886-45fa-81eb-db12402b7eef'::uuid,
@@ -4269,7 +4137,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     0,
-    '2025-06-25 15:27:00'
+    '2024-06-25 15:27:00'
 );
 INSERT INTO SOLD VALUES (
     '1ea18175-013f-4bfb-a418-03a7cff0d4fc'::uuid,
@@ -4280,7 +4148,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     466,
-    '2025-06-25 20:25:00'
+    '2024-06-25 20:25:00'
 );
 INSERT INTO SOLD VALUES (
     '519de4c3-b0f1-4b84-93d0-72f2f7e1903c'::uuid,
@@ -4291,7 +4159,7 @@ INSERT INTO SOLD VALUES (
     16,
     12.0,
     42,
-    '2025-06-25 14:41:00'
+    '2024-06-25 14:41:00'
 );
 INSERT INTO SOLD VALUES (
     'c4f31362-b01a-4abd-95b3-87d6f6f28aea'::uuid,
@@ -4302,7 +4170,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     107,
-    '2025-06-25 16:36:00'
+    '2024-06-25 16:36:00'
 );
 INSERT INTO SOLD VALUES (
     '621b95d5-87f5-4602-8828-bd06b6486e34'::uuid,
@@ -4313,7 +4181,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     68,
-    '2025-06-25 10:32:00'
+    '2024-06-25 10:32:00'
 );
 INSERT INTO SOLD VALUES (
     '2968d347-9816-4d04-b7df-9ce68a643f84'::uuid,
@@ -4324,7 +4192,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     8,
-    '2025-06-26 10:23:00'
+    '2024-06-26 10:23:00'
 );
 INSERT INTO SOLD VALUES (
     '7d8916e2-1cd2-460c-b0d1-c1047403beb8'::uuid,
@@ -4335,7 +4203,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     90,
-    '2025-06-26 09:14:00'
+    '2024-06-26 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     'e66fb701-864d-42f5-8e72-bea3ea6e6ce9'::uuid,
@@ -4346,7 +4214,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     33,
-    '2025-06-26 18:01:00'
+    '2024-06-26 18:01:00'
 );
 INSERT INTO SOLD VALUES (
     '6d3660cf-6000-4d29-bf44-40a7ffcae397'::uuid,
@@ -4357,7 +4225,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     60,
-    '2025-06-26 14:00:00'
+    '2024-06-26 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     '629780a0-93d7-4517-9c08-b7c3d8152127'::uuid,
@@ -4368,7 +4236,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     49,
-    '2025-06-26 14:00:00'
+    '2024-06-26 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     'f284ef49-6a11-47b1-9c52-c08879308e3a'::uuid,
@@ -4379,7 +4247,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     464,
-    '2025-06-26 15:49:00'
+    '2024-06-26 15:49:00'
 );
 INSERT INTO SOLD VALUES (
     '813211be-8276-4cd3-92d4-5c10b866400f'::uuid,
@@ -4390,7 +4258,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     18,
-    '2025-06-26 17:09:00'
+    '2024-06-26 17:09:00'
 );
 INSERT INTO SOLD VALUES (
     '7d9e1bb9-9d67-4f29-8c6a-690486aa6ee4'::uuid,
@@ -4401,7 +4269,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     94,
-    '2025-06-26 09:58:00'
+    '2024-06-26 09:58:00'
 );
 INSERT INTO SOLD VALUES (
     '746d72fc-6e04-4737-903f-420c0ae7df55'::uuid,
@@ -4412,7 +4280,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     64,
-    '2025-06-26 10:48:00'
+    '2024-06-26 10:48:00'
 );
 INSERT INTO SOLD VALUES (
     'ad182f4d-461c-418c-84cf-6501dc598880'::uuid,
@@ -4423,7 +4291,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     2,
-    '2025-06-27 19:24:00'
+    '2024-06-27 19:24:00'
 );
 INSERT INTO SOLD VALUES (
     '9d2f37a3-5209-454f-87f3-d94976a03580'::uuid,
@@ -4434,7 +4302,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     72,
-    '2025-06-27 14:31:00'
+    '2024-06-27 14:31:00'
 );
 INSERT INTO SOLD VALUES (
     '2b91a4bd-e8a7-403f-a9e5-f309a3af9cad'::uuid,
@@ -4445,7 +4313,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     29,
-    '2025-06-27 12:19:00'
+    '2024-06-27 12:19:00'
 );
 INSERT INTO SOLD VALUES (
     'ceeabf96-d495-464a-957e-990814ea9e86'::uuid,
@@ -4456,7 +4324,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     47,
-    '2025-06-27 13:25:00'
+    '2024-06-27 13:25:00'
 );
 INSERT INTO SOLD VALUES (
     '206b30bd-e19e-4032-990b-74c861276d02'::uuid,
@@ -4467,7 +4335,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     462,
-    '2025-06-27 16:33:00'
+    '2024-06-27 16:33:00'
 );
 INSERT INTO SOLD VALUES (
     'cc98ff8b-1755-4f17-83b3-b427418fc38d'::uuid,
@@ -4478,7 +4346,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     0,
-    '2025-06-27 18:54:00'
+    '2024-06-27 18:54:00'
 );
 INSERT INTO SOLD VALUES (
     '0632e063-20ae-4448-8079-62d98471b093'::uuid,
@@ -4489,7 +4357,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     85,
-    '2025-06-27 18:41:00'
+    '2024-06-27 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     '19a82d2f-9c5b-4fb0-8937-f08c1b66322a'::uuid,
@@ -4500,7 +4368,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     60,
-    '2025-06-27 19:15:00'
+    '2024-06-27 19:15:00'
 );
 INSERT INTO SOLD VALUES (
     '85091156-4997-4c2c-ba41-49adbbadbe3e'::uuid,
@@ -4511,7 +4379,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     0,
-    '2025-06-28 09:28:00'
+    '2024-06-28 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     'f6079695-78d0-4792-80a8-ca4ad5ebf5f3'::uuid,
@@ -4522,7 +4390,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     54,
-    '2025-06-28 09:14:00'
+    '2024-06-28 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     '0242d0a0-6c74-4c97-a68b-06c45dd5927c'::uuid,
@@ -4533,7 +4401,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     22,
-    '2025-06-28 13:00:00'
+    '2024-06-28 13:00:00'
 );
 INSERT INTO SOLD VALUES (
     '73315603-0b66-4950-b92f-715474ce0d5a'::uuid,
@@ -4544,7 +4412,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     59,
-    '2025-06-28 11:43:00'
+    '2024-06-28 11:43:00'
 );
 INSERT INTO SOLD VALUES (
     'fd1ff7d0-daf3-4c53-a20f-abbb39bdea0d'::uuid,
@@ -4555,7 +4423,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     44,
-    '2025-06-28 13:52:00'
+    '2024-06-28 13:52:00'
 );
 INSERT INTO SOLD VALUES (
     '88d889d4-9efc-4227-8f71-748c4b971b18'::uuid,
@@ -4566,7 +4434,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     460,
-    '2025-06-28 10:12:00'
+    '2024-06-28 10:12:00'
 );
 INSERT INTO SOLD VALUES (
     '7ae8eb6a-9ffa-444e-8f7d-048325fa950e'::uuid,
@@ -4577,7 +4445,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     69,
-    '2025-06-28 12:38:00'
+    '2024-06-28 12:38:00'
 );
 INSERT INTO SOLD VALUES (
     '9536a4ee-cf08-4e48-8030-ac9af4ccbd44'::uuid,
@@ -4588,7 +4456,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     55,
-    '2025-06-28 10:19:00'
+    '2024-06-28 10:19:00'
 );
 INSERT INTO SOLD VALUES (
     'f2104d41-883f-4494-94af-6c470175ad1f'::uuid,
@@ -4599,7 +4467,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     33,
-    '2025-06-29 20:12:00'
+    '2024-06-29 20:12:00'
 );
 INSERT INTO SOLD VALUES (
     '7334a1d1-cb0f-408a-90ce-764403a75bd7'::uuid,
@@ -4610,7 +4478,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     16,
-    '2025-06-29 15:34:00'
+    '2024-06-29 15:34:00'
 );
 INSERT INTO SOLD VALUES (
     'fd9692f5-bc41-42a4-aad1-7caa739f63c1'::uuid,
@@ -4621,7 +4489,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     58,
-    '2025-06-29 20:17:00'
+    '2024-06-29 20:17:00'
 );
 INSERT INTO SOLD VALUES (
     '78cf9652-9e36-454c-b0a9-cc7899dcc077'::uuid,
@@ -4632,7 +4500,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     41,
-    '2025-06-29 20:05:00'
+    '2024-06-29 20:05:00'
 );
 INSERT INTO SOLD VALUES (
     '6638f503-237d-4591-954a-c18f9073306a'::uuid,
@@ -4643,7 +4511,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     458,
-    '2025-06-29 13:57:00'
+    '2024-06-29 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     '4edd12e8-6b79-47b0-a52a-abcf0f2d765e'::uuid,
@@ -4654,7 +4522,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     53,
-    '2025-06-29 15:16:00'
+    '2024-06-29 15:16:00'
 );
 INSERT INTO SOLD VALUES (
     '7c8d611e-c1c9-40a8-ab5a-b18995c899f9'::uuid,
@@ -4665,7 +4533,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     52,
-    '2025-06-29 14:54:00'
+    '2024-06-29 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     '3ece3000-4b26-44ce-92e6-44a38162aaac'::uuid,
@@ -4676,7 +4544,7 @@ INSERT INTO SOLD VALUES (
     23,
     25.0,
     10,
-    '2025-06-30 20:08:00'
+    '2024-06-30 20:08:00'
 );
 INSERT INTO SOLD VALUES (
     'e6d44edc-276d-4ce4-83e5-a40960822ed8'::uuid,
@@ -4687,7 +4555,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     12,
-    '2025-06-30 11:24:00'
+    '2024-06-30 11:24:00'
 );
 INSERT INTO SOLD VALUES (
     '1aef0e49-be9b-4929-8122-c230757a8720'::uuid,
@@ -4698,7 +4566,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     57,
-    '2025-06-30 09:27:00'
+    '2024-06-30 09:27:00'
 );
 INSERT INTO SOLD VALUES (
     '1f98cb80-64a7-4175-9c1c-ab436ff25ebf'::uuid,
@@ -4709,7 +4577,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     39,
-    '2025-06-30 13:36:00'
+    '2024-06-30 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     'fc9458b2-7fc2-44bd-8bca-a3598e1af146'::uuid,
@@ -4720,7 +4588,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     455,
-    '2025-06-30 11:22:00'
+    '2024-06-30 11:22:00'
 );
 INSERT INTO SOLD VALUES (
     'bcdabe16-6fbd-4d73-8829-e0014642aa78'::uuid,
@@ -4731,7 +4599,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     40,
-    '2025-06-30 17:35:00'
+    '2024-06-30 17:35:00'
 );
 INSERT INTO SOLD VALUES (
     'ff697757-31a7-4434-99da-facf4e2d3975'::uuid,
@@ -4742,7 +4610,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     45,
-    '2025-06-30 14:00:00'
+    '2024-06-30 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     '68f30457-b37d-47a5-b86c-4a7006b140c2'::uuid,
@@ -4753,7 +4621,7 @@ INSERT INTO SOLD VALUES (
     2,
     25.0,
     8,
-    '2025-07-01 19:18:00'
+    '2024-07-01 19:18:00'
 );
 INSERT INTO SOLD VALUES (
     'd9002603-afe4-40b6-be83-d05260eaf548'::uuid,
@@ -4764,7 +4632,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     179,
-    '2025-07-01 16:03:00'
+    '2024-07-01 16:03:00'
 );
 INSERT INTO SOLD VALUES (
     'a2d1a5a2-933b-4ac1-82f5-510fef536190'::uuid,
@@ -4775,7 +4643,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     56,
-    '2025-07-01 14:38:00'
+    '2024-07-01 14:38:00'
 );
 INSERT INTO SOLD VALUES (
     '13a5b5c3-3c2a-4172-a221-446408bacd56'::uuid,
@@ -4786,7 +4654,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     37,
-    '2025-07-01 14:31:00'
+    '2024-07-01 14:31:00'
 );
 INSERT INTO SOLD VALUES (
     '434d49f4-91d0-405c-9705-6b07e4dc2a9f'::uuid,
@@ -4797,7 +4665,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     454,
-    '2025-07-01 20:46:00'
+    '2024-07-01 20:46:00'
 );
 INSERT INTO SOLD VALUES (
     'c0aa5c00-c1ab-467e-b33e-b8d4faead17a'::uuid,
@@ -4808,7 +4676,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     30,
-    '2025-07-01 12:35:00'
+    '2024-07-01 12:35:00'
 );
 INSERT INTO SOLD VALUES (
     '8b388439-953b-4bf5-93b0-e254256eb06f'::uuid,
@@ -4819,7 +4687,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     42,
-    '2025-07-01 17:33:00'
+    '2024-07-01 17:33:00'
 );
 INSERT INTO SOLD VALUES (
     '3feb4d74-b87a-474d-821a-1e69e9dda8e8'::uuid,
@@ -4830,7 +4698,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     132,
-    '2025-07-02 10:16:00'
+    '2024-07-02 10:16:00'
 );
 INSERT INTO SOLD VALUES (
     '297a958f-cd87-49f3-9a1b-3435c041317d'::uuid,
@@ -4841,7 +4709,7 @@ INSERT INTO SOLD VALUES (
     8,
     25.0,
     0,
-    '2025-07-02 20:12:00'
+    '2024-07-02 20:12:00'
 );
 INSERT INTO SOLD VALUES (
     'b25ded49-13d9-4acc-ba3b-d93c10bbbaa4'::uuid,
@@ -4852,7 +4720,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     175,
-    '2025-07-02 11:12:00'
+    '2024-07-02 11:12:00'
 );
 INSERT INTO SOLD VALUES (
     'ecd10f83-db41-448a-8be3-ecd674b50611'::uuid,
@@ -4863,7 +4731,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     55,
-    '2025-07-02 15:42:00'
+    '2024-07-02 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     '1a5408f0-b336-4588-8bd8-6e108914a128'::uuid,
@@ -4874,7 +4742,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     34,
-    '2025-07-02 20:50:00'
+    '2024-07-02 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     '4fed41fb-ed18-4276-b91b-9e019cf46cbc'::uuid,
@@ -4885,7 +4753,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     452,
-    '2025-07-02 09:58:00'
+    '2024-07-02 09:58:00'
 );
 INSERT INTO SOLD VALUES (
     'a573e121-ead7-4346-8862-ed90eb384ab8'::uuid,
@@ -4896,7 +4764,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     18,
-    '2025-07-02 17:58:00'
+    '2024-07-02 17:58:00'
 );
 INSERT INTO SOLD VALUES (
     '8238e2cc-1784-4e4c-bcd4-019c58e8c185'::uuid,
@@ -4907,7 +4775,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     38,
-    '2025-07-02 12:39:00'
+    '2024-07-02 12:39:00'
 );
 INSERT INTO SOLD VALUES (
     'b8edb1c9-f2c9-4eed-b2cd-1d48a02049c5'::uuid,
@@ -4918,7 +4786,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     124,
-    '2025-07-03 10:26:00'
+    '2024-07-03 10:26:00'
 );
 INSERT INTO SOLD VALUES (
     '2af25edd-165b-4701-baca-03d3a62f95ac'::uuid,
@@ -4929,7 +4797,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     170,
-    '2025-07-03 11:16:00'
+    '2024-07-03 11:16:00'
 );
 INSERT INTO SOLD VALUES (
     '747ba0ce-248c-40d7-a563-1a60f4d07520'::uuid,
@@ -4940,7 +4808,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     53,
-    '2025-07-03 20:21:00'
+    '2024-07-03 20:21:00'
 );
 INSERT INTO SOLD VALUES (
     'cc344dcb-cd71-4e7b-8253-b4e8bf166efc'::uuid,
@@ -4951,7 +4819,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     32,
-    '2025-07-03 19:34:00'
+    '2024-07-03 19:34:00'
 );
 INSERT INTO SOLD VALUES (
     '53da0464-c398-4a64-bda6-4638f808f9cd'::uuid,
@@ -4962,7 +4830,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     451,
-    '2025-07-03 10:28:00'
+    '2024-07-03 10:28:00'
 );
 INSERT INTO SOLD VALUES (
     '552999fc-b2c2-4193-a028-7a2cbed80973'::uuid,
@@ -4973,7 +4841,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     3,
-    '2025-07-03 10:17:00'
+    '2024-07-03 10:17:00'
 );
 INSERT INTO SOLD VALUES (
     '8a7bcc49-14ab-4801-ac29-cb69f68273cf'::uuid,
@@ -4984,7 +4852,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     35,
-    '2025-07-03 15:00:00'
+    '2024-07-03 15:00:00'
 );
 INSERT INTO SOLD VALUES (
     '0207de38-5edf-41be-8fc8-e10ce423d9a9'::uuid,
@@ -4995,7 +4863,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     116,
-    '2025-07-04 19:48:00'
+    '2024-07-04 19:48:00'
 );
 INSERT INTO SOLD VALUES (
     '16df7b9d-07fa-4f71-88f7-ad4183efdd85'::uuid,
@@ -5006,7 +4874,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     166,
-    '2025-07-04 13:30:00'
+    '2024-07-04 13:30:00'
 );
 INSERT INTO SOLD VALUES (
     'b81d83da-cac2-4302-89c9-28710d7c74d5'::uuid,
@@ -5017,7 +4885,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     51,
-    '2025-07-04 15:23:00'
+    '2024-07-04 15:23:00'
 );
 INSERT INTO SOLD VALUES (
     '9f098798-2573-43b3-a839-3bf9a9e0413e'::uuid,
@@ -5028,7 +4896,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     30,
-    '2025-07-04 16:43:00'
+    '2024-07-04 16:43:00'
 );
 INSERT INTO SOLD VALUES (
     '41884055-94ad-4b12-ba47-bed7e3a527f7'::uuid,
@@ -5039,7 +4907,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     449,
-    '2025-07-04 09:17:00'
+    '2024-07-04 09:17:00'
 );
 INSERT INTO SOLD VALUES (
     'b97f7bff-70a2-4537-8cf4-8aef0d4e81e3'::uuid,
@@ -5050,7 +4918,7 @@ INSERT INTO SOLD VALUES (
     3,
     8.0,
     0,
-    '2025-07-04 13:21:00'
+    '2024-07-04 13:21:00'
 );
 INSERT INTO SOLD VALUES (
     '3d688daf-c765-4527-9c5f-4f84643a83a0'::uuid,
@@ -5061,7 +4929,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     31,
-    '2025-07-04 14:29:00'
+    '2024-07-04 14:29:00'
 );
 INSERT INTO SOLD VALUES (
     '2fcd2aee-1748-4ad8-8d63-7d7accc7443e'::uuid,
@@ -5072,7 +4940,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     165,
-    '2025-07-05 16:48:00'
+    '2024-07-05 16:48:00'
 );
 INSERT INTO SOLD VALUES (
     'fb9904d4-e116-4e8f-bec6-1b1edb7bce97'::uuid,
@@ -5083,7 +4951,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     143,
-    '2025-07-05 15:27:00'
+    '2024-07-05 15:27:00'
 );
 INSERT INTO SOLD VALUES (
     'a7f66e53-bcc6-4627-a68c-28cc187d62c9'::uuid,
@@ -5094,7 +4962,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     50,
-    '2025-07-05 14:20:00'
+    '2024-07-05 14:20:00'
 );
 INSERT INTO SOLD VALUES (
     'c1a4f725-57b9-4355-922b-41d5cafab8b9'::uuid,
@@ -5105,7 +4973,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     26,
-    '2025-07-05 10:04:00'
+    '2024-07-05 10:04:00'
 );
 INSERT INTO SOLD VALUES (
     'ce5e8b5d-9162-41ba-99c2-339086a4f456'::uuid,
@@ -5116,7 +4984,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     447,
-    '2025-07-05 18:22:00'
+    '2024-07-05 18:22:00'
 );
 INSERT INTO SOLD VALUES (
     '10788def-10f4-4ea6-bd51-52c2d04bb5bb'::uuid,
@@ -5127,7 +4995,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     30,
-    '2025-07-05 20:11:00'
+    '2024-07-05 20:11:00'
 );
 INSERT INTO SOLD VALUES (
     '14cc4251-c0d2-4e1a-b1e6-1bf66cdab16b'::uuid,
@@ -5138,7 +5006,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     106,
-    '2025-07-06 11:41:00'
+    '2024-07-06 11:41:00'
 );
 INSERT INTO SOLD VALUES (
     '237ec7a9-a406-4d84-86ae-eb1752af25e6'::uuid,
@@ -5149,7 +5017,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     158,
-    '2025-07-06 12:51:00'
+    '2024-07-06 12:51:00'
 );
 INSERT INTO SOLD VALUES (
     '52f63dbc-c2ac-45ce-9559-9a9b34ba66fc'::uuid,
@@ -5160,7 +5028,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     134,
-    '2025-07-06 11:25:00'
+    '2024-07-06 11:25:00'
 );
 INSERT INTO SOLD VALUES (
     '41ce2ca7-b981-41aa-a61e-deb6677d9ba6'::uuid,
@@ -5171,7 +5039,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     23,
-    '2025-07-06 18:32:00'
+    '2024-07-06 18:32:00'
 );
 INSERT INTO SOLD VALUES (
     'ca44a14f-e228-45a2-9540-0474cefd90fe'::uuid,
@@ -5182,7 +5050,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     446,
-    '2025-07-06 15:18:00'
+    '2024-07-06 15:18:00'
 );
 INSERT INTO SOLD VALUES (
     'fb0b3431-ee5f-4086-9250-ebbf45099526'::uuid,
@@ -5193,7 +5061,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     94,
-    '2025-07-07 09:44:00'
+    '2024-07-07 09:44:00'
 );
 INSERT INTO SOLD VALUES (
     '16138467-63d9-49aa-a524-d5633d080688'::uuid,
@@ -5204,7 +5072,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     152,
-    '2025-07-07 17:46:00'
+    '2024-07-07 17:46:00'
 );
 INSERT INTO SOLD VALUES (
     '887fafa3-742f-430a-a55f-cf720f675458'::uuid,
@@ -5215,7 +5083,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     126,
-    '2025-07-07 10:15:00'
+    '2024-07-07 10:15:00'
 );
 INSERT INTO SOLD VALUES (
     'cc302bfe-aa89-499c-a435-83b4535766a2'::uuid,
@@ -5226,7 +5094,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     49,
-    '2025-07-07 11:14:00'
+    '2024-07-07 11:14:00'
 );
 INSERT INTO SOLD VALUES (
     '2298a3c9-19de-4437-81d0-d08d2c7722a1'::uuid,
@@ -5237,7 +5105,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     20,
-    '2025-07-07 11:20:00'
+    '2024-07-07 11:20:00'
 );
 INSERT INTO SOLD VALUES (
     'aca331bb-3f63-4a88-a523-a832076cdd7f'::uuid,
@@ -5248,7 +5116,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     443,
-    '2025-07-07 10:10:00'
+    '2024-07-07 10:10:00'
 );
 INSERT INTO SOLD VALUES (
     '431720db-2fc8-4248-819a-b7ae33870c17'::uuid,
@@ -5259,7 +5127,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     26,
-    '2025-07-07 20:44:00'
+    '2024-07-07 20:44:00'
 );
 INSERT INTO SOLD VALUES (
     '39c709c9-b8fa-4c0b-b4e0-6f58bdfa7ead'::uuid,
@@ -5270,7 +5138,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     88,
-    '2025-07-08 12:49:00'
+    '2024-07-08 12:49:00'
 );
 INSERT INTO SOLD VALUES (
     'd6098856-31c8-4ef0-87c5-d2b3c743c2c2'::uuid,
@@ -5281,7 +5149,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     148,
-    '2025-07-08 18:52:00'
+    '2024-07-08 18:52:00'
 );
 INSERT INTO SOLD VALUES (
     'dca9bcf9-f673-428c-9a02-a68b9ce49330'::uuid,
@@ -5292,7 +5160,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     122,
-    '2025-07-08 16:45:00'
+    '2024-07-08 16:45:00'
 );
 INSERT INTO SOLD VALUES (
     'a7b05e85-9564-4baf-9409-7bb65933e81d'::uuid,
@@ -5303,7 +5171,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     48,
-    '2025-07-08 12:44:00'
+    '2024-07-08 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     'ec908ab6-c68f-4527-945d-a11dc91fe298'::uuid,
@@ -5314,7 +5182,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     17,
-    '2025-07-08 15:44:00'
+    '2024-07-08 15:44:00'
 );
 INSERT INTO SOLD VALUES (
     '444661ac-2a92-4983-97b3-f2805d0c2397'::uuid,
@@ -5325,7 +5193,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     441,
-    '2025-07-08 09:44:00'
+    '2024-07-08 09:44:00'
 );
 INSERT INTO SOLD VALUES (
     '73135bcf-2295-4fa6-a5cf-e48eb2c9892d'::uuid,
@@ -5336,7 +5204,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     359,
-    '2025-07-08 11:15:00'
+    '2024-07-08 11:15:00'
 );
 INSERT INTO SOLD VALUES (
     '46eaee7b-d06c-441f-9ecb-48bdb0a6c83d'::uuid,
@@ -5347,7 +5215,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     22,
-    '2025-07-08 10:19:00'
+    '2024-07-08 10:19:00'
 );
 INSERT INTO SOLD VALUES (
     '286829ab-5698-46ad-bd15-5a72a7d7fe02'::uuid,
@@ -5358,7 +5226,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     82,
-    '2025-07-09 19:57:00'
+    '2024-07-09 19:57:00'
 );
 INSERT INTO SOLD VALUES (
     'bed370f4-1bcb-4031-95c5-fc33cb099da8'::uuid,
@@ -5369,7 +5237,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     142,
-    '2025-07-09 10:44:00'
+    '2024-07-09 10:44:00'
 );
 INSERT INTO SOLD VALUES (
     '65c5ae39-813e-4307-bc9a-b560f15f715c'::uuid,
@@ -5380,7 +5248,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     117,
-    '2025-07-09 11:59:00'
+    '2024-07-09 11:59:00'
 );
 INSERT INTO SOLD VALUES (
     'd342f883-3790-4e17-bb6a-5926dfb87d01'::uuid,
@@ -5391,7 +5259,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     15,
-    '2025-07-09 16:34:00'
+    '2024-07-09 16:34:00'
 );
 INSERT INTO SOLD VALUES (
     '56849dec-d58d-4aee-9f96-e169ce5b6439'::uuid,
@@ -5402,7 +5270,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     440,
-    '2025-07-09 19:12:00'
+    '2024-07-09 19:12:00'
 );
 INSERT INTO SOLD VALUES (
     '95831901-daf7-4198-9a70-16613cfb0b62'::uuid,
@@ -5413,7 +5281,7 @@ INSERT INTO SOLD VALUES (
     22,
     12.0,
     337,
-    '2025-07-09 17:09:00'
+    '2024-07-09 17:09:00'
 );
 INSERT INTO SOLD VALUES (
     'fe622abe-be94-4f89-96d7-916a722a7252'::uuid,
@@ -5424,7 +5292,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     75,
-    '2025-07-10 15:10:00'
+    '2024-07-10 15:10:00'
 );
 INSERT INTO SOLD VALUES (
     '76d6d86b-bb82-459a-a115-ce11674be1a9'::uuid,
@@ -5435,7 +5303,7 @@ INSERT INTO SOLD VALUES (
     2,
     25.0,
     278,
-    '2025-07-10 15:31:00'
+    '2024-07-10 15:31:00'
 );
 INSERT INTO SOLD VALUES (
     '52848b60-1d2c-4351-a957-c794fd238caf'::uuid,
@@ -5446,7 +5314,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     138,
-    '2025-07-10 18:31:00'
+    '2024-07-10 18:31:00'
 );
 INSERT INTO SOLD VALUES (
     'e17d8eb0-71f9-4071-b339-96511188c206'::uuid,
@@ -5457,7 +5325,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     113,
-    '2025-07-10 16:30:00'
+    '2024-07-10 16:30:00'
 );
 INSERT INTO SOLD VALUES (
     'feacf53c-76ed-4871-9a78-ea77bd16f318'::uuid,
@@ -5468,7 +5336,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     46,
-    '2025-07-10 15:09:00'
+    '2024-07-10 15:09:00'
 );
 INSERT INTO SOLD VALUES (
     '207e7e6c-4ca8-40e9-9563-70b1d7545de0'::uuid,
@@ -5479,7 +5347,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     12,
-    '2025-07-10 15:00:00'
+    '2024-07-10 15:00:00'
 );
 INSERT INTO SOLD VALUES (
     'e638b345-01b9-4457-bcae-144bc4d19c94'::uuid,
@@ -5490,7 +5358,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     439,
-    '2025-07-10 11:09:00'
+    '2024-07-10 11:09:00'
 );
 INSERT INTO SOLD VALUES (
     'e4edfbe0-6889-4a67-95e6-0be6d55e3e7c'::uuid,
@@ -5501,7 +5369,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     336,
-    '2025-07-10 11:10:00'
+    '2024-07-10 11:10:00'
 );
 INSERT INTO SOLD VALUES (
     '8f328517-726d-40b3-a1c5-28c9e1f2394d'::uuid,
@@ -5512,7 +5380,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     20,
-    '2025-07-10 14:31:00'
+    '2024-07-10 14:31:00'
 );
 INSERT INTO SOLD VALUES (
     '83eb77f1-7a02-428a-a099-433cb0738001'::uuid,
@@ -5523,7 +5391,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     65,
-    '2025-07-11 09:45:00'
+    '2024-07-11 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     '28294bf8-547d-471f-906d-638e21051b64'::uuid,
@@ -5534,7 +5402,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     266,
-    '2025-07-11 09:31:00'
+    '2024-07-11 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     '273dba2f-ce55-4ca6-9b13-36176c7a5c29'::uuid,
@@ -5545,7 +5413,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     135,
-    '2025-07-11 18:39:00'
+    '2024-07-11 18:39:00'
 );
 INSERT INTO SOLD VALUES (
     '3bb7948b-9418-4911-884b-8b9141a35ff2'::uuid,
@@ -5556,7 +5424,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     109,
-    '2025-07-11 14:55:00'
+    '2024-07-11 14:55:00'
 );
 INSERT INTO SOLD VALUES (
     '1b5513d0-9783-4116-9897-931e18d919cc'::uuid,
@@ -5567,7 +5435,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     9,
-    '2025-07-11 11:29:00'
+    '2024-07-11 11:29:00'
 );
 INSERT INTO SOLD VALUES (
     'ed9b5492-a208-40c8-899e-537a0cace182'::uuid,
@@ -5578,7 +5446,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     438,
-    '2025-07-11 16:24:00'
+    '2024-07-11 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     '58cc1346-28e6-4a68-93ce-92e8cac3a7fb'::uuid,
@@ -5589,7 +5457,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     321,
-    '2025-07-11 10:48:00'
+    '2024-07-11 10:48:00'
 );
 INSERT INTO SOLD VALUES (
     '373abe0b-9bfd-4675-9af4-6630be1128ac'::uuid,
@@ -5600,7 +5468,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     16,
-    '2025-07-11 11:53:00'
+    '2024-07-11 11:53:00'
 );
 INSERT INTO SOLD VALUES (
     'e799e768-6b27-4ba6-93e6-55bb139e267a'::uuid,
@@ -5611,7 +5479,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     54,
-    '2025-07-12 10:24:00'
+    '2024-07-12 10:24:00'
 );
 INSERT INTO SOLD VALUES (
     '05b8938c-dd88-432c-8822-ee878ad77883'::uuid,
@@ -5622,7 +5490,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     251,
-    '2025-07-12 10:39:00'
+    '2024-07-12 10:39:00'
 );
 INSERT INTO SOLD VALUES (
     '4c42fdcb-f2b6-4432-b425-e585d973a930'::uuid,
@@ -5633,7 +5501,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     129,
-    '2025-07-12 10:19:00'
+    '2024-07-12 10:19:00'
 );
 INSERT INTO SOLD VALUES (
     '4b3121fa-b517-43e2-a73a-6165ade3dc0c'::uuid,
@@ -5644,7 +5512,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     99,
-    '2025-07-12 10:18:00'
+    '2024-07-12 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     '7a9577bc-beb8-4d6f-9e88-71fdfe823261'::uuid,
@@ -5655,7 +5523,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     45,
-    '2025-07-12 17:30:00'
+    '2024-07-12 17:30:00'
 );
 INSERT INTO SOLD VALUES (
     '0596f9f7-c2c5-447d-a340-3681b7db9744'::uuid,
@@ -5666,7 +5534,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     5,
-    '2025-07-12 16:14:00'
+    '2024-07-12 16:14:00'
 );
 INSERT INTO SOLD VALUES (
     '075d84ce-e4e8-4d68-951f-efe1c86ab4e7'::uuid,
@@ -5677,7 +5545,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     436,
-    '2025-07-12 14:53:00'
+    '2024-07-12 14:53:00'
 );
 INSERT INTO SOLD VALUES (
     '5ef38b54-7063-4abc-9ef3-478ddd3ef7c4'::uuid,
@@ -5688,7 +5556,7 @@ INSERT INTO SOLD VALUES (
     32,
     12.0,
     289,
-    '2025-07-12 13:03:00'
+    '2024-07-12 13:03:00'
 );
 INSERT INTO SOLD VALUES (
     '9a16f60d-077c-43e2-9be5-dbc08db5dbac'::uuid,
@@ -5699,7 +5567,7 @@ INSERT INTO SOLD VALUES (
     20,
     8.0,
     430,
-    '2025-07-12 19:35:00'
+    '2024-07-12 19:35:00'
 );
 INSERT INTO SOLD VALUES (
     '8f724592-331c-4c95-b438-c84925c3aa63'::uuid,
@@ -5710,7 +5578,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     10,
-    '2025-07-12 09:05:00'
+    '2024-07-12 09:05:00'
 );
 INSERT INTO SOLD VALUES (
     '6ad36bdd-dd27-46ef-b931-35fc9c232bef'::uuid,
@@ -5721,7 +5589,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     43,
-    '2025-07-13 10:18:00'
+    '2024-07-13 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     'b57f4363-0a67-4ee8-a362-fb695f01d175'::uuid,
@@ -5732,7 +5600,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     250,
-    '2025-07-13 10:59:00'
+    '2024-07-13 10:59:00'
 );
 INSERT INTO SOLD VALUES (
     '59a9081a-60a4-46be-974f-1ebeff03500a'::uuid,
@@ -5743,7 +5611,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     125,
-    '2025-07-13 18:57:00'
+    '2024-07-13 18:57:00'
 );
 INSERT INTO SOLD VALUES (
     '56d04b8b-4a9f-40f4-b6ad-2cec77b49f40'::uuid,
@@ -5754,7 +5622,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     93,
-    '2025-07-13 20:57:00'
+    '2024-07-13 20:57:00'
 );
 INSERT INTO SOLD VALUES (
     '647440e3-cccc-4652-9295-5366f7b56758'::uuid,
@@ -5765,7 +5633,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     44,
-    '2025-07-13 18:49:00'
+    '2024-07-13 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     'f8c2145b-af80-4a20-9850-cb9da8c7d96a'::uuid,
@@ -5776,7 +5644,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     1,
-    '2025-07-13 20:30:00'
+    '2024-07-13 20:30:00'
 );
 INSERT INTO SOLD VALUES (
     '9dd70d12-bfb3-4a6e-ad41-2776920d2eaa'::uuid,
@@ -5787,7 +5655,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     433,
-    '2025-07-13 12:47:00'
+    '2024-07-13 12:47:00'
 );
 INSERT INTO SOLD VALUES (
     '79f23564-0488-415a-885c-817cf3298345'::uuid,
@@ -5798,7 +5666,7 @@ INSERT INTO SOLD VALUES (
     30,
     12.0,
     259,
-    '2025-07-13 16:23:00'
+    '2024-07-13 16:23:00'
 );
 INSERT INTO SOLD VALUES (
     'e651f2f6-cc3f-473c-94da-124268b42d1f'::uuid,
@@ -5809,7 +5677,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     416,
-    '2025-07-13 18:21:00'
+    '2024-07-13 18:21:00'
 );
 INSERT INTO SOLD VALUES (
     '13dbb6b6-4d42-40fb-8e45-bf41390366d0'::uuid,
@@ -5820,7 +5688,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     6,
-    '2025-07-13 13:13:00'
+    '2024-07-13 13:13:00'
 );
 INSERT INTO SOLD VALUES (
     '3838ebbd-95c9-49e1-a900-048305a411b4'::uuid,
@@ -5831,7 +5699,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     42,
-    '2025-07-14 14:56:00'
+    '2024-07-14 14:56:00'
 );
 INSERT INTO SOLD VALUES (
     '9104ade1-cc6f-48ac-8989-e7e1093b1536'::uuid,
@@ -5842,7 +5710,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     235,
-    '2025-07-14 20:31:00'
+    '2024-07-14 20:31:00'
 );
 INSERT INTO SOLD VALUES (
     'f6bf5eb3-63c9-449f-aac2-8eb760a815eb'::uuid,
@@ -5853,7 +5721,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     118,
-    '2025-07-14 09:09:00'
+    '2024-07-14 09:09:00'
 );
 INSERT INTO SOLD VALUES (
     '3a07f4fe-567b-4abb-b1af-f9652120a023'::uuid,
@@ -5864,7 +5732,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     86,
-    '2025-07-14 16:26:00'
+    '2024-07-14 16:26:00'
 );
 INSERT INTO SOLD VALUES (
     '57e2879c-5ce8-4b81-9eab-e5ea53dc3c10'::uuid,
@@ -5875,7 +5743,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     43,
-    '2025-07-14 16:50:00'
+    '2024-07-14 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     '250f19b7-ebdd-4141-9bdc-66fc809841ee'::uuid,
@@ -5886,7 +5754,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     0,
-    '2025-07-14 11:16:00'
+    '2024-07-14 11:16:00'
 );
 INSERT INTO SOLD VALUES (
     '722cdef6-b8a5-4fc2-871f-e621ada92004'::uuid,
@@ -5897,7 +5765,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     431,
-    '2025-07-14 09:14:00'
+    '2024-07-14 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     'aaadfdbe-4f15-4675-93e7-d2c5229b61d9'::uuid,
@@ -5908,7 +5776,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     234,
-    '2025-07-14 12:23:00'
+    '2024-07-14 12:23:00'
 );
 INSERT INTO SOLD VALUES (
     'f3b8e787-dcd6-401c-bfff-33a1186d0154'::uuid,
@@ -5919,7 +5787,7 @@ INSERT INTO SOLD VALUES (
     18,
     8.0,
     398,
-    '2025-07-14 15:58:00'
+    '2024-07-14 15:58:00'
 );
 INSERT INTO SOLD VALUES (
     '1cda18c8-05c6-4230-a5c5-0e014f6610ec'::uuid,
@@ -5930,7 +5798,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     2,
-    '2025-07-14 20:23:00'
+    '2024-07-14 20:23:00'
 );
 INSERT INTO SOLD VALUES (
     '51374fb7-e23c-418b-9ac9-491c64208f55'::uuid,
@@ -5941,7 +5809,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     36,
-    '2025-07-15 19:28:00'
+    '2024-07-15 19:28:00'
 );
 INSERT INTO SOLD VALUES (
     'e2212052-607c-46f2-a69f-12f91f9214cc'::uuid,
@@ -5952,7 +5820,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     224,
-    '2025-07-15 12:17:00'
+    '2024-07-15 12:17:00'
 );
 INSERT INTO SOLD VALUES (
     'fc908b96-484b-42fc-b63b-706a59c8b32a'::uuid,
@@ -5963,7 +5831,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     114,
-    '2025-07-15 11:06:00'
+    '2024-07-15 11:06:00'
 );
 INSERT INTO SOLD VALUES (
     '122c5965-9064-44fa-bafe-d4ba67f89846'::uuid,
@@ -5974,7 +5842,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     81,
-    '2025-07-15 12:01:00'
+    '2024-07-15 12:01:00'
 );
 INSERT INTO SOLD VALUES (
     'dbd239fd-931e-42ad-b586-042213b44be9'::uuid,
@@ -5985,7 +5853,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     77,
-    '2025-07-15 18:04:00'
+    '2024-07-15 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     'd515f428-ba9a-4c2f-a5e1-1246553c316c'::uuid,
@@ -5996,7 +5864,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     429,
-    '2025-07-15 14:05:00'
+    '2024-07-15 14:05:00'
 );
 INSERT INTO SOLD VALUES (
     '4122d576-2a2e-46e8-b380-c633deddedea'::uuid,
@@ -6007,7 +5875,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     214,
-    '2025-07-15 19:02:00'
+    '2024-07-15 19:02:00'
 );
 INSERT INTO SOLD VALUES (
     'd19d5210-ebd8-4f36-b354-595956164e2e'::uuid,
@@ -6018,7 +5886,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     388,
-    '2025-07-15 16:34:00'
+    '2024-07-15 16:34:00'
 );
 INSERT INTO SOLD VALUES (
     '2b5fbc08-4b6a-4663-ac84-4b17ed95d25a'::uuid,
@@ -6029,7 +5897,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     0,
-    '2025-07-15 11:50:00'
+    '2024-07-15 11:50:00'
 );
 INSERT INTO SOLD VALUES (
     '3a3894d3-a2d4-4a2d-a7d4-693e749699c8'::uuid,
@@ -6040,7 +5908,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     27,
-    '2025-07-16 10:52:00'
+    '2024-07-16 10:52:00'
 );
 INSERT INTO SOLD VALUES (
     'ce3ffd1d-7e51-433b-960b-48a5fe958bc9'::uuid,
@@ -6051,7 +5919,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     210,
-    '2025-07-16 14:03:00'
+    '2024-07-16 14:03:00'
 );
 INSERT INTO SOLD VALUES (
     '5b10a1ef-7d55-4994-9760-86e8e6021fb2'::uuid,
@@ -6062,7 +5930,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     109,
-    '2025-07-16 18:04:00'
+    '2024-07-16 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     '7f8d49b7-c5c7-49f4-8d55-c4a4925b5ebe'::uuid,
@@ -6073,7 +5941,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     77,
-    '2025-07-16 19:41:00'
+    '2024-07-16 19:41:00'
 );
 INSERT INTO SOLD VALUES (
     '621c7eab-577c-4baa-9bdc-31622718e793'::uuid,
@@ -6084,7 +5952,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     42,
-    '2025-07-16 16:58:00'
+    '2024-07-16 16:58:00'
 );
 INSERT INTO SOLD VALUES (
     '047d3290-5157-41aa-8124-b76c533aa93d'::uuid,
@@ -6095,7 +5963,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     75,
-    '2025-07-16 18:44:00'
+    '2024-07-16 18:44:00'
 );
 INSERT INTO SOLD VALUES (
     '5ff07651-59be-4dc0-9944-07fab9cb719c'::uuid,
@@ -6106,7 +5974,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     427,
-    '2025-07-16 16:04:00'
+    '2024-07-16 16:04:00'
 );
 INSERT INTO SOLD VALUES (
     '762fe600-41b5-4c2d-890f-dd286a352c4a'::uuid,
@@ -6117,7 +5985,7 @@ INSERT INTO SOLD VALUES (
     14,
     12.0,
     200,
-    '2025-07-16 16:55:00'
+    '2024-07-16 16:55:00'
 );
 INSERT INTO SOLD VALUES (
     'f0a31210-1dae-4e51-94da-5a9bacbffd98'::uuid,
@@ -6128,7 +5996,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     377,
-    '2025-07-16 20:06:00'
+    '2024-07-16 20:06:00'
 );
 INSERT INTO SOLD VALUES (
     '9d6a0820-920c-41bb-b4e5-a30e02cd044b'::uuid,
@@ -6139,7 +6007,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     21,
-    '2025-07-17 16:08:00'
+    '2024-07-17 16:08:00'
 );
 INSERT INTO SOLD VALUES (
     '99d2e705-30d0-41bf-949a-16c506652b34'::uuid,
@@ -6150,7 +6018,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     200,
-    '2025-07-17 11:14:00'
+    '2024-07-17 11:14:00'
 );
 INSERT INTO SOLD VALUES (
     '4dbbcb41-843e-4fb1-8ac2-83a027d6fa54'::uuid,
@@ -6161,7 +6029,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     105,
-    '2025-07-17 10:46:00'
+    '2024-07-17 10:46:00'
 );
 INSERT INTO SOLD VALUES (
     '1434e087-14e0-472d-98f3-ec1009a9d4a1'::uuid,
@@ -6172,7 +6040,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     75,
-    '2025-07-17 13:46:00'
+    '2024-07-17 13:46:00'
 );
 INSERT INTO SOLD VALUES (
     '63935f63-818c-4214-b12a-468b336445de'::uuid,
@@ -6183,7 +6051,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     41,
-    '2025-07-17 15:51:00'
+    '2024-07-17 15:51:00'
 );
 INSERT INTO SOLD VALUES (
     'e693c017-a581-43c6-9fa7-c8749632c0a6'::uuid,
@@ -6194,7 +6062,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     73,
-    '2025-07-17 16:34:00'
+    '2024-07-17 16:34:00'
 );
 INSERT INTO SOLD VALUES (
     '6cd2ec31-6464-4116-ae41-376c4f6a3963'::uuid,
@@ -6205,7 +6073,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     426,
-    '2025-07-17 16:35:00'
+    '2024-07-17 16:35:00'
 );
 INSERT INTO SOLD VALUES (
     '07b0aa5a-5c97-43d0-9f41-f75a16a29bbe'::uuid,
@@ -6216,7 +6084,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     180,
-    '2025-07-17 19:55:00'
+    '2024-07-17 19:55:00'
 );
 INSERT INTO SOLD VALUES (
     'ce42d754-0ea3-45f3-88ec-f576061cd60f'::uuid,
@@ -6227,7 +6095,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     363,
-    '2025-07-17 16:41:00'
+    '2024-07-17 16:41:00'
 );
 INSERT INTO SOLD VALUES (
     'd58f6f50-63e3-41ec-8e6a-e3d8aa3e3ea7'::uuid,
@@ -6238,7 +6106,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     14,
-    '2025-07-18 19:04:00'
+    '2024-07-18 19:04:00'
 );
 INSERT INTO SOLD VALUES (
     '072e3a78-3817-488e-8736-0749929e88e2'::uuid,
@@ -6249,7 +6117,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     187,
-    '2025-07-18 12:28:00'
+    '2024-07-18 12:28:00'
 );
 INSERT INTO SOLD VALUES (
     '806b9087-04df-47a9-bc56-faf6379c8f1b'::uuid,
@@ -6260,7 +6128,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     102,
-    '2025-07-18 13:54:00'
+    '2024-07-18 13:54:00'
 );
 INSERT INTO SOLD VALUES (
     '290db8d7-c24d-47c8-92fe-aca307ecfab2'::uuid,
@@ -6271,7 +6139,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     71,
-    '2025-07-18 17:14:00'
+    '2024-07-18 17:14:00'
 );
 INSERT INTO SOLD VALUES (
     '3b54f243-c2ca-4cd4-b539-cbb5192b5f9f'::uuid,
@@ -6282,7 +6150,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     40,
-    '2025-07-18 15:35:00'
+    '2024-07-18 15:35:00'
 );
 INSERT INTO SOLD VALUES (
     'f2478257-2d4c-42d1-872f-763485b6c912'::uuid,
@@ -6293,7 +6161,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     70,
-    '2025-07-18 12:38:00'
+    '2024-07-18 12:38:00'
 );
 INSERT INTO SOLD VALUES (
     '9ea8f163-334c-46de-9765-8e0b928b65e8'::uuid,
@@ -6304,7 +6172,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     424,
-    '2025-07-18 18:05:00'
+    '2024-07-18 18:05:00'
 );
 INSERT INTO SOLD VALUES (
     '9d293d9d-ac54-402b-bbdf-bbba37e909de'::uuid,
@@ -6315,7 +6183,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     155,
-    '2025-07-18 11:57:00'
+    '2024-07-18 11:57:00'
 );
 INSERT INTO SOLD VALUES (
     'c01512a6-443e-46d9-a52c-7dea340b5501'::uuid,
@@ -6326,7 +6194,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     349,
-    '2025-07-18 20:43:00'
+    '2024-07-18 20:43:00'
 );
 INSERT INTO SOLD VALUES (
     'f33c56c9-2772-4401-923d-6bacfe35413d'::uuid,
@@ -6337,7 +6205,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     148,
-    '2025-07-18 18:49:00'
+    '2024-07-18 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     'da36409d-5ff0-4b68-85b9-7d9b29f5a57b'::uuid,
@@ -6348,7 +6216,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     3,
-    '2025-07-19 12:13:00'
+    '2024-07-19 12:13:00'
 );
 INSERT INTO SOLD VALUES (
     '4d8fde6e-00b8-4852-8b79-23804064efdb'::uuid,
@@ -6359,7 +6227,7 @@ INSERT INTO SOLD VALUES (
     23,
     25.0,
     164,
-    '2025-07-19 10:10:00'
+    '2024-07-19 10:10:00'
 );
 INSERT INTO SOLD VALUES (
     '19869aba-c94a-4da2-a38c-d3cb32136879'::uuid,
@@ -6370,7 +6238,7 @@ INSERT INTO SOLD VALUES (
     8,
     30.0,
     94,
-    '2025-07-19 11:09:00'
+    '2024-07-19 11:09:00'
 );
 INSERT INTO SOLD VALUES (
     'f59a5176-b7c5-4c41-b8e5-39280feda8e3'::uuid,
@@ -6381,7 +6249,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     63,
-    '2025-07-19 14:51:00'
+    '2024-07-19 14:51:00'
 );
 INSERT INTO SOLD VALUES (
     'a0fc48b0-176d-49f0-a93d-a26a1e50b3e4'::uuid,
@@ -6392,7 +6260,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     67,
-    '2025-07-19 19:00:00'
+    '2024-07-19 19:00:00'
 );
 INSERT INTO SOLD VALUES (
     '055dad46-c302-4adf-93bd-39277aa39721'::uuid,
@@ -6403,7 +6271,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     422,
-    '2025-07-19 14:23:00'
+    '2024-07-19 14:23:00'
 );
 INSERT INTO SOLD VALUES (
     '26487599-75c4-4a90-8c79-a0045f0706a8'::uuid,
@@ -6414,7 +6282,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     132,
-    '2025-07-19 11:35:00'
+    '2024-07-19 11:35:00'
 );
 INSERT INTO SOLD VALUES (
     '97faba56-1b2b-4b1f-9ad8-ad3814946f51'::uuid,
@@ -6425,7 +6293,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     330,
-    '2025-07-19 09:48:00'
+    '2024-07-19 09:48:00'
 );
 INSERT INTO SOLD VALUES (
     'dee38821-4d75-41fe-a728-6b9ee6f40ae3'::uuid,
@@ -6436,7 +6304,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     143,
-    '2025-07-19 12:19:00'
+    '2024-07-19 12:19:00'
 );
 INSERT INTO SOLD VALUES (
     '404b8ad3-2b45-41af-9685-c3d22c37a0bc'::uuid,
@@ -6447,7 +6315,7 @@ INSERT INTO SOLD VALUES (
     3,
     250.0,
     0,
-    '2025-07-20 09:54:00'
+    '2024-07-20 09:54:00'
 );
 INSERT INTO SOLD VALUES (
     '1e0cdda3-c2b1-4a2a-9fb8-67bca56cfe8a'::uuid,
@@ -6458,7 +6326,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     163,
-    '2025-07-20 20:00:00'
+    '2024-07-20 20:00:00'
 );
 INSERT INTO SOLD VALUES (
     '9ec76330-b2e1-4a69-b55b-844194f6ae6a'::uuid,
@@ -6469,7 +6337,7 @@ INSERT INTO SOLD VALUES (
     8,
     30.0,
     86,
-    '2025-07-20 20:52:00'
+    '2024-07-20 20:52:00'
 );
 INSERT INTO SOLD VALUES (
     'e67937c0-d8c8-4568-acf2-449f161585a9'::uuid,
@@ -6480,7 +6348,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     53,
-    '2025-07-20 10:30:00'
+    '2024-07-20 10:30:00'
 );
 INSERT INTO SOLD VALUES (
     '8793d7ee-036d-4c60-8c1a-78f11b67e3f2'::uuid,
@@ -6491,7 +6359,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     39,
-    '2025-07-20 11:48:00'
+    '2024-07-20 11:48:00'
 );
 INSERT INTO SOLD VALUES (
     '13c4d97d-b901-470b-a28d-26bea533daa4'::uuid,
@@ -6502,7 +6370,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     63,
-    '2025-07-20 18:16:00'
+    '2024-07-20 18:16:00'
 );
 INSERT INTO SOLD VALUES (
     '772b36eb-92a5-451f-9010-0c6cb3d27da2'::uuid,
@@ -6513,7 +6381,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     111,
-    '2025-07-20 20:50:00'
+    '2024-07-20 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     '9923f34a-dd10-4295-8c55-c326233b8db9'::uuid,
@@ -6524,7 +6392,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     420,
-    '2025-07-20 09:45:00'
+    '2024-07-20 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     '42854495-fa98-40ac-853f-06ec6006ce83'::uuid,
@@ -6535,7 +6403,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     131,
-    '2025-07-20 14:51:00'
+    '2024-07-20 14:51:00'
 );
 INSERT INTO SOLD VALUES (
     '14c05702-a28d-4b72-8a29-66aae127192c'::uuid,
@@ -6546,7 +6414,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     317,
-    '2025-07-20 19:25:00'
+    '2024-07-20 19:25:00'
 );
 INSERT INTO SOLD VALUES (
     'fd69bc76-ddbb-4bb1-939f-a758f3876865'::uuid,
@@ -6557,7 +6425,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     139,
-    '2025-07-20 17:51:00'
+    '2024-07-20 17:51:00'
 );
 INSERT INTO SOLD VALUES (
     '5fd460fe-c94f-4c90-9cff-05673a57a3bf'::uuid,
@@ -6568,7 +6436,7 @@ INSERT INTO SOLD VALUES (
     23,
     25.0,
     140,
-    '2025-07-21 16:17:00'
+    '2024-07-21 16:17:00'
 );
 INSERT INTO SOLD VALUES (
     '69d9ab3b-9c5a-47b7-9ea8-ad3b11189c6b'::uuid,
@@ -6579,7 +6447,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     84,
-    '2025-07-21 12:32:00'
+    '2024-07-21 12:32:00'
 );
 INSERT INTO SOLD VALUES (
     '47793f16-385b-4cd7-b95b-7747db3db03b'::uuid,
@@ -6590,7 +6458,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     52,
-    '2025-07-21 11:41:00'
+    '2024-07-21 11:41:00'
 );
 INSERT INTO SOLD VALUES (
     '5b48a989-b4ab-4e4a-b704-45989f9f3606'::uuid,
@@ -6601,7 +6469,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     38,
-    '2025-07-21 15:16:00'
+    '2024-07-21 15:16:00'
 );
 INSERT INTO SOLD VALUES (
     '792f70bd-eafc-4ee1-9033-d8a9bffdaaaf'::uuid,
@@ -6612,7 +6480,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     60,
-    '2025-07-21 11:09:00'
+    '2024-07-21 11:09:00'
 );
 INSERT INTO SOLD VALUES (
     '22121b8c-8f66-40f0-bccf-7cbbc6bdadb0'::uuid,
@@ -6623,7 +6491,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     104,
-    '2025-07-21 19:43:00'
+    '2024-07-21 19:43:00'
 );
 INSERT INTO SOLD VALUES (
     '902be8ee-de04-4521-a719-d0ee52467e1a'::uuid,
@@ -6634,7 +6502,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     419,
-    '2025-07-21 17:43:00'
+    '2024-07-21 17:43:00'
 );
 INSERT INTO SOLD VALUES (
     '04d9b521-e0ee-4b85-b9b9-483c40235a3a'::uuid,
@@ -6645,7 +6513,7 @@ INSERT INTO SOLD VALUES (
     28,
     12.0,
     103,
-    '2025-07-21 19:46:00'
+    '2024-07-21 19:46:00'
 );
 INSERT INTO SOLD VALUES (
     '8f38ae68-8967-4a72-badc-f790adc99b59'::uuid,
@@ -6656,7 +6524,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     298,
-    '2025-07-21 18:30:00'
+    '2024-07-21 18:30:00'
 );
 INSERT INTO SOLD VALUES (
     '20ab05ff-c02d-4ee7-a3f7-85cfde47ee69'::uuid,
@@ -6667,7 +6535,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     138,
-    '2025-07-21 16:47:00'
+    '2024-07-21 16:47:00'
 );
 INSERT INTO SOLD VALUES (
     '53ac2aa2-3766-4009-8915-b1c3555e4318'::uuid,
@@ -6678,7 +6546,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     139,
-    '2025-07-22 17:01:00'
+    '2024-07-22 17:01:00'
 );
 INSERT INTO SOLD VALUES (
     '557b7b1b-66ef-4f37-9017-7f5023198d39'::uuid,
@@ -6689,7 +6557,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     79,
-    '2025-07-22 12:36:00'
+    '2024-07-22 12:36:00'
 );
 INSERT INTO SOLD VALUES (
     '643092d5-e2a3-446f-98a7-2f4c9cf9fd82'::uuid,
@@ -6700,7 +6568,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     44,
-    '2025-07-22 14:18:00'
+    '2024-07-22 14:18:00'
 );
 INSERT INTO SOLD VALUES (
     'ab939269-6ce6-4f13-98ee-fdc9801982f2'::uuid,
@@ -6711,7 +6579,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     37,
-    '2025-07-22 09:31:00'
+    '2024-07-22 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     '5120228f-5396-4b1e-8f89-1dd73a2e52ed'::uuid,
@@ -6722,7 +6590,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     58,
-    '2025-07-22 16:30:00'
+    '2024-07-22 16:30:00'
 );
 INSERT INTO SOLD VALUES (
     'a55d5627-2511-4503-94d8-c233fb9aa88f'::uuid,
@@ -6733,7 +6601,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     100,
-    '2025-07-22 20:32:00'
+    '2024-07-22 20:32:00'
 );
 INSERT INTO SOLD VALUES (
     '14b3cb24-178e-47b1-9198-cb7fa2abb50a'::uuid,
@@ -6744,7 +6612,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     417,
-    '2025-07-22 18:36:00'
+    '2024-07-22 18:36:00'
 );
 INSERT INTO SOLD VALUES (
     '8e9c53ff-896d-4ba1-acd6-4f6e89d359af'::uuid,
@@ -6755,7 +6623,7 @@ INSERT INTO SOLD VALUES (
     14,
     12.0,
     89,
-    '2025-07-22 16:24:00'
+    '2024-07-22 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     '05a3353a-84db-4c46-969f-5c8a4b89838f'::uuid,
@@ -6766,7 +6634,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     286,
-    '2025-07-22 16:25:00'
+    '2024-07-22 16:25:00'
 );
 INSERT INTO SOLD VALUES (
     '65fa509d-8434-4688-9f35-1bec2b043a4b'::uuid,
@@ -6777,7 +6645,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     135,
-    '2025-07-22 12:31:00'
+    '2024-07-22 12:31:00'
 );
 INSERT INTO SOLD VALUES (
     'b042aa0f-ba80-48ee-84d6-40869af2f202'::uuid,
@@ -6788,7 +6656,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     125,
-    '2025-07-23 15:17:00'
+    '2024-07-23 15:17:00'
 );
 INSERT INTO SOLD VALUES (
     'a00d24bf-5efe-48b9-9b7b-3269123ccc25'::uuid,
@@ -6799,7 +6667,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     74,
-    '2025-07-23 13:07:00'
+    '2024-07-23 13:07:00'
 );
 INSERT INTO SOLD VALUES (
     '0d48cb0e-6460-4c12-a0ac-02fc5eb8f486'::uuid,
@@ -6810,7 +6678,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     43,
-    '2025-07-23 10:38:00'
+    '2024-07-23 10:38:00'
 );
 INSERT INTO SOLD VALUES (
     'f8352504-2f93-43a3-82c8-8f880cfe4c92'::uuid,
@@ -6821,7 +6689,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     36,
-    '2025-07-23 14:52:00'
+    '2024-07-23 14:52:00'
 );
 INSERT INTO SOLD VALUES (
     '6d54e40c-6aec-40ca-8373-764f27563229'::uuid,
@@ -6832,7 +6700,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     55,
-    '2025-07-23 17:17:00'
+    '2024-07-23 17:17:00'
 );
 INSERT INTO SOLD VALUES (
     '88e5c614-afb7-4949-b98d-fb1f228238d0'::uuid,
@@ -6843,7 +6711,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     95,
-    '2025-07-23 11:17:00'
+    '2024-07-23 11:17:00'
 );
 INSERT INTO SOLD VALUES (
     '98b3db5f-4a89-4065-81a4-b9a0727e0b7b'::uuid,
@@ -6854,7 +6722,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     416,
-    '2025-07-23 09:10:00'
+    '2024-07-23 09:10:00'
 );
 INSERT INTO SOLD VALUES (
     '17682afd-9062-4dd5-8459-343a7a4d34d3'::uuid,
@@ -6865,7 +6733,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     74,
-    '2025-07-23 09:53:00'
+    '2024-07-23 09:53:00'
 );
 INSERT INTO SOLD VALUES (
     '039a82ce-76a9-44a0-9871-7a6f1db161ad'::uuid,
@@ -6876,7 +6744,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     276,
-    '2025-07-23 12:44:00'
+    '2024-07-23 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     'c8777232-7e5a-4ef0-8d5f-645d187113e9'::uuid,
@@ -6887,7 +6755,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     132,
-    '2025-07-23 17:14:00'
+    '2024-07-23 17:14:00'
 );
 INSERT INTO SOLD VALUES (
     'e4ea920a-2c74-4a54-87ae-cc53fdc59095'::uuid,
@@ -6898,7 +6766,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     115,
-    '2025-07-24 18:05:00'
+    '2024-07-24 18:05:00'
 );
 INSERT INTO SOLD VALUES (
     'e3bdd476-3d6e-4db2-ab53-3fd75e38dbbc'::uuid,
@@ -6909,7 +6777,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     69,
-    '2025-07-24 10:50:00'
+    '2024-07-24 10:50:00'
 );
 INSERT INTO SOLD VALUES (
     'f5b01e97-4cde-44a1-bc59-dcb239b37cfd'::uuid,
@@ -6920,7 +6788,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     35,
-    '2025-07-24 19:56:00'
+    '2024-07-24 19:56:00'
 );
 INSERT INTO SOLD VALUES (
     '23168f53-779a-4d00-86c9-a258191d7b4a'::uuid,
@@ -6931,7 +6799,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     35,
-    '2025-07-24 12:02:00'
+    '2024-07-24 12:02:00'
 );
 INSERT INTO SOLD VALUES (
     '37b2485e-212b-4a30-9de6-e6ae188a615c'::uuid,
@@ -6942,7 +6810,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     88,
-    '2025-07-24 15:57:00'
+    '2024-07-24 15:57:00'
 );
 INSERT INTO SOLD VALUES (
     'efe58947-fd6f-45ed-a3a3-ca7f8e5cc977'::uuid,
@@ -6953,7 +6821,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     414,
-    '2025-07-24 14:35:00'
+    '2024-07-24 14:35:00'
 );
 INSERT INTO SOLD VALUES (
     '11581bd2-fc46-463b-a7a1-4abd417f1a03'::uuid,
@@ -6964,7 +6832,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     53,
-    '2025-07-24 16:51:00'
+    '2024-07-24 16:51:00'
 );
 INSERT INTO SOLD VALUES (
     '97b81d3f-7e8a-4523-bdad-1217f6437b28'::uuid,
@@ -6975,7 +6843,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     267,
-    '2025-07-24 13:04:00'
+    '2024-07-24 13:04:00'
 );
 INSERT INTO SOLD VALUES (
     'f312757f-0bbc-4c77-9e56-4a5c3c080ef4'::uuid,
@@ -6986,7 +6854,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     128,
-    '2025-07-24 09:20:00'
+    '2024-07-24 09:20:00'
 );
 INSERT INTO SOLD VALUES (
     'ed44dc70-be75-475e-a3a7-26971a6f5948'::uuid,
@@ -6997,7 +6865,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     158,
-    '2025-07-25 16:46:00'
+    '2024-07-25 16:46:00'
 );
 INSERT INTO SOLD VALUES (
     '9b04576a-c369-4399-b38e-9312e1189a5b'::uuid,
@@ -7008,7 +6876,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     105,
-    '2025-07-25 12:23:00'
+    '2024-07-25 12:23:00'
 );
 INSERT INTO SOLD VALUES (
     '1b2ff773-a35c-42fc-9314-e0e32e53f182'::uuid,
@@ -7019,7 +6887,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     67,
-    '2025-07-25 17:54:00'
+    '2024-07-25 17:54:00'
 );
 INSERT INTO SOLD VALUES (
     '7d38a3e8-fc48-46b2-ac3b-36c879a479eb'::uuid,
@@ -7030,7 +6898,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     30,
-    '2025-07-25 14:36:00'
+    '2024-07-25 14:36:00'
 );
 INSERT INTO SOLD VALUES (
     '510406ed-eb41-45c0-8a64-389bbf4d8a8a'::uuid,
@@ -7041,7 +6909,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     52,
-    '2025-07-25 15:17:00'
+    '2024-07-25 15:17:00'
 );
 INSERT INTO SOLD VALUES (
     'd0333e08-336e-4b7b-92f6-b3b8e5653b4f'::uuid,
@@ -7052,7 +6920,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     84,
-    '2025-07-25 12:35:00'
+    '2024-07-25 12:35:00'
 );
 INSERT INTO SOLD VALUES (
     '3dfbab71-e8c0-4398-a684-ffd1bf928b4c'::uuid,
@@ -7063,7 +6931,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     413,
-    '2025-07-25 13:05:00'
+    '2024-07-25 13:05:00'
 );
 INSERT INTO SOLD VALUES (
     'ecbf7aea-8d36-40ce-a54f-94179ed551d4'::uuid,
@@ -7074,7 +6942,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     52,
-    '2025-07-25 20:27:00'
+    '2024-07-25 20:27:00'
 );
 INSERT INTO SOLD VALUES (
     '480ad513-5da7-4ac9-8a89-c0643f4b3e1a'::uuid,
@@ -7085,7 +6953,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     258,
-    '2025-07-25 18:45:00'
+    '2024-07-25 18:45:00'
 );
 INSERT INTO SOLD VALUES (
     'c5192c6c-d297-4c8a-89cd-39f74c875b63'::uuid,
@@ -7096,7 +6964,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     126,
-    '2025-07-25 12:34:00'
+    '2024-07-25 12:34:00'
 );
 INSERT INTO SOLD VALUES (
     '4dd9fdd2-1ef5-4019-9421-e16bf532cd0d'::uuid,
@@ -7107,7 +6975,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     157,
-    '2025-07-26 11:00:00'
+    '2024-07-26 11:00:00'
 );
 INSERT INTO SOLD VALUES (
     'bac1ffe0-8547-4b63-8dea-076b008a7572'::uuid,
@@ -7118,7 +6986,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     89,
-    '2025-07-26 14:59:00'
+    '2024-07-26 14:59:00'
 );
 INSERT INTO SOLD VALUES (
     '45a1c026-1562-4180-ad3e-90cc2b6b9601'::uuid,
@@ -7129,7 +6997,7 @@ INSERT INTO SOLD VALUES (
     8,
     30.0,
     59,
-    '2025-07-26 20:16:00'
+    '2024-07-26 20:16:00'
 );
 INSERT INTO SOLD VALUES (
     'a83beb13-c648-4344-81a0-6a3b0ce54754'::uuid,
@@ -7140,7 +7008,7 @@ INSERT INTO SOLD VALUES (
     11,
     15.0,
     19,
-    '2025-07-26 11:19:00'
+    '2024-07-26 11:19:00'
 );
 INSERT INTO SOLD VALUES (
     '94e943be-ff39-4a00-8d20-da394f5c6d76'::uuid,
@@ -7151,7 +7019,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     34,
-    '2025-07-26 19:15:00'
+    '2024-07-26 19:15:00'
 );
 INSERT INTO SOLD VALUES (
     'fa6550f3-e6e8-454a-96a5-279592c91bfe'::uuid,
@@ -7162,7 +7030,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     49,
-    '2025-07-26 18:33:00'
+    '2024-07-26 18:33:00'
 );
 INSERT INTO SOLD VALUES (
     '85e4ba0f-fe66-4f02-832c-d8a79ce48bbd'::uuid,
@@ -7173,7 +7041,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     411,
-    '2025-07-26 14:18:00'
+    '2024-07-26 14:18:00'
 );
 INSERT INTO SOLD VALUES (
     'c7bca7fa-2304-4d50-88f0-5de7b512d1d2'::uuid,
@@ -7184,7 +7052,7 @@ INSERT INTO SOLD VALUES (
     32,
     12.0,
     20,
-    '2025-07-26 13:57:00'
+    '2024-07-26 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     'b3761662-7135-4118-b160-926ec7dccebe'::uuid,
@@ -7195,7 +7063,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     243,
-    '2025-07-26 11:31:00'
+    '2024-07-26 11:31:00'
 );
 INSERT INTO SOLD VALUES (
     'd088c520-9742-47eb-b8ce-6a6b73672d29'::uuid,
@@ -7206,7 +7074,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     124,
-    '2025-07-26 12:29:00'
+    '2024-07-26 12:29:00'
 );
 INSERT INTO SOLD VALUES (
     '8adf7c9b-445c-4b97-b4ab-9de2c4cd5bfa'::uuid,
@@ -7217,7 +7085,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     149,
-    '2025-07-27 09:29:00'
+    '2024-07-27 09:29:00'
 );
 INSERT INTO SOLD VALUES (
     'dcbc2503-062f-4c82-afc3-ddd3a83f1d3d'::uuid,
@@ -7228,7 +7096,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     65,
-    '2025-07-27 13:16:00'
+    '2024-07-27 13:16:00'
 );
 INSERT INTO SOLD VALUES (
     '545ae61a-a1d9-44a4-b520-b4f0130601be'::uuid,
@@ -7239,7 +7107,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     57,
-    '2025-07-27 19:42:00'
+    '2024-07-27 19:42:00'
 );
 INSERT INTO SOLD VALUES (
     '6ff67596-c756-47be-8e77-852835f45081'::uuid,
@@ -7250,7 +7118,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     10,
-    '2025-07-27 16:44:00'
+    '2024-07-27 16:44:00'
 );
 INSERT INTO SOLD VALUES (
     'd3de9d96-6984-4221-b9d1-e5b2d8e95c3a'::uuid,
@@ -7261,7 +7129,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     33,
-    '2025-07-27 16:42:00'
+    '2024-07-27 16:42:00'
 );
 INSERT INTO SOLD VALUES (
     'b199be75-429e-416d-b07d-4243415a5574'::uuid,
@@ -7272,7 +7140,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     46,
-    '2025-07-27 11:26:00'
+    '2024-07-27 11:26:00'
 );
 INSERT INTO SOLD VALUES (
     '41ad2c5f-1ff8-49ad-b7c9-d6ad207ebf0b'::uuid,
@@ -7283,7 +7151,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     78,
-    '2025-07-27 10:09:00'
+    '2024-07-27 10:09:00'
 );
 INSERT INTO SOLD VALUES (
     'd4188f72-6464-4073-a5cf-c23fb21299e9'::uuid,
@@ -7294,7 +7162,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     409,
-    '2025-07-27 12:55:00'
+    '2024-07-27 12:55:00'
 );
 INSERT INTO SOLD VALUES (
     '15ae784d-38d7-4ca0-83d2-8502fe82dfc3'::uuid,
@@ -7305,7 +7173,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     0,
-    '2025-07-27 17:49:00'
+    '2024-07-27 17:49:00'
 );
 INSERT INTO SOLD VALUES (
     'e85f879d-32fa-4e5e-839e-9befc88cd106'::uuid,
@@ -7316,7 +7184,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     231,
-    '2025-07-27 16:34:00'
+    '2024-07-27 16:34:00'
 );
 INSERT INTO SOLD VALUES (
     'b605cbe4-6855-457c-9ed2-80b0ce4a82f4'::uuid,
@@ -7327,7 +7195,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     119,
-    '2025-07-27 15:43:00'
+    '2024-07-27 15:43:00'
 );
 INSERT INTO SOLD VALUES (
     '0b868531-ae64-4f7a-925f-8163f8d20cdf'::uuid,
@@ -7338,7 +7206,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     138,
-    '2025-07-28 13:36:00'
+    '2024-07-28 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     '3fc389a8-dcde-49bb-a4fc-2af597d1d3ad'::uuid,
@@ -7349,7 +7217,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     49,
-    '2025-07-28 09:13:00'
+    '2024-07-28 09:13:00'
 );
 INSERT INTO SOLD VALUES (
     'e8183269-e3f6-4a85-bd65-624d81775ff8'::uuid,
@@ -7360,7 +7228,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     53,
-    '2025-07-28 10:11:00'
+    '2024-07-28 10:11:00'
 );
 INSERT INTO SOLD VALUES (
     'efec2845-6ad4-42f3-8c16-7806277b060b'::uuid,
@@ -7371,7 +7239,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     0,
-    '2025-07-28 15:33:00'
+    '2024-07-28 15:33:00'
 );
 INSERT INTO SOLD VALUES (
     'f6ed650f-732a-48cb-9094-eb275f1d9ab3'::uuid,
@@ -7382,7 +7250,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     32,
-    '2025-07-28 16:57:00'
+    '2024-07-28 16:57:00'
 );
 INSERT INTO SOLD VALUES (
     '45d900b1-e892-438d-933c-370ada912297'::uuid,
@@ -7393,7 +7261,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     43,
-    '2025-07-28 15:30:00'
+    '2024-07-28 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     '22d94007-a7f3-4c9c-96ad-cb562127cd80'::uuid,
@@ -7404,7 +7272,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     72,
-    '2025-07-28 10:10:00'
+    '2024-07-28 10:10:00'
 );
 INSERT INTO SOLD VALUES (
     '73ed6733-1d25-426a-81f5-9bb9e8e2405a'::uuid,
@@ -7415,7 +7283,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     407,
-    '2025-07-28 18:56:00'
+    '2024-07-28 18:56:00'
 );
 INSERT INTO SOLD VALUES (
     'b69b447f-505f-4c7e-9ce2-ebfbd8bb9555'::uuid,
@@ -7426,7 +7294,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     218,
-    '2025-07-28 17:14:00'
+    '2024-07-28 17:14:00'
 );
 INSERT INTO SOLD VALUES (
     '533ad8ef-4f82-4af1-ab02-6734a1ba2aa1'::uuid,
@@ -7437,7 +7305,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     116,
-    '2025-07-28 15:51:00'
+    '2024-07-28 15:51:00'
 );
 INSERT INTO SOLD VALUES (
     'ec7dd86b-22f2-45aa-8632-8db317c74496'::uuid,
@@ -7448,7 +7316,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     37,
-    '2025-07-29 12:56:00'
+    '2024-07-29 12:56:00'
 );
 INSERT INTO SOLD VALUES (
     '504fb58c-b3d7-4765-96f7-af5044a13456'::uuid,
@@ -7459,7 +7327,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     48,
-    '2025-07-29 11:01:00'
+    '2024-07-29 11:01:00'
 );
 INSERT INTO SOLD VALUES (
     '29271f13-80f2-443a-9d13-88cfc9ed1f18'::uuid,
@@ -7470,7 +7338,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     40,
-    '2025-07-29 18:44:00'
+    '2024-07-29 18:44:00'
 );
 INSERT INTO SOLD VALUES (
     '0ff2e8ea-58b6-470b-9782-03cfe01c7330'::uuid,
@@ -7481,7 +7349,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     67,
-    '2025-07-29 13:38:00'
+    '2024-07-29 13:38:00'
 );
 INSERT INTO SOLD VALUES (
     '07ee2f64-a4a7-4e63-937b-d7b301d90a25'::uuid,
@@ -7492,7 +7360,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     405,
-    '2025-07-29 12:08:00'
+    '2024-07-29 12:08:00'
 );
 INSERT INTO SOLD VALUES (
     '313c5108-6772-4ea3-90c7-b3d3ac9a7468'::uuid,
@@ -7503,7 +7371,7 @@ INSERT INTO SOLD VALUES (
     2,
     8.0,
     216,
-    '2025-07-29 16:59:00'
+    '2024-07-29 16:59:00'
 );
 INSERT INTO SOLD VALUES (
     '9e4fc5e4-25e7-42e1-9a8e-82924222f025'::uuid,
@@ -7514,7 +7382,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     113,
-    '2025-07-29 15:13:00'
+    '2024-07-29 15:13:00'
 );
 INSERT INTO SOLD VALUES (
     '0faf4b65-7ecf-4a80-ba47-78876da2968f'::uuid,
@@ -7525,7 +7393,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     23,
-    '2025-07-30 12:14:00'
+    '2024-07-30 12:14:00'
 );
 INSERT INTO SOLD VALUES (
     '8466417d-8389-4559-ad2e-93d1f6fb4cfb'::uuid,
@@ -7536,7 +7404,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     44,
-    '2025-07-30 20:35:00'
+    '2024-07-30 20:35:00'
 );
 INSERT INTO SOLD VALUES (
     'dbafba11-0039-438c-a95b-51deae9dbf57'::uuid,
@@ -7547,7 +7415,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     31,
-    '2025-07-30 11:50:00'
+    '2024-07-30 11:50:00'
 );
 INSERT INTO SOLD VALUES (
     'c41ce821-8ea5-4459-a13b-ed3d310c3305'::uuid,
@@ -7558,7 +7426,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     38,
-    '2025-07-30 19:53:00'
+    '2024-07-30 19:53:00'
 );
 INSERT INTO SOLD VALUES (
     'efaa6cd8-8981-45df-8b3c-eeeb9889b541'::uuid,
@@ -7569,7 +7437,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     60,
-    '2025-07-30 15:23:00'
+    '2024-07-30 15:23:00'
 );
 INSERT INTO SOLD VALUES (
     '4213e4e2-440f-4a92-b354-2b20e510d749'::uuid,
@@ -7580,7 +7448,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     403,
-    '2025-07-30 17:36:00'
+    '2024-07-30 17:36:00'
 );
 INSERT INTO SOLD VALUES (
     '8b824624-2712-465e-b474-9ad69edc7d89'::uuid,
@@ -7591,7 +7459,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     203,
-    '2025-07-30 14:04:00'
+    '2024-07-30 14:04:00'
 );
 INSERT INTO SOLD VALUES (
     'f2f89811-c4ce-454d-99ec-842d692efa0d'::uuid,
@@ -7602,7 +7470,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     112,
-    '2025-07-30 20:06:00'
+    '2024-07-30 20:06:00'
 );
 INSERT INTO SOLD VALUES (
     '15cbe026-e627-4610-bee8-a9cc11b1f885'::uuid,
@@ -7613,7 +7481,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     133,
-    '2025-07-31 18:24:00'
+    '2024-07-31 18:24:00'
 );
 INSERT INTO SOLD VALUES (
     '9a8f6955-9823-44b5-98b8-80fc56e8bf4a'::uuid,
@@ -7624,7 +7492,7 @@ INSERT INTO SOLD VALUES (
     1,
     25.0,
     22,
-    '2025-07-31 12:43:00'
+    '2024-07-31 12:43:00'
 );
 INSERT INTO SOLD VALUES (
     'bb83fdaa-03d9-4743-933e-b97a380d7759'::uuid,
@@ -7635,7 +7503,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     40,
-    '2025-07-31 10:27:00'
+    '2024-07-31 10:27:00'
 );
 INSERT INTO SOLD VALUES (
     '5bd30c4b-ebce-4a26-bae4-81aac1c12104'::uuid,
@@ -7646,7 +7514,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     29,
-    '2025-07-31 16:35:00'
+    '2024-07-31 16:35:00'
 );
 INSERT INTO SOLD VALUES (
     'd4d67be6-930b-4e02-8515-7cc17ff3323b'::uuid,
@@ -7657,7 +7525,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     36,
-    '2025-07-31 18:10:00'
+    '2024-07-31 18:10:00'
 );
 INSERT INTO SOLD VALUES (
     '139f04ce-0da3-45d9-8461-36a10fc8d9ab'::uuid,
@@ -7668,7 +7536,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     54,
-    '2025-07-31 10:50:00'
+    '2024-07-31 10:50:00'
 );
 INSERT INTO SOLD VALUES (
     'fb9b21bf-5cb2-42fe-80fa-c68efef1030d'::uuid,
@@ -7679,7 +7547,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     402,
-    '2025-07-31 13:56:00'
+    '2024-07-31 13:56:00'
 );
 INSERT INTO SOLD VALUES (
     'bd15f164-8b81-4a52-be34-0811ac71c566'::uuid,
@@ -7690,7 +7558,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     195,
-    '2025-07-31 11:21:00'
+    '2024-07-31 11:21:00'
 );
 INSERT INTO SOLD VALUES (
     'c5a43b01-3be2-471c-a280-352b84c686d3'::uuid,
@@ -7701,7 +7569,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     125,
-    '2025-08-01 19:54:00'
+    '2024-08-01 19:54:00'
 );
 INSERT INTO SOLD VALUES (
     '02847ca5-7bae-4277-8cff-484342dd61e3'::uuid,
@@ -7712,7 +7580,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     4,
-    '2025-08-01 19:27:00'
+    '2024-08-01 19:27:00'
 );
 INSERT INTO SOLD VALUES (
     'fbbb5bd1-c0ed-4ff9-93bd-c767ec7bf0c0'::uuid,
@@ -7723,7 +7591,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     34,
-    '2025-08-01 13:18:00'
+    '2024-08-01 13:18:00'
 );
 INSERT INTO SOLD VALUES (
     '7ea62ee0-9918-4fd2-993c-3c0dcf2b874b'::uuid,
@@ -7734,7 +7602,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     27,
-    '2025-08-01 16:34:00'
+    '2024-08-01 16:34:00'
 );
 INSERT INTO SOLD VALUES (
     '98d37454-86d2-4dba-ac16-21e57551cabf'::uuid,
@@ -7745,7 +7613,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     34,
-    '2025-08-01 19:57:00'
+    '2024-08-01 19:57:00'
 );
 INSERT INTO SOLD VALUES (
     '999c9d25-33c3-4648-ae9a-e7889718e7c7'::uuid,
@@ -7756,7 +7624,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     401,
-    '2025-08-01 13:36:00'
+    '2024-08-01 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     'e6ea1947-89bb-42ef-9d0a-44d238a79c8b'::uuid,
@@ -7767,7 +7635,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     180,
-    '2025-08-01 19:06:00'
+    '2024-08-01 19:06:00'
 );
 INSERT INTO SOLD VALUES (
     '5f5f5ff7-27a6-4164-8337-5d605e6b3e4d'::uuid,
@@ -7778,7 +7646,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     109,
-    '2025-08-01 16:09:00'
+    '2024-08-01 16:09:00'
 );
 INSERT INTO SOLD VALUES (
     '774e6aa3-1fda-4403-9dac-811c11170911'::uuid,
@@ -7789,7 +7657,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     114,
-    '2025-08-02 19:54:00'
+    '2024-08-02 19:54:00'
 );
 INSERT INTO SOLD VALUES (
     'c72ac792-04a2-431d-850b-8f44eead83c2'::uuid,
@@ -7800,7 +7668,7 @@ INSERT INTO SOLD VALUES (
     4,
     25.0,
     0,
-    '2025-08-02 15:02:00'
+    '2024-08-02 15:02:00'
 );
 INSERT INTO SOLD VALUES (
     '9e57b2ee-424c-4bb1-b119-69b78730fc8e'::uuid,
@@ -7811,7 +7679,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     32,
-    '2025-08-02 12:06:00'
+    '2024-08-02 12:06:00'
 );
 INSERT INTO SOLD VALUES (
     'd7e39b52-f27e-410f-b019-0370aedb6c77'::uuid,
@@ -7822,7 +7690,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     26,
-    '2025-08-02 14:09:00'
+    '2024-08-02 14:09:00'
 );
 INSERT INTO SOLD VALUES (
     '81bfbbc4-64dd-44e9-8e20-8e9ce8eb0d0e'::uuid,
@@ -7833,7 +7701,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     53,
-    '2025-08-02 12:30:00'
+    '2024-08-02 12:30:00'
 );
 INSERT INTO SOLD VALUES (
     '10793b75-04d1-4c5b-ba70-2a20f7c3bcc9'::uuid,
@@ -7844,7 +7712,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     399,
-    '2025-08-02 14:53:00'
+    '2024-08-02 14:53:00'
 );
 INSERT INTO SOLD VALUES (
     'a2f6b4bb-95e5-4f87-a447-62f7749cb431'::uuid,
@@ -7855,7 +7723,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     169,
-    '2025-08-02 18:49:00'
+    '2024-08-02 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     '6b0b6cc8-71ca-4e10-883f-86386feb6a57'::uuid,
@@ -7866,7 +7734,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     104,
-    '2025-08-02 13:49:00'
+    '2024-08-02 13:49:00'
 );
 INSERT INTO SOLD VALUES (
     '852544e7-7344-493c-86fc-2f834c374e19'::uuid,
@@ -7877,7 +7745,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     107,
-    '2025-08-03 13:28:00'
+    '2024-08-03 13:28:00'
 );
 INSERT INTO SOLD VALUES (
     '8c13a6ef-f4e0-4992-9990-f83d20b7b2ca'::uuid,
@@ -7888,7 +7756,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     26,
-    '2025-08-03 20:15:00'
+    '2024-08-03 20:15:00'
 );
 INSERT INTO SOLD VALUES (
     '696293f5-c5bc-4732-9325-b4aaabfc83f0'::uuid,
@@ -7899,7 +7767,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     25,
-    '2025-08-03 13:53:00'
+    '2024-08-03 13:53:00'
 );
 INSERT INTO SOLD VALUES (
     '95173313-8340-4f5c-b972-20e982ab8dc1'::uuid,
@@ -7910,7 +7778,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     33,
-    '2025-08-03 09:29:00'
+    '2024-08-03 09:29:00'
 );
 INSERT INTO SOLD VALUES (
     '69af7d85-4d4c-4c9c-ae67-7939adf23647'::uuid,
@@ -7921,7 +7789,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     45,
-    '2025-08-03 14:07:00'
+    '2024-08-03 14:07:00'
 );
 INSERT INTO SOLD VALUES (
     '65c1c816-8d05-495b-8839-f85e3924003e'::uuid,
@@ -7932,7 +7800,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     396,
-    '2025-08-03 09:36:00'
+    '2024-08-03 09:36:00'
 );
 INSERT INTO SOLD VALUES (
     'a72d29f9-4c52-4316-9207-4c9493a48f7b'::uuid,
@@ -7943,7 +7811,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     158,
-    '2025-08-03 19:54:00'
+    '2024-08-03 19:54:00'
 );
 INSERT INTO SOLD VALUES (
     'c5a04b79-4c42-4936-8e3b-836f69b38d17'::uuid,
@@ -7954,7 +7822,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     101,
-    '2025-08-03 15:27:00'
+    '2024-08-03 15:27:00'
 );
 INSERT INTO SOLD VALUES (
     '7a6a5537-222a-404b-8d8b-cd8c9d27f5d5'::uuid,
@@ -7965,7 +7833,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     21,
-    '2025-08-04 12:27:00'
+    '2024-08-04 12:27:00'
 );
 INSERT INTO SOLD VALUES (
     '14874d28-6890-4cfb-a62d-54acba847f7a'::uuid,
@@ -7976,7 +7844,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     24,
-    '2025-08-04 12:40:00'
+    '2024-08-04 12:40:00'
 );
 INSERT INTO SOLD VALUES (
     '61e1476c-dbfd-4179-ba56-5cb75cf49f5c'::uuid,
@@ -7987,7 +7855,7 @@ INSERT INTO SOLD VALUES (
     4,
     40.0,
     29,
-    '2025-08-04 16:07:00'
+    '2024-08-04 16:07:00'
 );
 INSERT INTO SOLD VALUES (
     '3f763695-4bf0-4fc8-96d4-1763cdac801d'::uuid,
@@ -7998,7 +7866,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     44,
-    '2025-08-04 17:11:00'
+    '2024-08-04 17:11:00'
 );
 INSERT INTO SOLD VALUES (
     '24171491-a8e7-4134-89c3-e63899b7e206'::uuid,
@@ -8009,7 +7877,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     394,
-    '2025-08-04 10:36:00'
+    '2024-08-04 10:36:00'
 );
 INSERT INTO SOLD VALUES (
     '689be0af-48fa-40ab-af87-bae3712cc242'::uuid,
@@ -8020,7 +7888,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     146,
-    '2025-08-04 14:21:00'
+    '2024-08-04 14:21:00'
 );
 INSERT INTO SOLD VALUES (
     '83984f3c-0516-41d1-820c-262d1cd5de11'::uuid,
@@ -8031,7 +7899,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     98,
-    '2025-08-04 10:20:00'
+    '2024-08-04 10:20:00'
 );
 INSERT INTO SOLD VALUES (
     '19eeba4e-0355-45f3-9c8a-ba4bc3c80727'::uuid,
@@ -8042,7 +7910,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     97,
-    '2025-08-05 14:08:00'
+    '2024-08-05 14:08:00'
 );
 INSERT INTO SOLD VALUES (
     '6b7f4244-384b-45d6-9e32-57f6c8f7fc1e'::uuid,
@@ -8053,7 +7921,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     302,
-    '2025-08-05 13:25:00'
+    '2024-08-05 13:25:00'
 );
 INSERT INTO SOLD VALUES (
     '09862b7f-d34d-4e79-ab70-ae7eeb061863'::uuid,
@@ -8064,7 +7932,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     17,
-    '2025-08-05 20:03:00'
+    '2024-08-05 20:03:00'
 );
 INSERT INTO SOLD VALUES (
     'd0e9fb8a-54be-4ff3-a11a-67407b72c108'::uuid,
@@ -8075,7 +7943,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     27,
-    '2025-08-05 19:02:00'
+    '2024-08-05 19:02:00'
 );
 INSERT INTO SOLD VALUES (
     '99015ae2-6f78-4681-8467-ff394eb91fed'::uuid,
@@ -8086,7 +7954,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     38,
-    '2025-08-05 13:07:00'
+    '2024-08-05 13:07:00'
 );
 INSERT INTO SOLD VALUES (
     '0d9f951c-613c-47ea-afbb-982013c9b285'::uuid,
@@ -8097,7 +7965,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     392,
-    '2025-08-05 15:31:00'
+    '2024-08-05 15:31:00'
 );
 INSERT INTO SOLD VALUES (
     'cdf26db1-896c-4ab1-b6da-1913fce07c88'::uuid,
@@ -8108,7 +7976,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     133,
-    '2025-08-05 10:31:00'
+    '2024-08-05 10:31:00'
 );
 INSERT INTO SOLD VALUES (
     '602c703d-0408-492e-bf45-f0d735db89f9'::uuid,
@@ -8119,7 +7987,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     96,
-    '2025-08-05 13:25:00'
+    '2024-08-05 13:25:00'
 );
 INSERT INTO SOLD VALUES (
     'cff11cf2-c26b-48ea-b225-7b852ce04dda'::uuid,
@@ -8130,7 +7998,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     87,
-    '2025-08-06 15:02:00'
+    '2024-08-06 15:02:00'
 );
 INSERT INTO SOLD VALUES (
     '73b7dc5f-b78c-4568-bbc7-c532b3ceecd4'::uuid,
@@ -8141,7 +8009,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     287,
-    '2025-08-06 10:19:00'
+    '2024-08-06 10:19:00'
 );
 INSERT INTO SOLD VALUES (
     '113cabdc-4d56-4047-93ee-5845a7784ef8'::uuid,
@@ -8152,7 +8020,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     13,
-    '2025-08-06 12:12:00'
+    '2024-08-06 12:12:00'
 );
 INSERT INTO SOLD VALUES (
     '8acdcae6-c75e-416d-9c10-c48660da7e7b'::uuid,
@@ -8163,7 +8031,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     23,
-    '2025-08-06 15:42:00'
+    '2024-08-06 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     'd3eafda3-549a-4b6e-b7ef-f18b6619c632'::uuid,
@@ -8174,7 +8042,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     25,
-    '2025-08-06 18:59:00'
+    '2024-08-06 18:59:00'
 );
 INSERT INTO SOLD VALUES (
     'b52ccbf3-fb73-435f-9199-451f5b9bb88e'::uuid,
@@ -8185,7 +8053,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     36,
-    '2025-08-06 14:10:00'
+    '2024-08-06 14:10:00'
 );
 INSERT INTO SOLD VALUES (
     '6c218411-0b62-49ad-b90e-79f7bf2c258a'::uuid,
@@ -8196,7 +8064,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     390,
-    '2025-08-06 18:24:00'
+    '2024-08-06 18:24:00'
 );
 INSERT INTO SOLD VALUES (
     '99898d7a-fec6-4969-8b56-475b6e1e1c79'::uuid,
@@ -8207,7 +8075,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     121,
-    '2025-08-06 09:22:00'
+    '2024-08-06 09:22:00'
 );
 INSERT INTO SOLD VALUES (
     'c3982afc-6cf2-4d2e-ab15-b440eaa02eb5'::uuid,
@@ -8218,7 +8086,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     81,
-    '2025-08-07 18:41:00'
+    '2024-08-07 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     '3bf9b8b4-0afd-4a71-b169-25b82337a801'::uuid,
@@ -8229,7 +8097,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     277,
-    '2025-08-07 19:13:00'
+    '2024-08-07 19:13:00'
 );
 INSERT INTO SOLD VALUES (
     '9ee8bf60-1fb1-46d2-9e8e-49e9ea43ec7d'::uuid,
@@ -8240,7 +8108,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     9,
-    '2025-08-07 10:03:00'
+    '2024-08-07 10:03:00'
 );
 INSERT INTO SOLD VALUES (
     '2d3755bb-123b-429b-a3d6-4361597d3453'::uuid,
@@ -8251,7 +8119,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     22,
-    '2025-08-07 16:37:00'
+    '2024-08-07 16:37:00'
 );
 INSERT INTO SOLD VALUES (
     'ce53bc5b-ebcf-477e-9638-4471c3660155'::uuid,
@@ -8262,7 +8130,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     22,
-    '2025-08-07 17:03:00'
+    '2024-08-07 17:03:00'
 );
 INSERT INTO SOLD VALUES (
     '86305cfe-2c3d-4ac2-b668-5a14814a76f6'::uuid,
@@ -8273,7 +8141,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     31,
-    '2025-08-07 20:29:00'
+    '2024-08-07 20:29:00'
 );
 INSERT INTO SOLD VALUES (
     '2c7ceec1-53b5-4563-8453-28862ed2d16c'::uuid,
@@ -8284,7 +8152,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     389,
-    '2025-08-07 09:03:00'
+    '2024-08-07 09:03:00'
 );
 INSERT INTO SOLD VALUES (
     'a2b841de-fa39-4c78-bc54-1c696401cb2c'::uuid,
@@ -8295,7 +8163,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     111,
-    '2025-08-07 12:21:00'
+    '2024-08-07 12:21:00'
 );
 INSERT INTO SOLD VALUES (
     '923ada8e-67de-41f9-8452-1c3b4487d607'::uuid,
@@ -8306,7 +8174,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     92,
-    '2025-08-07 10:33:00'
+    '2024-08-07 10:33:00'
 );
 INSERT INTO SOLD VALUES (
     '85d0ba21-77d4-424e-a436-1d6c5ff92e6c'::uuid,
@@ -8317,7 +8185,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     71,
-    '2025-08-08 16:21:00'
+    '2024-08-08 16:21:00'
 );
 INSERT INTO SOLD VALUES (
     '8f13e53f-f9fa-4a8b-a2d3-ae369f3898b4'::uuid,
@@ -8328,7 +8196,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     260,
-    '2025-08-08 13:55:00'
+    '2024-08-08 13:55:00'
 );
 INSERT INTO SOLD VALUES (
     'a751dca0-3b10-4394-acba-8d9e2fc22ce9'::uuid,
@@ -8339,7 +8207,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     5,
-    '2025-08-08 15:38:00'
+    '2024-08-08 15:38:00'
 );
 INSERT INTO SOLD VALUES (
     '8eb83144-8155-43be-8049-6eb2068ae796'::uuid,
@@ -8350,7 +8218,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     21,
-    '2025-08-08 13:53:00'
+    '2024-08-08 13:53:00'
 );
 INSERT INTO SOLD VALUES (
     'cadf4bcd-6715-4393-9cb6-38ef79c89fd5'::uuid,
@@ -8361,7 +8229,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     20,
-    '2025-08-08 10:10:00'
+    '2024-08-08 10:10:00'
 );
 INSERT INTO SOLD VALUES (
     '0d904fb6-59b8-432c-ac06-f2f9372c4b11'::uuid,
@@ -8372,7 +8240,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     27,
-    '2025-08-08 13:51:00'
+    '2024-08-08 13:51:00'
 );
 INSERT INTO SOLD VALUES (
     'ebfa2674-ea24-42b9-ae89-2ced1da4025e'::uuid,
@@ -8383,7 +8251,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     387,
-    '2025-08-08 20:37:00'
+    '2024-08-08 20:37:00'
 );
 INSERT INTO SOLD VALUES (
     '9c3d8a06-d9fd-47e0-a03f-caeb390ca345'::uuid,
@@ -8394,7 +8262,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     98,
-    '2025-08-08 13:09:00'
+    '2024-08-08 13:09:00'
 );
 INSERT INTO SOLD VALUES (
     '96803bb5-0a60-40d1-8184-bcf7e0be1339'::uuid,
@@ -8405,7 +8273,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     88,
-    '2025-08-08 16:56:00'
+    '2024-08-08 16:56:00'
 );
 INSERT INTO SOLD VALUES (
     'de680126-2935-4ce0-90e9-e230553ff5ea'::uuid,
@@ -8416,7 +8284,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     60,
-    '2025-08-09 18:04:00'
+    '2024-08-09 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     '6b613526-f89d-4b0d-8d6a-ea283c89a486'::uuid,
@@ -8427,7 +8295,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     242,
-    '2025-08-09 09:18:00'
+    '2024-08-09 09:18:00'
 );
 INSERT INTO SOLD VALUES (
     '7dbd671d-a2d2-428b-9ae6-f24e9d3a074f'::uuid,
@@ -8438,7 +8306,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     0,
-    '2025-08-09 11:20:00'
+    '2024-08-09 11:20:00'
 );
 INSERT INTO SOLD VALUES (
     '6b8d5a7e-5989-4d51-aba9-34c80bb16435'::uuid,
@@ -8449,7 +8317,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     20,
-    '2025-08-09 10:59:00'
+    '2024-08-09 10:59:00'
 );
 INSERT INTO SOLD VALUES (
     'ede9e4b4-9a6c-42ad-b0d5-48ba5eb9b457'::uuid,
@@ -8460,7 +8328,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     19,
-    '2025-08-09 18:40:00'
+    '2024-08-09 18:40:00'
 );
 INSERT INTO SOLD VALUES (
     '1bde04c2-bc26-41fc-b2aa-3e21837b1d61'::uuid,
@@ -8471,7 +8339,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     20,
-    '2025-08-09 13:31:00'
+    '2024-08-09 13:31:00'
 );
 INSERT INTO SOLD VALUES (
     'c6ef50c9-a8ee-4315-8dcc-d30a14fe9946'::uuid,
@@ -8482,7 +8350,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     385,
-    '2025-08-09 11:00:00'
+    '2024-08-09 11:00:00'
 );
 INSERT INTO SOLD VALUES (
     '547103c1-2fc9-4141-a432-de4e19dcc3ca'::uuid,
@@ -8493,7 +8361,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     85,
-    '2025-08-09 20:39:00'
+    '2024-08-09 20:39:00'
 );
 INSERT INTO SOLD VALUES (
     'dd864ddc-6e5b-4d61-a645-76da429fe5a0'::uuid,
@@ -8504,7 +8372,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     83,
-    '2025-08-09 13:01:00'
+    '2024-08-09 13:01:00'
 );
 INSERT INTO SOLD VALUES (
     'b3d240df-2926-4a87-93cf-d548e4b927b7'::uuid,
@@ -8515,7 +8383,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     48,
-    '2025-08-10 17:36:00'
+    '2024-08-10 17:36:00'
 );
 INSERT INTO SOLD VALUES (
     '8cf2dc27-bb58-4553-96e9-7a93bec9add6'::uuid,
@@ -8526,7 +8394,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     218,
-    '2025-08-10 20:54:00'
+    '2024-08-10 20:54:00'
 );
 INSERT INTO SOLD VALUES (
     'b109c5c9-93b0-4427-98f8-3498918a27d8'::uuid,
@@ -8537,7 +8405,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     19,
-    '2025-08-10 09:54:00'
+    '2024-08-10 09:54:00'
 );
 INSERT INTO SOLD VALUES (
     'c1482680-aa29-4170-bda1-ec172ecd3e66'::uuid,
@@ -8548,7 +8416,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     16,
-    '2025-08-10 19:32:00'
+    '2024-08-10 19:32:00'
 );
 INSERT INTO SOLD VALUES (
     '917eb3c5-2030-426b-b07b-df35c345f00a'::uuid,
@@ -8559,7 +8427,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     11,
-    '2025-08-10 17:44:00'
+    '2024-08-10 17:44:00'
 );
 INSERT INTO SOLD VALUES (
     '948b1f89-9eec-409f-8dbd-55cac3f81770'::uuid,
@@ -8570,7 +8438,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     382,
-    '2025-08-10 12:53:00'
+    '2024-08-10 12:53:00'
 );
 INSERT INTO SOLD VALUES (
     '467f584a-ed1f-45f9-a9b5-8bdd8a6c121a'::uuid,
@@ -8581,7 +8449,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     69,
-    '2025-08-10 15:21:00'
+    '2024-08-10 15:21:00'
 );
 INSERT INTO SOLD VALUES (
     'fb2510e7-72f9-4dcd-80de-8961b12d5228'::uuid,
@@ -8592,7 +8460,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     80,
-    '2025-08-10 09:37:00'
+    '2024-08-10 09:37:00'
 );
 INSERT INTO SOLD VALUES (
     '9d1c429c-dba1-4917-a78d-34ac4f65f32b'::uuid,
@@ -8603,7 +8471,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     38,
-    '2025-08-11 19:00:00'
+    '2024-08-11 19:00:00'
 );
 INSERT INTO SOLD VALUES (
     'bbeffa7f-eb78-40f1-8bfa-e2b5c8982955'::uuid,
@@ -8614,7 +8482,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     194,
-    '2025-08-11 18:37:00'
+    '2024-08-11 18:37:00'
 );
 INSERT INTO SOLD VALUES (
     '575c06d4-39ea-4c5d-9f2b-e97342fe4c36'::uuid,
@@ -8625,7 +8493,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     18,
-    '2025-08-11 15:53:00'
+    '2024-08-11 15:53:00'
 );
 INSERT INTO SOLD VALUES (
     '212ae0f3-efb6-4369-989f-8b4e2aa49224'::uuid,
@@ -8636,7 +8504,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     5,
-    '2025-08-11 12:12:00'
+    '2024-08-11 12:12:00'
 );
 INSERT INTO SOLD VALUES (
     '23e867f6-cf3d-439d-aab0-87f80da96e23'::uuid,
@@ -8647,7 +8515,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     379,
-    '2025-08-11 18:40:00'
+    '2024-08-11 18:40:00'
 );
 INSERT INTO SOLD VALUES (
     '102c84ed-0cb9-4315-9a34-2fa07c532e3d'::uuid,
@@ -8658,7 +8526,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     50,
-    '2025-08-11 11:21:00'
+    '2024-08-11 11:21:00'
 );
 INSERT INTO SOLD VALUES (
     'fd2bf5e8-81da-438b-9b4e-401057593544'::uuid,
@@ -8669,7 +8537,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     77,
-    '2025-08-11 12:45:00'
+    '2024-08-11 12:45:00'
 );
 INSERT INTO SOLD VALUES (
     'b5644d5b-541a-4828-ac4e-8992e5e8fb9a'::uuid,
@@ -8680,7 +8548,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     29,
-    '2025-08-12 09:58:00'
+    '2024-08-12 09:58:00'
 );
 INSERT INTO SOLD VALUES (
     'd7748765-41a1-434d-9720-1a472dd7d8b4'::uuid,
@@ -8691,7 +8559,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     177,
-    '2025-08-12 15:32:00'
+    '2024-08-12 15:32:00'
 );
 INSERT INTO SOLD VALUES (
     'fac587a8-dbbc-4e51-b175-0df3a889a287'::uuid,
@@ -8702,7 +8570,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     17,
-    '2025-08-12 11:31:00'
+    '2024-08-12 11:31:00'
 );
 INSERT INTO SOLD VALUES (
     '4e00526f-baf6-429a-aa1d-13950aff0edc'::uuid,
@@ -8713,7 +8581,7 @@ INSERT INTO SOLD VALUES (
     2,
     40.0,
     14,
-    '2025-08-12 10:44:00'
+    '2024-08-12 10:44:00'
 );
 INSERT INTO SOLD VALUES (
     '7617de33-a9a1-4181-89e4-0009085e17de'::uuid,
@@ -8724,7 +8592,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     378,
-    '2025-08-12 12:42:00'
+    '2024-08-12 12:42:00'
 );
 INSERT INTO SOLD VALUES (
     '0ea04265-181c-4066-86ee-580a661ef744'::uuid,
@@ -8735,7 +8603,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     41,
-    '2025-08-12 09:20:00'
+    '2024-08-12 09:20:00'
 );
 INSERT INTO SOLD VALUES (
     'e074a911-77e1-46fb-908b-996c56bedffb'::uuid,
@@ -8746,7 +8614,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     74,
-    '2025-08-12 14:38:00'
+    '2024-08-12 14:38:00'
 );
 INSERT INTO SOLD VALUES (
     '3cd1983a-623a-4792-be3c-fa71c8527826'::uuid,
@@ -8757,7 +8625,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     23,
-    '2025-08-13 16:23:00'
+    '2024-08-13 16:23:00'
 );
 INSERT INTO SOLD VALUES (
     '308916f3-ad7a-4947-a261-0efe7370a0d7'::uuid,
@@ -8768,7 +8636,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     158,
-    '2025-08-13 09:48:00'
+    '2024-08-13 09:48:00'
 );
 INSERT INTO SOLD VALUES (
     'e538e548-f230-44d5-94db-061539f47706'::uuid,
@@ -8779,7 +8647,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     11,
-    '2025-08-13 15:51:00'
+    '2024-08-13 15:51:00'
 );
 INSERT INTO SOLD VALUES (
     '38aabb50-3bcd-4424-9543-e9d0dd6477be'::uuid,
@@ -8790,7 +8658,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     0,
-    '2025-08-13 18:22:00'
+    '2024-08-13 18:22:00'
 );
 INSERT INTO SOLD VALUES (
     '44e0c257-3289-400e-974b-51ac881bd9e6'::uuid,
@@ -8801,7 +8669,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     377,
-    '2025-08-13 10:15:00'
+    '2024-08-13 10:15:00'
 );
 INSERT INTO SOLD VALUES (
     '14b64d22-9e97-4ede-8437-398ee47a247b'::uuid,
@@ -8812,7 +8680,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     32,
-    '2025-08-13 11:16:00'
+    '2024-08-13 11:16:00'
 );
 INSERT INTO SOLD VALUES (
     '57b99d38-ec22-4422-8efd-31c0f534478b'::uuid,
@@ -8823,7 +8691,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     71,
-    '2025-08-13 15:30:00'
+    '2024-08-13 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     '59603a3f-d3b8-42a7-bd7b-36b2db7ab0ce'::uuid,
@@ -8834,7 +8702,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     18,
-    '2025-08-14 13:09:00'
+    '2024-08-14 13:09:00'
 );
 INSERT INTO SOLD VALUES (
     '88bef58f-b6aa-4924-8194-2239f02a7bbc'::uuid,
@@ -8845,7 +8713,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     148,
-    '2025-08-14 16:20:00'
+    '2024-08-14 16:20:00'
 );
 INSERT INTO SOLD VALUES (
     '300c082d-f60f-412c-b059-f0036a76ca40'::uuid,
@@ -8856,7 +8724,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     16,
-    '2025-08-14 18:25:00'
+    '2024-08-14 18:25:00'
 );
 INSERT INTO SOLD VALUES (
     'fd45da9c-bb24-4d57-af02-7cf9deb9e39a'::uuid,
@@ -8867,7 +8735,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     10,
-    '2025-08-14 14:26:00'
+    '2024-08-14 14:26:00'
 );
 INSERT INTO SOLD VALUES (
     'cadb450d-34e9-4e4a-88e0-111eb586a994'::uuid,
@@ -8878,7 +8746,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     375,
-    '2025-08-14 12:37:00'
+    '2024-08-14 12:37:00'
 );
 INSERT INTO SOLD VALUES (
     'd381c9ed-9321-42a9-9a39-910c2d0d6f6d'::uuid,
@@ -8889,7 +8757,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     22,
-    '2025-08-14 09:26:00'
+    '2024-08-14 09:26:00'
 );
 INSERT INTO SOLD VALUES (
     '126f6553-0884-43df-8ef6-22605b70356a'::uuid,
@@ -8900,7 +8768,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     69,
-    '2025-08-14 18:18:00'
+    '2024-08-14 18:18:00'
 );
 INSERT INTO SOLD VALUES (
     '7fc5e98c-c68e-4b99-ad31-b44ca3d6ce54'::uuid,
@@ -8911,7 +8779,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     8,
-    '2025-08-15 16:32:00'
+    '2024-08-15 16:32:00'
 );
 INSERT INTO SOLD VALUES (
     'fe0ee534-16a8-4875-820c-81759126dcba'::uuid,
@@ -8922,7 +8790,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     130,
-    '2025-08-15 20:08:00'
+    '2024-08-15 20:08:00'
 );
 INSERT INTO SOLD VALUES (
     '883a6435-438b-4ec0-982c-f3654e79ea6e'::uuid,
@@ -8933,7 +8801,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     195,
-    '2025-08-15 10:36:00'
+    '2024-08-15 10:36:00'
 );
 INSERT INTO SOLD VALUES (
     'df181470-5dac-4976-a7b8-9e2a1f6dcbd1'::uuid,
@@ -8944,7 +8812,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     7,
-    '2025-08-15 13:44:00'
+    '2024-08-15 13:44:00'
 );
 INSERT INTO SOLD VALUES (
     '66ef335a-34f4-4461-a7a2-8bc6e9be4b86'::uuid,
@@ -8955,7 +8823,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     373,
-    '2025-08-15 11:02:00'
+    '2024-08-15 11:02:00'
 );
 INSERT INTO SOLD VALUES (
     'd27210b3-662c-4994-844e-28c1a4bbf823'::uuid,
@@ -8966,7 +8834,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     8,
-    '2025-08-15 09:35:00'
+    '2024-08-15 09:35:00'
 );
 INSERT INTO SOLD VALUES (
     '13871088-d6ee-4010-a7a9-8925b68361cc'::uuid,
@@ -8977,7 +8845,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     66,
-    '2025-08-15 13:39:00'
+    '2024-08-15 13:39:00'
 );
 INSERT INTO SOLD VALUES (
     '4877bacc-cc84-4319-b455-8107c0ece529'::uuid,
@@ -8988,7 +8856,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     172,
-    '2025-08-16 20:05:00'
+    '2024-08-16 20:05:00'
 );
 INSERT INTO SOLD VALUES (
     '6252b693-3cc0-47a7-a40d-c121529265d8'::uuid,
@@ -8999,7 +8867,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     111,
-    '2025-08-16 18:14:00'
+    '2024-08-16 18:14:00'
 );
 INSERT INTO SOLD VALUES (
     '09e50ed6-b030-4f3a-9064-2d83218abd7d'::uuid,
@@ -9010,7 +8878,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     189,
-    '2025-08-16 16:47:00'
+    '2024-08-16 16:47:00'
 );
 INSERT INTO SOLD VALUES (
     '1853b78f-c682-4b25-a7e7-4f2e9bf34ea0'::uuid,
@@ -9021,7 +8889,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     4,
-    '2025-08-16 14:13:00'
+    '2024-08-16 14:13:00'
 );
 INSERT INTO SOLD VALUES (
     '848e4efb-f03e-4483-9890-ec4c283d44e9'::uuid,
@@ -9032,7 +8900,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     371,
-    '2025-08-16 18:44:00'
+    '2024-08-16 18:44:00'
 );
 INSERT INTO SOLD VALUES (
     '8e1012ad-228b-4686-9b08-b2e8fcb74935'::uuid,
@@ -9043,7 +8911,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     0,
-    '2025-08-16 09:14:00'
+    '2024-08-16 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     'bd722470-a473-43c2-a8b2-5f7e10aeaac9'::uuid,
@@ -9054,7 +8922,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     62,
-    '2025-08-16 20:03:00'
+    '2024-08-16 20:03:00'
 );
 INSERT INTO SOLD VALUES (
     '82304d39-91ee-4357-881e-bff6fe1ce79e'::uuid,
@@ -9065,7 +8933,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     160,
-    '2025-08-17 19:48:00'
+    '2024-08-17 19:48:00'
 );
 INSERT INTO SOLD VALUES (
     '4676c58c-b552-4fa1-abec-b64482730062'::uuid,
@@ -9076,7 +8944,7 @@ INSERT INTO SOLD VALUES (
     21,
     25.0,
     90,
-    '2025-08-17 20:47:00'
+    '2024-08-17 20:47:00'
 );
 INSERT INTO SOLD VALUES (
     '08d4f498-60f4-4cf7-8840-21b0aa300ccb'::uuid,
@@ -9087,7 +8955,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     184,
-    '2025-08-17 20:42:00'
+    '2024-08-17 20:42:00'
 );
 INSERT INTO SOLD VALUES (
     '5eff0b6d-9297-4502-817f-3a3abcd299fb'::uuid,
@@ -9098,7 +8966,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     15,
-    '2025-08-17 12:52:00'
+    '2024-08-17 12:52:00'
 );
 INSERT INTO SOLD VALUES (
     '93a570d9-745f-4be8-95ef-342db5a2e90d'::uuid,
@@ -9109,7 +8977,7 @@ INSERT INTO SOLD VALUES (
     3,
     40.0,
     1,
-    '2025-08-17 11:32:00'
+    '2024-08-17 11:32:00'
 );
 INSERT INTO SOLD VALUES (
     '9a74eabe-7894-4886-aab2-9f4aadc27b23'::uuid,
@@ -9120,7 +8988,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     368,
-    '2025-08-17 18:04:00'
+    '2024-08-17 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     '05c9b7fb-6560-4b64-bea3-2332ad4f716e'::uuid,
@@ -9131,7 +8999,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     58,
-    '2025-08-17 09:45:00'
+    '2024-08-17 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     '1e943dcc-a491-4663-8fc4-8243cb943603'::uuid,
@@ -9142,7 +9010,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     153,
-    '2025-08-18 10:58:00'
+    '2024-08-18 10:58:00'
 );
 INSERT INTO SOLD VALUES (
     'b84c29a1-a457-468a-94c7-31c13939d25f'::uuid,
@@ -9153,7 +9021,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     74,
-    '2025-08-18 12:08:00'
+    '2024-08-18 12:08:00'
 );
 INSERT INTO SOLD VALUES (
     '368b3a25-21be-4002-bd5c-2b74fd6a0434'::uuid,
@@ -9164,7 +9032,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     180,
-    '2025-08-18 15:00:00'
+    '2024-08-18 15:00:00'
 );
 INSERT INTO SOLD VALUES (
     '3de9d4fa-d684-4fe6-b36b-cee421674243'::uuid,
@@ -9175,7 +9043,7 @@ INSERT INTO SOLD VALUES (
     1,
     40.0,
     0,
-    '2025-08-18 11:23:00'
+    '2024-08-18 11:23:00'
 );
 INSERT INTO SOLD VALUES (
     'd8162892-2abe-4063-b369-b01ee6333dcc'::uuid,
@@ -9186,7 +9054,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     366,
-    '2025-08-18 09:21:00'
+    '2024-08-18 09:21:00'
 );
 INSERT INTO SOLD VALUES (
     '6ed5321f-30c2-46aa-aebf-80666634813b'::uuid,
@@ -9197,7 +9065,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     54,
-    '2025-08-18 11:30:00'
+    '2024-08-18 11:30:00'
 );
 INSERT INTO SOLD VALUES (
     '558f6bca-c5e4-45db-b03e-633803f33c70'::uuid,
@@ -9208,7 +9076,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     146,
-    '2025-08-19 11:54:00'
+    '2024-08-19 11:54:00'
 );
 INSERT INTO SOLD VALUES (
     'd440c05c-3c93-447e-8cd0-6f2c62cd86bc'::uuid,
@@ -9219,7 +9087,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     56,
-    '2025-08-19 15:01:00'
+    '2024-08-19 15:01:00'
 );
 INSERT INTO SOLD VALUES (
     '0f7b382f-9564-4036-ab8a-c3ad89c3a97f'::uuid,
@@ -9230,7 +9098,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     176,
-    '2025-08-19 17:03:00'
+    '2024-08-19 17:03:00'
 );
 INSERT INTO SOLD VALUES (
     '5f5dd2b5-5e26-4ece-8253-c4d623284588'::uuid,
@@ -9241,7 +9109,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     13,
-    '2025-08-19 09:48:00'
+    '2024-08-19 09:48:00'
 );
 INSERT INTO SOLD VALUES (
     '9319bb49-812c-47cb-8a53-4242fdb25456'::uuid,
@@ -9252,7 +9120,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     365,
-    '2025-08-19 10:09:00'
+    '2024-08-19 10:09:00'
 );
 INSERT INTO SOLD VALUES (
     '60edfe21-42ad-421a-89ef-0eca4ac4d8c6'::uuid,
@@ -9263,7 +9131,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     51,
-    '2025-08-19 09:43:00'
+    '2024-08-19 09:43:00'
 );
 INSERT INTO SOLD VALUES (
     '99a97e36-9868-4cbb-b4a6-0e4c0a65337c'::uuid,
@@ -9274,7 +9142,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     137,
-    '2025-08-20 16:59:00'
+    '2024-08-20 16:59:00'
 );
 INSERT INTO SOLD VALUES (
     'd2eb9e30-d937-4976-8a87-64358ed58dd2'::uuid,
@@ -9285,7 +9153,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     40,
-    '2025-08-20 16:50:00'
+    '2024-08-20 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     '0ebb1c70-af4c-4ba1-88bc-ab7f675e997c'::uuid,
@@ -9296,7 +9164,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     171,
-    '2025-08-20 11:17:00'
+    '2024-08-20 11:17:00'
 );
 INSERT INTO SOLD VALUES (
     'bd802521-df38-40c4-a675-ec3a05366bf4'::uuid,
@@ -9307,7 +9175,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     194,
-    '2025-08-20 09:23:00'
+    '2024-08-20 09:23:00'
 );
 INSERT INTO SOLD VALUES (
     '658463e1-cf97-4ca2-855e-bdc30d380cc5'::uuid,
@@ -9318,7 +9186,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     12,
-    '2025-08-20 19:24:00'
+    '2024-08-20 19:24:00'
 );
 INSERT INTO SOLD VALUES (
     'd3eb54a8-3080-43af-af3b-01b179b921d0'::uuid,
@@ -9329,7 +9197,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     363,
-    '2025-08-20 11:06:00'
+    '2024-08-20 11:06:00'
 );
 INSERT INTO SOLD VALUES (
     'a2074b82-3651-4faa-b241-1159de61846f'::uuid,
@@ -9340,7 +9208,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     48,
-    '2025-08-20 09:31:00'
+    '2024-08-20 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     '3dc599d5-a31f-4b59-9c1c-278d3c934a97'::uuid,
@@ -9351,7 +9219,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     130,
-    '2025-08-21 10:58:00'
+    '2024-08-21 10:58:00'
 );
 INSERT INTO SOLD VALUES (
     '3bc6d453-39be-48b5-9102-4993156144d1'::uuid,
@@ -9362,7 +9230,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     25,
-    '2025-08-21 18:20:00'
+    '2024-08-21 18:20:00'
 );
 INSERT INTO SOLD VALUES (
     'a6aa619b-00e2-4398-ab7a-1df955cacb66'::uuid,
@@ -9373,7 +9241,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     185,
-    '2025-08-21 14:36:00'
+    '2024-08-21 14:36:00'
 );
 INSERT INTO SOLD VALUES (
     '4d533205-b63e-4b6c-862f-8c90387818e7'::uuid,
@@ -9384,7 +9252,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     11,
-    '2025-08-21 17:54:00'
+    '2024-08-21 17:54:00'
 );
 INSERT INTO SOLD VALUES (
     '90090270-e7e3-4762-ba17-fa59910c0d43'::uuid,
@@ -9395,7 +9263,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     362,
-    '2025-08-21 12:54:00'
+    '2024-08-21 12:54:00'
 );
 INSERT INTO SOLD VALUES (
     '8bd30b73-b30a-4ea9-9d50-8bb4ff4ada54'::uuid,
@@ -9406,7 +9274,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     120,
-    '2025-08-22 19:58:00'
+    '2024-08-22 19:58:00'
 );
 INSERT INTO SOLD VALUES (
     '31b08856-3ab2-49f9-9eef-70c55e22303f'::uuid,
@@ -9417,7 +9285,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     11,
-    '2025-08-22 09:38:00'
+    '2024-08-22 09:38:00'
 );
 INSERT INTO SOLD VALUES (
     'bc575511-12b0-4645-9234-3a607fca28d8'::uuid,
@@ -9428,7 +9296,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     168,
-    '2025-08-22 15:23:00'
+    '2024-08-22 15:23:00'
 );
 INSERT INTO SOLD VALUES (
     'e8ac2e00-0a87-484e-9190-b6aebf710fe9'::uuid,
@@ -9439,7 +9307,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     179,
-    '2025-08-22 14:24:00'
+    '2024-08-22 14:24:00'
 );
 INSERT INTO SOLD VALUES (
     'c758bec1-991b-4858-be28-a22286b700a6'::uuid,
@@ -9450,7 +9318,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     361,
-    '2025-08-22 17:19:00'
+    '2024-08-22 17:19:00'
 );
 INSERT INTO SOLD VALUES (
     '6cad3b5a-42dd-47d4-aa92-fb8770fc12c3'::uuid,
@@ -9461,7 +9329,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     46,
-    '2025-08-22 19:10:00'
+    '2024-08-22 19:10:00'
 );
 INSERT INTO SOLD VALUES (
     '9225a19d-2754-4f8d-8e44-9633fb982e9e'::uuid,
@@ -9472,7 +9340,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     113,
-    '2025-08-23 18:27:00'
+    '2024-08-23 18:27:00'
 );
 INSERT INTO SOLD VALUES (
     '7ac7b924-2943-4e98-83d8-204ef22c9db9'::uuid,
@@ -9483,7 +9351,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     0,
-    '2025-08-23 15:56:00'
+    '2024-08-23 15:56:00'
 );
 INSERT INTO SOLD VALUES (
     'da296c1e-15d2-457e-b359-8c849af7bda2'::uuid,
@@ -9494,7 +9362,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     162,
-    '2025-08-23 15:13:00'
+    '2024-08-23 15:13:00'
 );
 INSERT INTO SOLD VALUES (
     '49c8e2d2-2878-4ac9-ae88-5680323872b9'::uuid,
@@ -9505,7 +9373,7 @@ INSERT INTO SOLD VALUES (
     11,
     15.0,
     168,
-    '2025-08-23 20:07:00'
+    '2024-08-23 20:07:00'
 );
 INSERT INTO SOLD VALUES (
     '8386d77a-195f-401a-8d2c-61c59c00d8d4'::uuid,
@@ -9516,7 +9384,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     10,
-    '2025-08-23 19:31:00'
+    '2024-08-23 19:31:00'
 );
 INSERT INTO SOLD VALUES (
     '98ac5399-7cf5-4a74-b0d5-8ec664972886'::uuid,
@@ -9527,7 +9395,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     358,
-    '2025-08-23 20:56:00'
+    '2024-08-23 20:56:00'
 );
 INSERT INTO SOLD VALUES (
     '39bd5f38-c617-4794-82d7-285361d5ce0a'::uuid,
@@ -9538,7 +9406,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     42,
-    '2025-08-23 11:13:00'
+    '2024-08-23 11:13:00'
 );
 INSERT INTO SOLD VALUES (
     '3e5ff5d7-c930-4c6f-b342-3b2b6cecec2f'::uuid,
@@ -9549,7 +9417,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     104,
-    '2025-08-24 20:14:00'
+    '2024-08-24 20:14:00'
 );
 INSERT INTO SOLD VALUES (
     '75943e96-b03a-4577-aabe-d571243f961c'::uuid,
@@ -9560,7 +9428,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     156,
-    '2025-08-24 18:17:00'
+    '2024-08-24 18:17:00'
 );
 INSERT INTO SOLD VALUES (
     '3ab16665-7c73-4639-94c4-d9929c0eefcf'::uuid,
@@ -9571,7 +9439,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     158,
-    '2025-08-24 09:23:00'
+    '2024-08-24 09:23:00'
 );
 INSERT INTO SOLD VALUES (
     '174db7a2-5bcf-4222-a8a3-7fb91614c6db'::uuid,
@@ -9582,7 +9450,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     8,
-    '2025-08-24 15:53:00'
+    '2024-08-24 15:53:00'
 );
 INSERT INTO SOLD VALUES (
     'c250e69e-e64b-44b8-a0c1-d1fbbe9796ab'::uuid,
@@ -9593,7 +9461,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     356,
-    '2025-08-24 13:32:00'
+    '2024-08-24 13:32:00'
 );
 INSERT INTO SOLD VALUES (
     'd09ed258-d4f1-4fbb-83aa-f873976285eb'::uuid,
@@ -9604,7 +9472,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     38,
-    '2025-08-24 18:34:00'
+    '2024-08-24 18:34:00'
 );
 INSERT INTO SOLD VALUES (
     '6b84e6da-868b-455f-89ce-39f83de2f65d'::uuid,
@@ -9615,7 +9483,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     93,
-    '2025-08-25 09:03:00'
+    '2024-08-25 09:03:00'
 );
 INSERT INTO SOLD VALUES (
     'cfb40074-9bd5-49bc-9f1d-3036757d993b'::uuid,
@@ -9626,7 +9494,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     151,
-    '2025-08-25 19:46:00'
+    '2024-08-25 19:46:00'
 );
 INSERT INTO SOLD VALUES (
     '847be906-b1a5-4c70-b290-6fa64d104d3c'::uuid,
@@ -9637,7 +9505,7 @@ INSERT INTO SOLD VALUES (
     12,
     15.0,
     146,
-    '2025-08-25 09:14:00'
+    '2024-08-25 09:14:00'
 );
 INSERT INTO SOLD VALUES (
     'f8278f05-e332-4ad2-b612-75996930c4f1'::uuid,
@@ -9648,7 +9516,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     355,
-    '2025-08-25 14:12:00'
+    '2024-08-25 14:12:00'
 );
 INSERT INTO SOLD VALUES (
     '321aa58f-0877-406c-92e9-ba182830db63'::uuid,
@@ -9659,7 +9527,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     34,
-    '2025-08-25 20:03:00'
+    '2024-08-25 20:03:00'
 );
 INSERT INTO SOLD VALUES (
     '86030446-1006-469a-bf92-30d7be90ce47'::uuid,
@@ -9670,7 +9538,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     86,
-    '2025-08-26 17:24:00'
+    '2024-08-26 17:24:00'
 );
 INSERT INTO SOLD VALUES (
     'ce8c6c45-b667-49c9-b8a4-47dc8533c98c'::uuid,
@@ -9681,7 +9549,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     146,
-    '2025-08-26 12:40:00'
+    '2024-08-26 12:40:00'
 );
 INSERT INTO SOLD VALUES (
     '04cd21f1-085f-4208-8bbf-879c0db24c4f'::uuid,
@@ -9692,7 +9560,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     137,
-    '2025-08-26 11:15:00'
+    '2024-08-26 11:15:00'
 );
 INSERT INTO SOLD VALUES (
     '5230a9a7-1a20-4351-adb6-126a0d8585ec'::uuid,
@@ -9703,7 +9571,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     7,
-    '2025-08-26 10:32:00'
+    '2024-08-26 10:32:00'
 );
 INSERT INTO SOLD VALUES (
     '408ba3a4-507a-4e7a-9ea5-acb2bc6bd270'::uuid,
@@ -9714,7 +9582,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     353,
-    '2025-08-26 14:09:00'
+    '2024-08-26 14:09:00'
 );
 INSERT INTO SOLD VALUES (
     'd34fbe50-b899-48fe-a3b1-997c09c0343d'::uuid,
@@ -9725,7 +9593,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     382,
-    '2025-08-26 16:40:00'
+    '2024-08-26 16:40:00'
 );
 INSERT INTO SOLD VALUES (
     'acaff67f-b219-4678-996e-038060d9e661'::uuid,
@@ -9736,7 +9604,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     32,
-    '2025-08-26 14:56:00'
+    '2024-08-26 14:56:00'
 );
 INSERT INTO SOLD VALUES (
     '83ea1ed5-c770-47ad-ae07-c84a4b9156ab'::uuid,
@@ -9747,7 +9615,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     80,
-    '2025-08-27 17:25:00'
+    '2024-08-27 17:25:00'
 );
 INSERT INTO SOLD VALUES (
     '3c0d3b82-21f2-4f4f-aee0-7cd511f3d60d'::uuid,
@@ -9758,7 +9626,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     142,
-    '2025-08-27 12:18:00'
+    '2024-08-27 12:18:00'
 );
 INSERT INTO SOLD VALUES (
     'e16ddad6-927f-4ba4-80af-0f39f98107df'::uuid,
@@ -9769,7 +9637,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     131,
-    '2025-08-27 18:40:00'
+    '2024-08-27 18:40:00'
 );
 INSERT INTO SOLD VALUES (
     'b6e9f16d-b13f-4b3e-bf6a-5d558c0928f8'::uuid,
@@ -9780,7 +9648,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     352,
-    '2025-08-27 11:18:00'
+    '2024-08-27 11:18:00'
 );
 INSERT INTO SOLD VALUES (
     '6027f665-fc9d-4b87-86c4-f772143dd7bf'::uuid,
@@ -9791,7 +9659,7 @@ INSERT INTO SOLD VALUES (
     19,
     12.0,
     363,
-    '2025-08-27 17:03:00'
+    '2024-08-27 17:03:00'
 );
 INSERT INTO SOLD VALUES (
     'c6ba3b9e-020d-4009-af12-8e66cafc5017'::uuid,
@@ -9802,7 +9670,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     30,
-    '2025-08-27 17:57:00'
+    '2024-08-27 17:57:00'
 );
 INSERT INTO SOLD VALUES (
     'ca935e4e-2751-46c2-9741-60e6002d898c'::uuid,
@@ -9813,7 +9681,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     71,
-    '2025-08-28 13:46:00'
+    '2024-08-28 13:46:00'
 );
 INSERT INTO SOLD VALUES (
     '3c7bd1f2-9d55-4764-aacc-4ac71ddebd03'::uuid,
@@ -9824,7 +9692,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     137,
-    '2025-08-28 18:49:00'
+    '2024-08-28 18:49:00'
 );
 INSERT INTO SOLD VALUES (
     '1ea5b344-48c0-4a6a-92c3-f1da75b0f389'::uuid,
@@ -9835,7 +9703,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     122,
-    '2025-08-28 13:34:00'
+    '2024-08-28 13:34:00'
 );
 INSERT INTO SOLD VALUES (
     'a513a090-e020-4793-8b2e-eb4677dc418c'::uuid,
@@ -9846,7 +9714,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     6,
-    '2025-08-28 19:43:00'
+    '2024-08-28 19:43:00'
 );
 INSERT INTO SOLD VALUES (
     '5f53cfff-0b04-4dae-8fe7-33cca08b2e84'::uuid,
@@ -9857,7 +9725,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     350,
-    '2025-08-28 15:14:00'
+    '2024-08-28 15:14:00'
 );
 INSERT INTO SOLD VALUES (
     'dd5df970-ea56-4694-b2fa-acfd14ff3b97'::uuid,
@@ -9868,7 +9736,7 @@ INSERT INTO SOLD VALUES (
     14,
     12.0,
     349,
-    '2025-08-28 19:35:00'
+    '2024-08-28 19:35:00'
 );
 INSERT INTO SOLD VALUES (
     '9fc87927-a7c8-4660-9aea-a4dd01920be8'::uuid,
@@ -9879,7 +9747,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     26,
-    '2025-08-28 10:33:00'
+    '2024-08-28 10:33:00'
 );
 INSERT INTO SOLD VALUES (
     '4581c9ea-3fa8-49a3-962b-66b5ad956c7e'::uuid,
@@ -9890,7 +9758,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     62,
-    '2025-08-29 10:26:00'
+    '2024-08-29 10:26:00'
 );
 INSERT INTO SOLD VALUES (
     'ce7f526d-d854-4a4c-84a4-5f77b5fbdd3b'::uuid,
@@ -9901,7 +9769,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     133,
-    '2025-08-29 09:50:00'
+    '2024-08-29 09:50:00'
 );
 INSERT INTO SOLD VALUES (
     'aec0bd26-306d-47ba-b235-d86ad060c92f'::uuid,
@@ -9912,7 +9780,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     115,
-    '2025-08-29 18:14:00'
+    '2024-08-29 18:14:00'
 );
 INSERT INTO SOLD VALUES (
     '898eec28-a0eb-4bdd-9160-8de071d594ec'::uuid,
@@ -9923,7 +9791,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     5,
-    '2025-08-29 13:14:00'
+    '2024-08-29 13:14:00'
 );
 INSERT INTO SOLD VALUES (
     'c85915e9-216d-4bdd-a0fd-12183b910673'::uuid,
@@ -9934,7 +9802,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     349,
-    '2025-08-29 12:48:00'
+    '2024-08-29 12:48:00'
 );
 INSERT INTO SOLD VALUES (
     '01ccba70-dfcf-49a9-a758-53f111cea596'::uuid,
@@ -9945,7 +9813,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     326,
-    '2025-08-29 13:20:00'
+    '2024-08-29 13:20:00'
 );
 INSERT INTO SOLD VALUES (
     '99951a6d-4934-4971-87a4-b76e59838c18'::uuid,
@@ -9956,7 +9824,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     24,
-    '2025-08-29 17:47:00'
+    '2024-08-29 17:47:00'
 );
 INSERT INTO SOLD VALUES (
     'af52485b-d318-4fbc-9925-f1b4db6115c1'::uuid,
@@ -9967,7 +9835,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     55,
-    '2025-08-30 14:11:00'
+    '2024-08-30 14:11:00'
 );
 INSERT INTO SOLD VALUES (
     'a5db8928-9115-471a-a860-95cf9199655d'::uuid,
@@ -9978,7 +9846,7 @@ INSERT INTO SOLD VALUES (
     22,
     25.0,
     278,
-    '2025-08-30 17:38:00'
+    '2024-08-30 17:38:00'
 );
 INSERT INTO SOLD VALUES (
     '93793516-4c16-4c7e-a75e-c3a40287aed4'::uuid,
@@ -9989,7 +9857,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     127,
-    '2025-08-30 12:55:00'
+    '2024-08-30 12:55:00'
 );
 INSERT INTO SOLD VALUES (
     '67863fe4-72e6-48a2-95d8-945d9e1c93b3'::uuid,
@@ -10000,7 +9868,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     113,
-    '2025-08-30 17:35:00'
+    '2024-08-30 17:35:00'
 );
 INSERT INTO SOLD VALUES (
     '6423b4ce-e8ac-4410-b284-70a86ea7d272'::uuid,
@@ -10011,7 +9879,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     4,
-    '2025-08-30 15:13:00'
+    '2024-08-30 15:13:00'
 );
 INSERT INTO SOLD VALUES (
     '0198ae12-9f34-4a83-9e32-1dde6689642d'::uuid,
@@ -10022,7 +9890,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     347,
-    '2025-08-30 12:54:00'
+    '2024-08-30 12:54:00'
 );
 INSERT INTO SOLD VALUES (
     '9c6a8059-2f9a-4fb0-8aa4-4721672b9d59'::uuid,
@@ -10033,7 +9901,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     21,
-    '2025-08-30 17:15:00'
+    '2024-08-30 17:15:00'
 );
 INSERT INTO SOLD VALUES (
     '691e74fc-f3cc-4d5a-8ced-b8aac4f51890'::uuid,
@@ -10044,7 +9912,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     45,
-    '2025-08-31 18:22:00'
+    '2024-08-31 18:22:00'
 );
 INSERT INTO SOLD VALUES (
     'b7b770b5-c99d-43e4-a201-19e721698e47'::uuid,
@@ -10055,7 +9923,7 @@ INSERT INTO SOLD VALUES (
     2,
     25.0,
     276,
-    '2025-08-31 16:27:00'
+    '2024-08-31 16:27:00'
 );
 INSERT INTO SOLD VALUES (
     '733f3e7f-0543-4e31-bac6-d61e9f2c0b59'::uuid,
@@ -10066,7 +9934,7 @@ INSERT INTO SOLD VALUES (
     8,
     30.0,
     119,
-    '2025-08-31 10:16:00'
+    '2024-08-31 10:16:00'
 );
 INSERT INTO SOLD VALUES (
     '6886703b-21bb-4941-aa39-ff28b5a051e3'::uuid,
@@ -10077,7 +9945,7 @@ INSERT INTO SOLD VALUES (
     12,
     15.0,
     101,
-    '2025-08-31 15:17:00'
+    '2024-08-31 15:17:00'
 );
 INSERT INTO SOLD VALUES (
     '31fb4fc0-3e21-4373-a1e3-6f94ebdd2d4a'::uuid,
@@ -10088,7 +9956,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     2,
-    '2025-08-31 17:10:00'
+    '2024-08-31 17:10:00'
 );
 INSERT INTO SOLD VALUES (
     'f56c493c-4ae6-4787-83b2-5d64f3cca97d'::uuid,
@@ -10099,7 +9967,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     345,
-    '2025-08-31 09:13:00'
+    '2024-08-31 09:13:00'
 );
 INSERT INTO SOLD VALUES (
     '7081d1d0-e934-4849-b422-37b9a2a1d5a8'::uuid,
@@ -10110,7 +9978,7 @@ INSERT INTO SOLD VALUES (
     29,
     12.0,
     297,
-    '2025-08-31 16:18:00'
+    '2024-08-31 16:18:00'
 );
 INSERT INTO SOLD VALUES (
     'a6d1c1dc-a782-4c15-8cd6-1b8eb25de20b'::uuid,
@@ -10121,7 +9989,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     17,
-    '2025-08-31 18:50:00'
+    '2024-08-31 18:50:00'
 );
 INSERT INTO SOLD VALUES (
     '74673d23-a4cb-4555-b7d6-3c9ece8d8a0e'::uuid,
@@ -10132,7 +10000,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     35,
-    '2025-09-01 20:23:00'
+    '2024-09-01 20:23:00'
 );
 INSERT INTO SOLD VALUES (
     'e0db7c1f-79c3-45d3-8083-640f725e3676'::uuid,
@@ -10143,7 +10011,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     260,
-    '2025-09-01 18:52:00'
+    '2024-09-01 18:52:00'
 );
 INSERT INTO SOLD VALUES (
     '198c7dcf-4af0-42bc-954a-b8c82e1c8137'::uuid,
@@ -10154,7 +10022,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     113,
-    '2025-09-01 20:11:00'
+    '2024-09-01 20:11:00'
 );
 INSERT INTO SOLD VALUES (
     '3fea36d5-6132-4056-aa24-52b0e1ec5bf0'::uuid,
@@ -10165,7 +10033,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     100,
-    '2025-09-01 17:46:00'
+    '2024-09-01 17:46:00'
 );
 INSERT INTO SOLD VALUES (
     'e454c825-c294-48df-9d01-e4968494ba9b'::uuid,
@@ -10176,7 +10044,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     1,
-    '2025-09-01 14:28:00'
+    '2024-09-01 14:28:00'
 );
 INSERT INTO SOLD VALUES (
     '965a59a5-006f-4673-99a6-25ec45804383'::uuid,
@@ -10187,7 +10055,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     342,
-    '2025-09-01 19:27:00'
+    '2024-09-01 19:27:00'
 );
 INSERT INTO SOLD VALUES (
     '36d38b1f-930d-49c9-bc27-0ab211be1aee'::uuid,
@@ -10198,7 +10066,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     277,
-    '2025-09-01 12:16:00'
+    '2024-09-01 12:16:00'
 );
 INSERT INTO SOLD VALUES (
     'a7578476-4eaf-4474-93dc-e89bd973248c'::uuid,
@@ -10209,7 +10077,7 @@ INSERT INTO SOLD VALUES (
     4,
     15.0,
     13,
-    '2025-09-01 15:22:00'
+    '2024-09-01 15:22:00'
 );
 INSERT INTO SOLD VALUES (
     '5192ab4e-df03-4b0a-bfa7-838101b7ca9b'::uuid,
@@ -10220,7 +10088,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     28,
-    '2025-09-02 16:36:00'
+    '2024-09-02 16:36:00'
 );
 INSERT INTO SOLD VALUES (
     '34b0b858-a44c-4d0a-a419-ce428cfe2c21'::uuid,
@@ -10231,7 +10099,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     247,
-    '2025-09-02 10:46:00'
+    '2024-09-02 10:46:00'
 );
 INSERT INTO SOLD VALUES (
     '71625fb3-3903-447f-b84f-906e004f9c18'::uuid,
@@ -10242,7 +10110,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     108,
-    '2025-09-02 11:25:00'
+    '2024-09-02 11:25:00'
 );
 INSERT INTO SOLD VALUES (
     '56cd40a2-62c3-4386-bf9c-30386d579721'::uuid,
@@ -10253,7 +10121,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     91,
-    '2025-09-02 13:18:00'
+    '2024-09-02 13:18:00'
 );
 INSERT INTO SOLD VALUES (
     '85f0c788-5d78-418c-9aac-a20e54c0c128'::uuid,
@@ -10264,7 +10132,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     0,
-    '2025-09-02 18:31:00'
+    '2024-09-02 18:31:00'
 );
 INSERT INTO SOLD VALUES (
     'e0124d7b-5c2f-4868-af99-c3fea8732315'::uuid,
@@ -10275,7 +10143,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     340,
-    '2025-09-02 14:48:00'
+    '2024-09-02 14:48:00'
 );
 INSERT INTO SOLD VALUES (
     '38975ae8-3b05-4459-be98-0d4258212d99'::uuid,
@@ -10286,7 +10154,7 @@ INSERT INTO SOLD VALUES (
     16,
     12.0,
     261,
-    '2025-09-02 13:57:00'
+    '2024-09-02 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     'd1b3cca8-6a27-4cd5-8634-5f95fb0e9528'::uuid,
@@ -10297,7 +10165,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     11,
-    '2025-09-02 19:18:00'
+    '2024-09-02 19:18:00'
 );
 INSERT INTO SOLD VALUES (
     'ac015864-07b3-46eb-ad0f-b917d2b748d9'::uuid,
@@ -10308,7 +10176,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     22,
-    '2025-09-03 17:02:00'
+    '2024-09-03 17:02:00'
 );
 INSERT INTO SOLD VALUES (
     '1c199531-7aa6-4376-b911-1521c54436fd'::uuid,
@@ -10319,7 +10187,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     236,
-    '2025-09-03 17:17:00'
+    '2024-09-03 17:17:00'
 );
 INSERT INTO SOLD VALUES (
     '7b2b6494-e854-456e-890b-d9020e85d9e2'::uuid,
@@ -10330,7 +10198,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     103,
-    '2025-09-03 12:47:00'
+    '2024-09-03 12:47:00'
 );
 INSERT INTO SOLD VALUES (
     '12306ab6-dcfa-4ce5-9662-5f6f19f5a6bf'::uuid,
@@ -10341,7 +10209,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     83,
-    '2025-09-03 18:15:00'
+    '2024-09-03 18:15:00'
 );
 INSERT INTO SOLD VALUES (
     '78936401-3d1c-481c-b04c-51a6ea584583'::uuid,
@@ -10352,7 +10220,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     339,
-    '2025-09-03 20:46:00'
+    '2024-09-03 20:46:00'
 );
 INSERT INTO SOLD VALUES (
     '0c8201e8-e73a-4ae7-870e-6f7e727cad60'::uuid,
@@ -10363,7 +10231,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     240,
-    '2025-09-03 14:07:00'
+    '2024-09-03 14:07:00'
 );
 INSERT INTO SOLD VALUES (
     '8581f6fb-3b86-478d-8317-4e970a421af1'::uuid,
@@ -10374,7 +10242,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     9,
-    '2025-09-03 20:10:00'
+    '2024-09-03 20:10:00'
 );
 INSERT INTO SOLD VALUES (
     'f9c4db1d-1f32-4353-9ab6-6de068b898ce'::uuid,
@@ -10385,7 +10253,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     15,
-    '2025-09-04 17:19:00'
+    '2024-09-04 17:19:00'
 );
 INSERT INTO SOLD VALUES (
     '794d9612-b01d-468c-af29-c90c23d80f2f'::uuid,
@@ -10396,7 +10264,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     225,
-    '2025-09-04 17:29:00'
+    '2024-09-04 17:29:00'
 );
 INSERT INTO SOLD VALUES (
     '47e84447-3443-42d6-8bb5-b53660754dc3'::uuid,
@@ -10407,7 +10275,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     99,
-    '2025-09-04 10:56:00'
+    '2024-09-04 10:56:00'
 );
 INSERT INTO SOLD VALUES (
     'e0508f50-7304-47f5-9db5-d1fc770d8b2b'::uuid,
@@ -10418,7 +10286,7 @@ INSERT INTO SOLD VALUES (
     6,
     15.0,
     77,
-    '2025-09-04 14:11:00'
+    '2024-09-04 14:11:00'
 );
 INSERT INTO SOLD VALUES (
     'ea9ba992-256a-4475-89e6-a6b4078d41fa'::uuid,
@@ -10429,7 +10297,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     338,
-    '2025-09-04 12:25:00'
+    '2024-09-04 12:25:00'
 );
 INSERT INTO SOLD VALUES (
     'b5717ed1-9280-4c75-8687-f6e6230aaf5b'::uuid,
@@ -10440,7 +10308,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     239,
-    '2025-09-04 17:56:00'
+    '2024-09-04 17:56:00'
 );
 INSERT INTO SOLD VALUES (
     '426cc619-5ebc-40f4-a104-e543719a802b'::uuid,
@@ -10451,7 +10319,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     6,
-    '2025-09-04 20:47:00'
+    '2024-09-04 20:47:00'
 );
 INSERT INTO SOLD VALUES (
     '99c5b17b-8865-4f1c-ace1-f6c16bca91fa'::uuid,
@@ -10462,7 +10330,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     6,
-    '2025-09-05 12:59:00'
+    '2024-09-05 12:59:00'
 );
 INSERT INTO SOLD VALUES (
     'dab3e0c9-5ca8-4ad6-a11b-11e045246b24'::uuid,
@@ -10473,7 +10341,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     207,
-    '2025-09-05 11:41:00'
+    '2024-09-05 11:41:00'
 );
 INSERT INTO SOLD VALUES (
     '758f4641-91d4-4e5c-81a8-b1a0a1a1e5fb'::uuid,
@@ -10484,7 +10352,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     95,
-    '2025-09-05 09:29:00'
+    '2024-09-05 09:29:00'
 );
 INSERT INTO SOLD VALUES (
     '18f3b9e8-aef1-4625-a7a9-d8f37e62ce83'::uuid,
@@ -10495,7 +10363,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     75,
-    '2025-09-05 10:15:00'
+    '2024-09-05 10:15:00'
 );
 INSERT INTO SOLD VALUES (
     'a5898181-4d15-4e98-b800-c4a251ffd7f6'::uuid,
@@ -10506,7 +10374,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     336,
-    '2025-09-05 16:44:00'
+    '2024-09-05 16:44:00'
 );
 INSERT INTO SOLD VALUES (
     '4a68e5ea-ad05-444c-b765-d2ee3cc593f3'::uuid,
@@ -10517,7 +10385,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     215,
-    '2025-09-05 14:20:00'
+    '2024-09-05 14:20:00'
 );
 INSERT INTO SOLD VALUES (
     'cebb0a86-0825-4b0b-bc7c-b4967fc98c98'::uuid,
@@ -10528,7 +10396,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     468,
-    '2025-09-05 18:59:00'
+    '2024-09-05 18:59:00'
 );
 INSERT INTO SOLD VALUES (
     '5821d516-72f3-47e7-bad7-08fb9bd08e96'::uuid,
@@ -10539,7 +10407,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     3,
-    '2025-09-05 12:44:00'
+    '2024-09-05 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     'f852794f-d21b-4e8e-8569-0d144c2cc715'::uuid,
@@ -10550,7 +10418,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     0,
-    '2025-09-06 09:30:00'
+    '2024-09-06 09:30:00'
 );
 INSERT INTO SOLD VALUES (
     'bdecf533-9970-4073-9c8b-921d76b68ad3'::uuid,
@@ -10561,7 +10429,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     183,
-    '2025-09-06 15:13:00'
+    '2024-09-06 15:13:00'
 );
 INSERT INTO SOLD VALUES (
     '7769bb19-5e39-43cb-b4fa-d6d10773b907'::uuid,
@@ -10572,7 +10440,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     88,
-    '2025-09-06 10:03:00'
+    '2024-09-06 10:03:00'
 );
 INSERT INTO SOLD VALUES (
     '5dad4a09-170a-4bf8-b4d3-2ccb870d798a'::uuid,
@@ -10583,7 +10451,7 @@ INSERT INTO SOLD VALUES (
     8,
     15.0,
     67,
-    '2025-09-06 20:48:00'
+    '2024-09-06 20:48:00'
 );
 INSERT INTO SOLD VALUES (
     '7f24f196-debf-4d08-8e7b-0b4cd1e44475'::uuid,
@@ -10594,7 +10462,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     334,
-    '2025-09-06 09:54:00'
+    '2024-09-06 09:54:00'
 );
 INSERT INTO SOLD VALUES (
     '05246ecf-ecc1-4151-b1c2-ab80d69bea1c'::uuid,
@@ -10605,7 +10473,7 @@ INSERT INTO SOLD VALUES (
     31,
     12.0,
     184,
-    '2025-09-06 09:16:00'
+    '2024-09-06 09:16:00'
 );
 INSERT INTO SOLD VALUES (
     '3d2bf649-8a33-46a2-bf20-3d8efdae3cf0'::uuid,
@@ -10616,7 +10484,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     457,
-    '2025-09-06 15:24:00'
+    '2024-09-06 15:24:00'
 );
 INSERT INTO SOLD VALUES (
     '52a5b429-20be-478a-91c6-4802757c30d7'::uuid,
@@ -10627,7 +10495,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     0,
-    '2025-09-06 12:22:00'
+    '2024-09-06 12:22:00'
 );
 INSERT INTO SOLD VALUES (
     '26f7d57b-2ac5-4508-8e02-3af726ec8629'::uuid,
@@ -10638,7 +10506,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     168,
-    '2025-09-07 09:29:00'
+    '2024-09-07 09:29:00'
 );
 INSERT INTO SOLD VALUES (
     'd68d1e67-6845-49da-8013-2647f1a526e1'::uuid,
@@ -10649,7 +10517,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     82,
-    '2025-09-07 20:48:00'
+    '2024-09-07 20:48:00'
 );
 INSERT INTO SOLD VALUES (
     '7cda127c-5347-4e8b-8304-445a4b36a89d'::uuid,
@@ -10660,7 +10528,7 @@ INSERT INTO SOLD VALUES (
     11,
     15.0,
     56,
-    '2025-09-07 12:01:00'
+    '2024-09-07 12:01:00'
 );
 INSERT INTO SOLD VALUES (
     'b7c315a9-3a97-4617-988a-5453041902de'::uuid,
@@ -10671,7 +10539,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     331,
-    '2025-09-07 19:47:00'
+    '2024-09-07 19:47:00'
 );
 INSERT INTO SOLD VALUES (
     'd67ad85c-c608-402b-a474-7f105d3d7789'::uuid,
@@ -10682,7 +10550,7 @@ INSERT INTO SOLD VALUES (
     30,
     12.0,
     154,
-    '2025-09-07 17:55:00'
+    '2024-09-07 17:55:00'
 );
 INSERT INTO SOLD VALUES (
     '55553a43-63fd-4c47-bbe0-88db4cbd939b'::uuid,
@@ -10693,7 +10561,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     441,
-    '2025-09-07 18:24:00'
+    '2024-09-07 18:24:00'
 );
 INSERT INTO SOLD VALUES (
     '97b5a8aa-ee59-494c-8e22-24c6bb4ead01'::uuid,
@@ -10704,7 +10572,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     199,
-    '2025-09-08 13:47:00'
+    '2024-09-08 13:47:00'
 );
 INSERT INTO SOLD VALUES (
     'ee30e26c-ad5a-4a26-bf77-be820b09fd94'::uuid,
@@ -10715,7 +10583,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     149,
-    '2025-09-08 14:56:00'
+    '2024-09-08 14:56:00'
 );
 INSERT INTO SOLD VALUES (
     '86e1d02d-d1b8-4f37-8fc1-45f520155e6f'::uuid,
@@ -10726,7 +10594,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     77,
-    '2025-09-08 12:20:00'
+    '2024-09-08 12:20:00'
 );
 INSERT INTO SOLD VALUES (
     '4c5c18ec-89ff-4df7-bc26-112bb6e689a2'::uuid,
@@ -10737,7 +10605,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     329,
-    '2025-09-08 12:37:00'
+    '2024-09-08 12:37:00'
 );
 INSERT INTO SOLD VALUES (
     '261fb443-c1a0-4c96-90a2-6b391fa8419c'::uuid,
@@ -10748,7 +10616,7 @@ INSERT INTO SOLD VALUES (
     26,
     12.0,
     128,
-    '2025-09-08 16:04:00'
+    '2024-09-08 16:04:00'
 );
 INSERT INTO SOLD VALUES (
     'd873c20a-111e-4702-ab8b-a804f5ca41ef'::uuid,
@@ -10759,7 +10627,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     426,
-    '2025-09-08 14:28:00'
+    '2024-09-08 14:28:00'
 );
 INSERT INTO SOLD VALUES (
     '6b61b992-8b79-4429-bf42-24c0580abba8'::uuid,
@@ -10770,7 +10638,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     192,
-    '2025-09-09 20:55:00'
+    '2024-09-09 20:55:00'
 );
 INSERT INTO SOLD VALUES (
     'ad813785-3a7a-49e1-971f-7021cefb214f'::uuid,
@@ -10781,7 +10649,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     135,
-    '2025-09-09 17:04:00'
+    '2024-09-09 17:04:00'
 );
 INSERT INTO SOLD VALUES (
     '2298ad32-6a00-4f11-9bbf-639f8e42b2a8'::uuid,
@@ -10792,7 +10660,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     72,
-    '2025-09-09 13:41:00'
+    '2024-09-09 13:41:00'
 );
 INSERT INTO SOLD VALUES (
     'ee0ee292-ac4e-4a1c-bac4-4a798e77da09'::uuid,
@@ -10803,7 +10671,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     46,
-    '2025-09-09 14:03:00'
+    '2024-09-09 14:03:00'
 );
 INSERT INTO SOLD VALUES (
     'd728c1fb-a1f8-4ee2-8e0b-2358f3f92f46'::uuid,
@@ -10814,7 +10682,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     328,
-    '2025-09-09 20:05:00'
+    '2024-09-09 20:05:00'
 );
 INSERT INTO SOLD VALUES (
     '1a7fd04f-5d38-4be0-8afe-4c96ad8a09b1'::uuid,
@@ -10825,7 +10693,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     110,
-    '2025-09-09 20:45:00'
+    '2024-09-09 20:45:00'
 );
 INSERT INTO SOLD VALUES (
     'c0469906-0229-45b5-ac3e-5efd9c49ae40'::uuid,
@@ -10836,7 +10704,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     418,
-    '2025-09-09 17:04:00'
+    '2024-09-09 17:04:00'
 );
 INSERT INTO SOLD VALUES (
     '7e9629cf-4321-459b-b795-5443c60f65a7'::uuid,
@@ -10847,7 +10715,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     186,
-    '2025-09-10 09:57:00'
+    '2024-09-10 09:57:00'
 );
 INSERT INTO SOLD VALUES (
     '5eaaa369-a178-46ad-8c77-6416c8e27e41'::uuid,
@@ -10858,7 +10726,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     117,
-    '2025-09-10 11:44:00'
+    '2024-09-10 11:44:00'
 );
 INSERT INTO SOLD VALUES (
     '440e1060-b371-4bbe-8e01-c0f0edaaf817'::uuid,
@@ -10869,7 +10737,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     66,
-    '2025-09-10 13:14:00'
+    '2024-09-10 13:14:00'
 );
 INSERT INTO SOLD VALUES (
     'eb075ab8-dcce-4ce4-9993-928d39cfc270'::uuid,
@@ -10880,7 +10748,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     44,
-    '2025-09-10 13:09:00'
+    '2024-09-10 13:09:00'
 );
 INSERT INTO SOLD VALUES (
     '6e075f9d-b7fc-4b83-8d8f-38d8ade4425b'::uuid,
@@ -10891,7 +10759,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     327,
-    '2025-09-10 17:21:00'
+    '2024-09-10 17:21:00'
 );
 INSERT INTO SOLD VALUES (
     '0feff782-66fb-450b-bbaf-d265276c7fde'::uuid,
@@ -10902,7 +10770,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     95,
-    '2025-09-10 13:51:00'
+    '2024-09-10 13:51:00'
 );
 INSERT INTO SOLD VALUES (
     'bed7365d-a2a3-4f47-a87b-6613bb71e4aa'::uuid,
@@ -10913,7 +10781,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     408,
-    '2025-09-10 11:21:00'
+    '2024-09-10 11:21:00'
 );
 INSERT INTO SOLD VALUES (
     '5245f9bf-8421-4ae4-8661-a0c2f254f3dd'::uuid,
@@ -10924,7 +10792,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     180,
-    '2025-09-11 14:57:00'
+    '2024-09-11 14:57:00'
 );
 INSERT INTO SOLD VALUES (
     'e02e52a7-4bf1-4ac5-9d25-f8db0c1a7960'::uuid,
@@ -10935,7 +10803,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     100,
-    '2025-09-11 17:32:00'
+    '2024-09-11 17:32:00'
 );
 INSERT INTO SOLD VALUES (
     '7a021f3f-4b68-4bc4-95f9-36119e051c5f'::uuid,
@@ -10946,7 +10814,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     61,
-    '2025-09-11 17:00:00'
+    '2024-09-11 17:00:00'
 );
 INSERT INTO SOLD VALUES (
     '6d74f432-a488-4f43-8af2-4ccf6c881f2e'::uuid,
@@ -10957,7 +10825,7 @@ INSERT INTO SOLD VALUES (
     10,
     15.0,
     34,
-    '2025-09-11 19:06:00'
+    '2024-09-11 19:06:00'
 );
 INSERT INTO SOLD VALUES (
     '497ac8ea-3a46-492f-85e5-8b8a9cd79e03'::uuid,
@@ -10968,7 +10836,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     325,
-    '2025-09-11 17:25:00'
+    '2024-09-11 17:25:00'
 );
 INSERT INTO SOLD VALUES (
     '07ef63f3-70b3-4ffd-9536-9c6ce267efea'::uuid,
@@ -10979,7 +10847,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     80,
-    '2025-09-11 10:32:00'
+    '2024-09-11 10:32:00'
 );
 INSERT INTO SOLD VALUES (
     'ff62801e-3166-49ca-93ce-f52cb574d272'::uuid,
@@ -10990,7 +10858,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     398,
-    '2025-09-11 17:07:00'
+    '2024-09-11 17:07:00'
 );
 INSERT INTO SOLD VALUES (
     'a2157b91-d341-4480-9886-73189e8ea653'::uuid,
@@ -11001,7 +10869,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     171,
-    '2025-09-12 11:44:00'
+    '2024-09-12 11:44:00'
 );
 INSERT INTO SOLD VALUES (
     '64b21203-da4b-4098-88a5-32ece7ce708f'::uuid,
@@ -11012,7 +10880,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     87,
-    '2025-09-12 14:25:00'
+    '2024-09-12 14:25:00'
 );
 INSERT INTO SOLD VALUES (
     '7fa9833c-d547-4528-88df-90f0a026618f'::uuid,
@@ -11023,7 +10891,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     57,
-    '2025-09-12 14:34:00'
+    '2024-09-12 14:34:00'
 );
 INSERT INTO SOLD VALUES (
     '2a1cb8ab-f668-48e9-9434-9ed32831042a'::uuid,
@@ -11034,7 +10902,7 @@ INSERT INTO SOLD VALUES (
     7,
     15.0,
     27,
-    '2025-09-12 20:36:00'
+    '2024-09-12 20:36:00'
 );
 INSERT INTO SOLD VALUES (
     'bf2659f4-2e44-4a49-9b3d-c3657d83d9de'::uuid,
@@ -11045,7 +10913,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     323,
-    '2025-09-12 18:29:00'
+    '2024-09-12 18:29:00'
 );
 INSERT INTO SOLD VALUES (
     '09b1b812-5f4b-4664-b34b-a66850969c05'::uuid,
@@ -11056,7 +10924,7 @@ INSERT INTO SOLD VALUES (
     19,
     12.0,
     61,
-    '2025-09-12 09:11:00'
+    '2024-09-12 09:11:00'
 );
 INSERT INTO SOLD VALUES (
     '9279eee4-2498-4ec8-ab3c-77fbebd8ac10'::uuid,
@@ -11067,7 +10935,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     159,
-    '2025-09-13 16:28:00'
+    '2024-09-13 16:28:00'
 );
 INSERT INTO SOLD VALUES (
     'bdf55651-9070-41a3-8be9-419ff5660b5e'::uuid,
@@ -11078,7 +10946,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     70,
-    '2025-09-13 09:27:00'
+    '2024-09-13 09:27:00'
 );
 INSERT INTO SOLD VALUES (
     '038e6786-460c-4e80-a4b3-e174a0554b7b'::uuid,
@@ -11089,7 +10957,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     55,
-    '2025-09-13 09:10:00'
+    '2024-09-13 09:10:00'
 );
 INSERT INTO SOLD VALUES (
     'c2cd2f77-34aa-452c-bdd1-a8934e47a5a8'::uuid,
@@ -11100,7 +10968,7 @@ INSERT INTO SOLD VALUES (
     9,
     15.0,
     18,
-    '2025-09-13 18:05:00'
+    '2024-09-13 18:05:00'
 );
 INSERT INTO SOLD VALUES (
     'b1cecb22-4a98-4a45-b3e9-72a10da8bd9d'::uuid,
@@ -11111,7 +10979,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     321,
-    '2025-09-13 10:58:00'
+    '2024-09-13 10:58:00'
 );
 INSERT INTO SOLD VALUES (
     '15fb6117-4aaa-47c4-9d91-6a9595a895d0'::uuid,
@@ -11122,7 +10990,7 @@ INSERT INTO SOLD VALUES (
     33,
     12.0,
     28,
-    '2025-09-13 15:43:00'
+    '2024-09-13 15:43:00'
 );
 INSERT INTO SOLD VALUES (
     'bab48bff-8701-4226-8594-3bf7ee0ec191'::uuid,
@@ -11133,7 +11001,7 @@ INSERT INTO SOLD VALUES (
     19,
     8.0,
     379,
-    '2025-09-13 18:56:00'
+    '2024-09-13 18:56:00'
 );
 INSERT INTO SOLD VALUES (
     '9f573e8f-0e45-419e-b988-1175148459a9'::uuid,
@@ -11144,7 +11012,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     150,
-    '2025-09-14 16:23:00'
+    '2024-09-14 16:23:00'
 );
 INSERT INTO SOLD VALUES (
     'edf21f12-e0ad-48b6-afcf-8751670410f4'::uuid,
@@ -11155,7 +11023,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     56,
-    '2025-09-14 19:04:00'
+    '2024-09-14 19:04:00'
 );
 INSERT INTO SOLD VALUES (
     '109b85c0-b3d9-4935-adb6-1360ed3de67e'::uuid,
@@ -11166,7 +11034,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     48,
-    '2025-09-14 18:30:00'
+    '2024-09-14 18:30:00'
 );
 INSERT INTO SOLD VALUES (
     '7f37e60f-01ae-4035-88d3-cb9238002bea'::uuid,
@@ -11177,7 +11045,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     318,
-    '2025-09-14 15:30:00'
+    '2024-09-14 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     '5ea5e46a-205f-4fb6-8904-2f8587a87d54'::uuid,
@@ -11188,7 +11056,7 @@ INSERT INTO SOLD VALUES (
     28,
     12.0,
     0,
-    '2025-09-14 09:23:00'
+    '2024-09-14 09:23:00'
 );
 INSERT INTO SOLD VALUES (
     '160f08ac-479d-4d1a-9f40-b702a20f6f13'::uuid,
@@ -11199,7 +11067,7 @@ INSERT INTO SOLD VALUES (
     18,
     8.0,
     361,
-    '2025-09-14 17:47:00'
+    '2024-09-14 17:47:00'
 );
 INSERT INTO SOLD VALUES (
     'b58425c4-9ea0-4e3f-b60b-2d83b7b8dda7'::uuid,
@@ -11210,7 +11078,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     138,
-    '2025-09-15 16:17:00'
+    '2024-09-15 16:17:00'
 );
 INSERT INTO SOLD VALUES (
     'ef942ca8-4370-43e7-8bdc-e6f41f484502'::uuid,
@@ -11221,7 +11089,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     38,
-    '2025-09-15 10:38:00'
+    '2024-09-15 10:38:00'
 );
 INSERT INTO SOLD VALUES (
     '389a6f1b-ee6f-4e05-b792-42d5bbc3c1a9'::uuid,
@@ -11232,7 +11100,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     43,
-    '2025-09-15 10:29:00'
+    '2024-09-15 10:29:00'
 );
 INSERT INTO SOLD VALUES (
     '0075e395-2578-4456-ad01-8aaa52c58d9e'::uuid,
@@ -11243,7 +11111,7 @@ INSERT INTO SOLD VALUES (
     13,
     15.0,
     5,
-    '2025-09-15 14:46:00'
+    '2024-09-15 14:46:00'
 );
 INSERT INTO SOLD VALUES (
     '06cd5338-181b-48dd-ab4f-1da77d13324e'::uuid,
@@ -11254,7 +11122,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     59,
-    '2025-09-15 10:31:00'
+    '2024-09-15 10:31:00'
 );
 INSERT INTO SOLD VALUES (
     '5a4812c3-309c-4f45-9725-be8e32c70c46'::uuid,
@@ -11265,7 +11133,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     317,
-    '2025-09-15 09:28:00'
+    '2024-09-15 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     '432cfb5d-3526-4545-8fd8-bd590d438e31'::uuid,
@@ -11276,7 +11144,7 @@ INSERT INTO SOLD VALUES (
     18,
     8.0,
     343,
-    '2025-09-15 16:27:00'
+    '2024-09-15 16:27:00'
 );
 INSERT INTO SOLD VALUES (
     'f89c5a91-dff8-43ae-a73a-81c6cffba910'::uuid,
@@ -11287,7 +11155,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     168,
-    '2025-09-15 18:42:00'
+    '2024-09-15 18:42:00'
 );
 INSERT INTO SOLD VALUES (
     'bfa318bf-2bf6-4d75-85ba-f55f1efeef5c'::uuid,
@@ -11298,7 +11166,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     132,
-    '2025-09-16 20:50:00'
+    '2024-09-16 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     'd4190d62-80e6-4ba1-bafe-abc88f5723c2'::uuid,
@@ -11309,7 +11177,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     24,
-    '2025-09-16 10:02:00'
+    '2024-09-16 10:02:00'
 );
 INSERT INTO SOLD VALUES (
     '3db73a22-7c96-43b5-a3c6-10d64f44e97f'::uuid,
@@ -11320,7 +11188,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     39,
-    '2025-09-16 19:10:00'
+    '2024-09-16 19:10:00'
 );
 INSERT INTO SOLD VALUES (
     '811b3571-1b33-4dd8-8fff-2043ef3de779'::uuid,
@@ -11331,7 +11199,7 @@ INSERT INTO SOLD VALUES (
     5,
     15.0,
     0,
-    '2025-09-16 17:00:00'
+    '2024-09-16 17:00:00'
 );
 INSERT INTO SOLD VALUES (
     '6559a44b-36bb-4cc1-9610-acf5a3ce4f46'::uuid,
@@ -11342,7 +11210,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     58,
-    '2025-09-16 11:18:00'
+    '2024-09-16 11:18:00'
 );
 INSERT INTO SOLD VALUES (
     '4ddb8f5f-5f0a-4938-a154-ea42b61aed25'::uuid,
@@ -11353,7 +11221,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     316,
-    '2025-09-16 09:17:00'
+    '2024-09-16 09:17:00'
 );
 INSERT INTO SOLD VALUES (
     'd2673d0c-e634-42c9-9355-168ec6ee88b5'::uuid,
@@ -11364,7 +11232,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     335,
-    '2025-09-16 10:46:00'
+    '2024-09-16 10:46:00'
 );
 INSERT INTO SOLD VALUES (
     'c3cfed63-2b1b-4f4c-b2c1-df570155d64a'::uuid,
@@ -11375,7 +11243,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     160,
-    '2025-09-16 16:49:00'
+    '2024-09-16 16:49:00'
 );
 INSERT INTO SOLD VALUES (
     'cc59bb17-52d3-4f69-a89d-5023cd22f472'::uuid,
@@ -11386,7 +11254,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     131,
-    '2025-09-17 19:01:00'
+    '2024-09-17 19:01:00'
 );
 INSERT INTO SOLD VALUES (
     '61ab256b-7db9-41f3-bb2e-5861d9fae98e'::uuid,
@@ -11397,7 +11265,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     9,
-    '2025-09-17 10:46:00'
+    '2024-09-17 10:46:00'
 );
 INSERT INTO SOLD VALUES (
     '4a285c87-a9b4-4274-8ed1-927af3a12e8a'::uuid,
@@ -11408,7 +11276,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     35,
-    '2025-09-17 12:27:00'
+    '2024-09-17 12:27:00'
 );
 INSERT INTO SOLD VALUES (
     '522bf34e-da23-47dd-bbed-7c32836f8102'::uuid,
@@ -11419,7 +11287,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     315,
-    '2025-09-17 14:10:00'
+    '2024-09-17 14:10:00'
 );
 INSERT INTO SOLD VALUES (
     'a11cf24d-403a-4e2a-abc7-1c74c1997043'::uuid,
@@ -11430,7 +11298,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     326,
-    '2025-09-17 17:34:00'
+    '2024-09-17 17:34:00'
 );
 INSERT INTO SOLD VALUES (
     '9bbe230d-ff31-4bee-8845-97ba5efa62b7'::uuid,
@@ -11441,7 +11309,7 @@ INSERT INTO SOLD VALUES (
     2,
     10.0,
     158,
-    '2025-09-17 14:10:00'
+    '2024-09-17 14:10:00'
 );
 INSERT INTO SOLD VALUES (
     '14a35a88-0942-4bc0-b6dc-648b97249259'::uuid,
@@ -11452,7 +11320,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     123,
-    '2025-09-18 18:58:00'
+    '2024-09-18 18:58:00'
 );
 INSERT INTO SOLD VALUES (
     'b893ad49-1791-4a43-8d65-258b190c23d5'::uuid,
@@ -11463,7 +11331,7 @@ INSERT INTO SOLD VALUES (
     9,
     25.0,
     0,
-    '2025-09-18 15:33:00'
+    '2024-09-18 15:33:00'
 );
 INSERT INTO SOLD VALUES (
     'e6c4e95b-927b-4cec-9364-b14b66111295'::uuid,
@@ -11474,7 +11342,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     30,
-    '2025-09-18 09:46:00'
+    '2024-09-18 09:46:00'
 );
 INSERT INTO SOLD VALUES (
     'be154549-ca6a-46ba-bc47-9e3381be9d26'::uuid,
@@ -11485,7 +11353,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     313,
-    '2025-09-18 17:41:00'
+    '2024-09-18 17:41:00'
 );
 INSERT INTO SOLD VALUES (
     'a28b9ed7-1f40-439c-823b-2e77c25a628e'::uuid,
@@ -11496,7 +11364,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     318,
-    '2025-09-18 11:30:00'
+    '2024-09-18 11:30:00'
 );
 INSERT INTO SOLD VALUES (
     '89337651-056c-4395-b2b0-fa76c499e0a2'::uuid,
@@ -11507,7 +11375,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     150,
-    '2025-09-18 13:18:00'
+    '2024-09-18 13:18:00'
 );
 INSERT INTO SOLD VALUES (
     'b86a3393-30f6-4e95-b053-6aff788905e8'::uuid,
@@ -11518,7 +11386,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     121,
-    '2025-09-19 18:13:00'
+    '2024-09-19 18:13:00'
 );
 INSERT INTO SOLD VALUES (
     'd352db26-d35b-4cb8-a602-581783b9fb5d'::uuid,
@@ -11529,7 +11397,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     26,
-    '2025-09-19 09:53:00'
+    '2024-09-19 09:53:00'
 );
 INSERT INTO SOLD VALUES (
     '4949fa01-c6e2-4b46-a03f-c3a7b87e5240'::uuid,
@@ -11540,7 +11408,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     311,
-    '2025-09-19 17:38:00'
+    '2024-09-19 17:38:00'
 );
 INSERT INTO SOLD VALUES (
     'f16f5f44-c13d-46dc-99d0-b12a07dae5cb'::uuid,
@@ -11551,7 +11419,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     308,
-    '2025-09-19 15:16:00'
+    '2024-09-19 15:16:00'
 );
 INSERT INTO SOLD VALUES (
     'e5c4464b-19b7-4658-b60c-3ae4943570da'::uuid,
@@ -11562,7 +11430,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     143,
-    '2025-09-19 16:24:00'
+    '2024-09-19 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     '9c1c712d-1db9-4c61-ae29-a73d8ee1def4'::uuid,
@@ -11573,7 +11441,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     112,
-    '2025-09-20 19:18:00'
+    '2024-09-20 19:18:00'
 );
 INSERT INTO SOLD VALUES (
     '5b6de889-e3ab-4a4d-9883-7d86e356fa65'::uuid,
@@ -11584,7 +11452,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     21,
-    '2025-09-20 19:50:00'
+    '2024-09-20 19:50:00'
 );
 INSERT INTO SOLD VALUES (
     '1ba72723-8e0f-41b2-9a1e-019b89a853cd'::uuid,
@@ -11595,7 +11463,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     57,
-    '2025-09-20 18:32:00'
+    '2024-09-20 18:32:00'
 );
 INSERT INTO SOLD VALUES (
     'f3a1c697-0d37-4671-9f88-06965260e10c'::uuid,
@@ -11606,7 +11474,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     245,
-    '2025-09-20 12:12:00'
+    '2024-09-20 12:12:00'
 );
 INSERT INTO SOLD VALUES (
     '5fb098e8-ba9d-47eb-9c76-0f8a7038101f'::uuid,
@@ -11617,7 +11485,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     308,
-    '2025-09-20 17:27:00'
+    '2024-09-20 17:27:00'
 );
 INSERT INTO SOLD VALUES (
     'b64cd6f7-9fd5-4f35-a9cc-956c1afd57b0'::uuid,
@@ -11628,7 +11496,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     432,
-    '2025-09-20 19:22:00'
+    '2024-09-20 19:22:00'
 );
 INSERT INTO SOLD VALUES (
     '4264fe84-9b8c-48d4-8c0a-1dda257ee588'::uuid,
@@ -11639,7 +11507,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     292,
-    '2025-09-20 17:41:00'
+    '2024-09-20 17:41:00'
 );
 INSERT INTO SOLD VALUES (
     '32c9494c-975f-4d03-8bd8-075b124d7b72'::uuid,
@@ -11650,7 +11518,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     131,
-    '2025-09-20 18:58:00'
+    '2024-09-20 18:58:00'
 );
 INSERT INTO SOLD VALUES (
     '18f9ba05-c791-44a9-958b-af457540b3a7'::uuid,
@@ -11661,7 +11529,7 @@ INSERT INTO SOLD VALUES (
     13,
     250.0,
     99,
-    '2025-09-21 13:27:00'
+    '2024-09-21 13:27:00'
 );
 INSERT INTO SOLD VALUES (
     '25aa7c67-69a9-4a2d-92b9-d41987ad9f60'::uuid,
@@ -11672,7 +11540,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     17,
-    '2025-09-21 10:00:00'
+    '2024-09-21 10:00:00'
 );
 INSERT INTO SOLD VALUES (
     'fad066bf-4e5e-48c7-896a-e0f957d2ff77'::uuid,
@@ -11683,7 +11551,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     56,
-    '2025-09-21 12:55:00'
+    '2024-09-21 12:55:00'
 );
 INSERT INTO SOLD VALUES (
     '1ddf9f1d-c7e8-4de6-b3f5-edbbb244d4c6'::uuid,
@@ -11694,7 +11562,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     240,
-    '2025-09-21 14:07:00'
+    '2024-09-21 14:07:00'
 );
 INSERT INTO SOLD VALUES (
     '280ab0af-402f-4c60-aec2-dbe7b5f62a3e'::uuid,
@@ -11705,7 +11573,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     306,
-    '2025-09-21 16:57:00'
+    '2024-09-21 16:57:00'
 );
 INSERT INTO SOLD VALUES (
     'e4a8e331-65ec-4deb-8c1d-185c70e40de7'::uuid,
@@ -11716,7 +11584,7 @@ INSERT INTO SOLD VALUES (
     27,
     12.0,
     405,
-    '2025-09-21 16:10:00'
+    '2024-09-21 16:10:00'
 );
 INSERT INTO SOLD VALUES (
     '0e0a822d-9371-49dd-be47-9d724e9c7590'::uuid,
@@ -11727,7 +11595,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     277,
-    '2025-09-21 19:42:00'
+    '2024-09-21 19:42:00'
 );
 INSERT INTO SOLD VALUES (
     'b75f4736-3f1e-4ec2-96c5-127b1650e110'::uuid,
@@ -11738,7 +11606,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     124,
-    '2025-09-21 13:18:00'
+    '2024-09-21 13:18:00'
 );
 INSERT INTO SOLD VALUES (
     'e320eff9-d96a-448f-a151-f69cd8fc8556'::uuid,
@@ -11749,7 +11617,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     92,
-    '2025-09-22 14:42:00'
+    '2024-09-22 14:42:00'
 );
 INSERT INTO SOLD VALUES (
     '530e4b25-2312-45fd-b174-dc54167c31a0'::uuid,
@@ -11760,7 +11628,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     16,
-    '2025-09-22 10:43:00'
+    '2024-09-22 10:43:00'
 );
 INSERT INTO SOLD VALUES (
     '89679770-6fc3-4118-a9d0-b094d631cc5a'::uuid,
@@ -11771,7 +11639,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     55,
-    '2025-09-22 15:44:00'
+    '2024-09-22 15:44:00'
 );
 INSERT INTO SOLD VALUES (
     'ad4341fc-f66c-425e-8be5-739ddab2c5f9'::uuid,
@@ -11782,7 +11650,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     232,
-    '2025-09-22 16:33:00'
+    '2024-09-22 16:33:00'
 );
 INSERT INTO SOLD VALUES (
     'e399c248-98e6-42f3-9874-3700beb40593'::uuid,
@@ -11793,7 +11661,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     303,
-    '2025-09-22 10:03:00'
+    '2024-09-22 10:03:00'
 );
 INSERT INTO SOLD VALUES (
     'cb3374a3-f30f-4193-9535-cbadbd6b470e'::uuid,
@@ -11804,7 +11672,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     260,
-    '2025-09-22 14:02:00'
+    '2024-09-22 14:02:00'
 );
 INSERT INTO SOLD VALUES (
     '17384b74-96b8-4353-9e53-979c224145b5'::uuid,
@@ -11815,7 +11683,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     115,
-    '2025-09-22 18:41:00'
+    '2024-09-22 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     'cc68916c-e34c-4c59-9280-e30fb87d1066'::uuid,
@@ -11826,7 +11694,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     87,
-    '2025-09-23 17:18:00'
+    '2024-09-23 17:18:00'
 );
 INSERT INTO SOLD VALUES (
     '06e462e6-6c88-44ba-9700-38fa879ab0dd'::uuid,
@@ -11837,7 +11705,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     10,
-    '2025-09-23 10:18:00'
+    '2024-09-23 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     'e7cb4455-7c79-49a8-a7b1-2e34d19b4b5f'::uuid,
@@ -11848,7 +11716,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     54,
-    '2025-09-23 14:12:00'
+    '2024-09-23 14:12:00'
 );
 INSERT INTO SOLD VALUES (
     '71d95e5a-f58c-4251-ab77-3ad8ec77d52d'::uuid,
@@ -11859,7 +11727,7 @@ INSERT INTO SOLD VALUES (
     4,
     50.0,
     228,
-    '2025-09-23 20:55:00'
+    '2024-09-23 20:55:00'
 );
 INSERT INTO SOLD VALUES (
     '63b622d1-164c-43b4-8f6f-9fd5dfeb7660'::uuid,
@@ -11870,7 +11738,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     390,
-    '2025-09-23 09:45:00'
+    '2024-09-23 09:45:00'
 );
 INSERT INTO SOLD VALUES (
     'da2fb84d-09d2-449c-93ca-7bc076b17ed6'::uuid,
@@ -11881,7 +11749,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     107,
-    '2025-09-23 12:35:00'
+    '2024-09-23 12:35:00'
 );
 INSERT INTO SOLD VALUES (
     'f4d37b16-0466-4da0-b08e-11f213c1f7ac'::uuid,
@@ -11892,7 +11760,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     79,
-    '2025-09-24 17:44:00'
+    '2024-09-24 17:44:00'
 );
 INSERT INTO SOLD VALUES (
     '2a8a9793-7e76-4b25-92cb-dd980971b5bb'::uuid,
@@ -11903,7 +11771,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     4,
-    '2025-09-24 13:29:00'
+    '2024-09-24 13:29:00'
 );
 INSERT INTO SOLD VALUES (
     '7fa2fe6a-672e-4281-9947-09b080189338'::uuid,
@@ -11914,7 +11782,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     53,
-    '2025-09-24 15:48:00'
+    '2024-09-24 15:48:00'
 );
 INSERT INTO SOLD VALUES (
     'f1dfaaa7-dc09-4c6d-b17d-73ebf5a3a10c'::uuid,
@@ -11925,7 +11793,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     221,
-    '2025-09-24 15:28:00'
+    '2024-09-24 15:28:00'
 );
 INSERT INTO SOLD VALUES (
     '04d47181-1872-4131-bc94-5eaf476ccff7'::uuid,
@@ -11936,7 +11804,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     301,
-    '2025-09-24 12:27:00'
+    '2024-09-24 12:27:00'
 );
 INSERT INTO SOLD VALUES (
     '5d950b0a-878a-4fae-b22f-c0065b3779cc'::uuid,
@@ -11947,7 +11815,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     372,
-    '2025-09-24 15:57:00'
+    '2024-09-24 15:57:00'
 );
 INSERT INTO SOLD VALUES (
     '277cff30-2536-4a9c-aff7-8eb5e6558c96'::uuid,
@@ -11958,7 +11826,7 @@ INSERT INTO SOLD VALUES (
     9,
     8.0,
     251,
-    '2025-09-24 19:05:00'
+    '2024-09-24 19:05:00'
 );
 INSERT INTO SOLD VALUES (
     '9c082a46-2e83-4ab2-ae1b-2be21bacb71c'::uuid,
@@ -11969,7 +11837,7 @@ INSERT INTO SOLD VALUES (
     6,
     10.0,
     101,
-    '2025-09-24 20:12:00'
+    '2024-09-24 20:12:00'
 );
 INSERT INTO SOLD VALUES (
     '67d3a30c-e75a-4178-b6d7-80f6cd8f09f5'::uuid,
@@ -11980,7 +11848,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     71,
-    '2025-09-25 18:29:00'
+    '2024-09-25 18:29:00'
 );
 INSERT INTO SOLD VALUES (
     '1a14d3e5-f8cd-44f8-a940-dd16d51a3e5f'::uuid,
@@ -11991,7 +11859,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     335,
-    '2025-09-25 13:14:00'
+    '2024-09-25 13:14:00'
 );
 INSERT INTO SOLD VALUES (
     '591c0b83-3472-4a78-b9da-92e6fe577fe9'::uuid,
@@ -12002,7 +11870,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     0,
-    '2025-09-25 16:13:00'
+    '2024-09-25 16:13:00'
 );
 INSERT INTO SOLD VALUES (
     'bdf19dd8-f8a0-4f18-97fb-8ba3d26b8862'::uuid,
@@ -12013,7 +11881,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     51,
-    '2025-09-25 13:55:00'
+    '2024-09-25 13:55:00'
 );
 INSERT INTO SOLD VALUES (
     'f3a8f5c7-1de0-4487-9f11-38a904eab595'::uuid,
@@ -12024,7 +11892,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     215,
-    '2025-09-25 10:12:00'
+    '2024-09-25 10:12:00'
 );
 INSERT INTO SOLD VALUES (
     '0b784fd0-128c-442f-b3b2-8f0fda1f647b'::uuid,
@@ -12035,7 +11903,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     299,
-    '2025-09-25 13:03:00'
+    '2024-09-25 13:03:00'
 );
 INSERT INTO SOLD VALUES (
     '3b0b40e6-8190-4ccd-af84-f070635c4cd1'::uuid,
@@ -12046,7 +11914,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     348,
-    '2025-09-25 18:47:00'
+    '2024-09-25 18:47:00'
 );
 INSERT INTO SOLD VALUES (
     'ea13f6d8-d013-413a-a938-1da9b7338292'::uuid,
@@ -12057,7 +11925,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     243,
-    '2025-09-25 16:46:00'
+    '2024-09-25 16:46:00'
 );
 INSERT INTO SOLD VALUES (
     '98114ec4-2d98-43d0-b309-ba51ea0a010c'::uuid,
@@ -12068,7 +11936,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     61,
-    '2025-09-26 14:41:00'
+    '2024-09-26 14:41:00'
 );
 INSERT INTO SOLD VALUES (
     '8c742174-b018-47a0-804d-60e4d4178a12'::uuid,
@@ -12079,7 +11947,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     320,
-    '2025-09-26 14:32:00'
+    '2024-09-26 14:32:00'
 );
 INSERT INTO SOLD VALUES (
     '98d0f68a-e32d-4c7e-aa4c-9712032baafa'::uuid,
@@ -12090,7 +11958,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     50,
-    '2025-09-26 11:14:00'
+    '2024-09-26 11:14:00'
 );
 INSERT INTO SOLD VALUES (
     '2f64e71f-f08f-4dbc-800d-5b6e645dd116'::uuid,
@@ -12101,7 +11969,7 @@ INSERT INTO SOLD VALUES (
     5,
     50.0,
     210,
-    '2025-09-26 17:59:00'
+    '2024-09-26 17:59:00'
 );
 INSERT INTO SOLD VALUES (
     'e8458697-cea9-418f-8314-079f01ae50ca'::uuid,
@@ -12112,7 +11980,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     297,
-    '2025-09-26 14:14:00'
+    '2024-09-26 14:14:00'
 );
 INSERT INTO SOLD VALUES (
     'fad5bef4-83d1-45b4-9db0-4dec36fb8701'::uuid,
@@ -12123,7 +11991,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     325,
-    '2025-09-26 11:35:00'
+    '2024-09-26 11:35:00'
 );
 INSERT INTO SOLD VALUES (
     '1651b78b-5eab-48a0-b21f-9628fc64bc71'::uuid,
@@ -12134,7 +12002,7 @@ INSERT INTO SOLD VALUES (
     15,
     8.0,
     228,
-    '2025-09-26 16:23:00'
+    '2024-09-26 16:23:00'
 );
 INSERT INTO SOLD VALUES (
     '6a193163-e206-4326-9f67-ce91d14b023a'::uuid,
@@ -12145,7 +12013,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     93,
-    '2025-09-26 12:06:00'
+    '2024-09-26 12:06:00'
 );
 INSERT INTO SOLD VALUES (
     '8a59f91f-df44-4aeb-b8d5-92ba4895460d'::uuid,
@@ -12156,7 +12024,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     49,
-    '2025-09-27 19:09:00'
+    '2024-09-27 19:09:00'
 );
 INSERT INTO SOLD VALUES (
     '1ac1bd91-7229-484b-bae5-63f6991bb441'::uuid,
@@ -12167,7 +12035,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     49,
-    '2025-09-27 10:25:00'
+    '2024-09-27 10:25:00'
 );
 INSERT INTO SOLD VALUES (
     '0fa6dce9-f997-43b9-be36-1d636f7b6fca'::uuid,
@@ -12178,7 +12046,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     203,
-    '2025-09-27 15:02:00'
+    '2024-09-27 15:02:00'
 );
 INSERT INTO SOLD VALUES (
     'd5d5ad5a-d856-4c5f-bc7b-0d745dfa3b84'::uuid,
@@ -12189,7 +12057,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     295,
-    '2025-09-27 17:17:00'
+    '2024-09-27 17:17:00'
 );
 INSERT INTO SOLD VALUES (
     '30d34b8b-3ec5-4b87-a723-e4d2f6bea9e8'::uuid,
@@ -12200,7 +12068,7 @@ INSERT INTO SOLD VALUES (
     32,
     12.0,
     293,
-    '2025-09-27 15:08:00'
+    '2024-09-27 15:08:00'
 );
 INSERT INTO SOLD VALUES (
     '84bc28d0-4571-453e-b443-ab094d7f92df'::uuid,
@@ -12211,7 +12079,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     81,
-    '2025-09-27 16:10:00'
+    '2024-09-27 16:10:00'
 );
 INSERT INTO SOLD VALUES (
     'cba3db3c-7224-4993-b415-13b2fb17aa47'::uuid,
@@ -12222,7 +12090,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     39,
-    '2025-09-28 20:42:00'
+    '2024-09-28 20:42:00'
 );
 INSERT INTO SOLD VALUES (
     '7fa1d2b5-91ae-4284-a65f-d61b26346ae4'::uuid,
@@ -12233,7 +12101,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     304,
-    '2025-09-28 14:43:00'
+    '2024-09-28 14:43:00'
 );
 INSERT INTO SOLD VALUES (
     '06af7bad-9669-4d28-9492-6b5cb69c74d2'::uuid,
@@ -12244,7 +12112,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     48,
-    '2025-09-28 16:47:00'
+    '2024-09-28 16:47:00'
 );
 INSERT INTO SOLD VALUES (
     'ea5d43d8-5aaa-4063-8fdd-643eb7665b20'::uuid,
@@ -12255,7 +12123,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     197,
-    '2025-09-28 18:26:00'
+    '2024-09-28 18:26:00'
 );
 INSERT INTO SOLD VALUES (
     '08683867-418f-4101-948d-fd3f0f37156d'::uuid,
@@ -12266,7 +12134,7 @@ INSERT INTO SOLD VALUES (
     3,
     35.0,
     292,
-    '2025-09-28 10:30:00'
+    '2024-09-28 10:30:00'
 );
 INSERT INTO SOLD VALUES (
     '02d1adec-b6e9-42ba-98c4-6b7c4706b5ce'::uuid,
@@ -12277,7 +12145,7 @@ INSERT INTO SOLD VALUES (
     33,
     12.0,
     260,
-    '2025-09-28 19:43:00'
+    '2024-09-28 19:43:00'
 );
 INSERT INTO SOLD VALUES (
     '3baae3e2-d389-41c3-a7ea-707984d615e3'::uuid,
@@ -12288,7 +12156,7 @@ INSERT INTO SOLD VALUES (
     16,
     8.0,
     212,
-    '2025-09-28 14:54:00'
+    '2024-09-28 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     'd9479d7c-2144-4cbc-94d8-d9a32846c1d8'::uuid,
@@ -12299,7 +12167,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     97,
-    '2025-09-28 10:59:00'
+    '2024-09-28 10:59:00'
 );
 INSERT INTO SOLD VALUES (
     '4eb25656-c79a-495c-9459-2d8721a3c875'::uuid,
@@ -12310,7 +12178,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     73,
-    '2025-09-28 17:59:00'
+    '2024-09-28 17:59:00'
 );
 INSERT INTO SOLD VALUES (
     '6d2a3ac7-c9f8-43d9-a799-328a32c5a671'::uuid,
@@ -12321,7 +12189,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     29,
-    '2025-09-29 13:19:00'
+    '2024-09-29 13:19:00'
 );
 INSERT INTO SOLD VALUES (
     'f569d000-a5bd-487b-b479-cd7a6e086e60'::uuid,
@@ -12332,7 +12200,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     286,
-    '2025-09-29 11:25:00'
+    '2024-09-29 11:25:00'
 );
 INSERT INTO SOLD VALUES (
     '1d4415fe-f2f6-4dc6-b77a-fa0c70f28a8b'::uuid,
@@ -12343,7 +12211,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     189,
-    '2025-09-29 19:33:00'
+    '2024-09-29 19:33:00'
 );
 INSERT INTO SOLD VALUES (
     '529d138b-f8d7-45ff-a3e7-9a89587b7a15'::uuid,
@@ -12354,7 +12222,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     291,
-    '2025-09-29 10:42:00'
+    '2024-09-29 10:42:00'
 );
 INSERT INTO SOLD VALUES (
     '433f3e33-1527-402c-8fe6-93a3b455cff4'::uuid,
@@ -12365,7 +12233,7 @@ INSERT INTO SOLD VALUES (
     26,
     12.0,
     234,
-    '2025-09-29 15:25:00'
+    '2024-09-29 15:25:00'
 );
 INSERT INTO SOLD VALUES (
     'cda1408b-e73a-49f3-8101-6b7ad09e2124'::uuid,
@@ -12376,7 +12244,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     201,
-    '2025-09-29 15:07:00'
+    '2024-09-29 15:07:00'
 );
 INSERT INTO SOLD VALUES (
     '6ca67dfb-8981-4f4f-9207-8725e5b68f94'::uuid,
@@ -12387,7 +12255,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     94,
-    '2025-09-29 19:32:00'
+    '2024-09-29 19:32:00'
 );
 INSERT INTO SOLD VALUES (
     '583d7a56-a5b7-4838-b084-9520c85552e0'::uuid,
@@ -12398,7 +12266,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     61,
-    '2025-09-29 10:31:00'
+    '2024-09-29 10:31:00'
 );
 INSERT INTO SOLD VALUES (
     '111b133e-7bce-4cd1-8418-18a764b64f50'::uuid,
@@ -12409,7 +12277,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     22,
-    '2025-09-30 19:58:00'
+    '2024-09-30 19:58:00'
 );
 INSERT INTO SOLD VALUES (
     'ce442b0d-b63c-493c-8088-6b27d8062e4f'::uuid,
@@ -12420,7 +12288,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     268,
-    '2025-09-30 13:37:00'
+    '2024-09-30 13:37:00'
 );
 INSERT INTO SOLD VALUES (
     'f5ebc868-7545-4061-8506-c44a3d715456'::uuid,
@@ -12431,7 +12299,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     47,
-    '2025-09-30 20:44:00'
+    '2024-09-30 20:44:00'
 );
 INSERT INTO SOLD VALUES (
     '4bb201d2-79c3-4fce-badb-db003d0191e0'::uuid,
@@ -12442,7 +12310,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     183,
-    '2025-09-30 17:22:00'
+    '2024-09-30 17:22:00'
 );
 INSERT INTO SOLD VALUES (
     '064a5919-a8eb-48a4-a007-6674a0b383c5'::uuid,
@@ -12453,7 +12321,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     233,
-    '2025-09-30 19:31:00'
+    '2024-09-30 19:31:00'
 );
 INSERT INTO SOLD VALUES (
     '35dc6498-a902-4c6b-a329-a96969929931'::uuid,
@@ -12464,7 +12332,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     189,
-    '2025-09-30 13:22:00'
+    '2024-09-30 13:22:00'
 );
 INSERT INTO SOLD VALUES (
     'dc7f0534-c397-4f89-b21b-2f9b8f46c8ff'::uuid,
@@ -12475,7 +12343,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     93,
-    '2025-09-30 13:35:00'
+    '2024-09-30 13:35:00'
 );
 INSERT INTO SOLD VALUES (
     'b7b2a07b-a95b-4fb9-b64a-b4dab13f75ab'::uuid,
@@ -12486,7 +12354,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     53,
-    '2025-09-30 18:45:00'
+    '2024-09-30 18:45:00'
 );
 INSERT INTO SOLD VALUES (
     '6b0bc4ff-01a2-4b3f-be83-0f50e88b45d5'::uuid,
@@ -12497,7 +12365,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     143,
-    '2025-10-01 11:42:00'
+    '2024-10-01 11:42:00'
 );
 INSERT INTO SOLD VALUES (
     'b3a78f79-6c74-4973-8d8f-9c55cccd21b3'::uuid,
@@ -12508,7 +12376,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     250,
-    '2025-10-01 16:20:00'
+    '2024-10-01 16:20:00'
 );
 INSERT INTO SOLD VALUES (
     '6c4eb985-db56-4d7c-abf6-27fb699dc6d4'::uuid,
@@ -12519,7 +12387,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     215,
-    '2025-10-01 11:29:00'
+    '2024-10-01 11:29:00'
 );
 INSERT INTO SOLD VALUES (
     'bdeaf618-94ae-4e24-8c8e-6042adf94b07'::uuid,
@@ -12530,7 +12398,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     46,
-    '2025-10-01 13:47:00'
+    '2024-10-01 13:47:00'
 );
 INSERT INTO SOLD VALUES (
     '0504d744-a4ab-4704-af6d-b992d5ede53a'::uuid,
@@ -12541,7 +12409,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     173,
-    '2025-10-01 18:23:00'
+    '2024-10-01 18:23:00'
 );
 INSERT INTO SOLD VALUES (
     'cd9d4068-9e03-4dc1-bc6b-a2b026be8905'::uuid,
@@ -12552,7 +12420,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     289,
-    '2025-10-01 14:08:00'
+    '2024-10-01 14:08:00'
 );
 INSERT INTO SOLD VALUES (
     '0247d00c-690b-4f2a-b97e-4a1ac4a96197'::uuid,
@@ -12563,7 +12431,7 @@ INSERT INTO SOLD VALUES (
     17,
     12.0,
     216,
-    '2025-10-01 20:13:00'
+    '2024-10-01 20:13:00'
 );
 INSERT INTO SOLD VALUES (
     'd1ead1dc-183a-46cb-ac68-f8556b6d77eb'::uuid,
@@ -12574,7 +12442,7 @@ INSERT INTO SOLD VALUES (
     1,
     8.0,
     188,
-    '2025-10-01 12:10:00'
+    '2024-10-01 12:10:00'
 );
 INSERT INTO SOLD VALUES (
     '0119fd47-74c8-48a9-8ab0-49c4efbe6cee'::uuid,
@@ -12585,7 +12453,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     92,
-    '2025-10-01 17:11:00'
+    '2024-10-01 17:11:00'
 );
 INSERT INTO SOLD VALUES (
     'dfa81729-f8f8-45a7-83da-3fe1b2042305'::uuid,
@@ -12596,7 +12464,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     45,
-    '2025-10-01 17:02:00'
+    '2024-10-01 17:02:00'
 );
 INSERT INTO SOLD VALUES (
     '17a24b9b-874b-4070-900c-bcfe4f3a60c5'::uuid,
@@ -12607,7 +12475,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     137,
-    '2025-10-02 11:11:00'
+    '2024-10-02 11:11:00'
 );
 INSERT INTO SOLD VALUES (
     'f1d81a18-ccfa-413a-b4b1-1f19cd421fb5'::uuid,
@@ -12618,7 +12486,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     231,
-    '2025-10-02 15:42:00'
+    '2024-10-02 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     'e3d2672c-b603-4fd6-9da6-34e8d18001e0'::uuid,
@@ -12629,7 +12497,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     211,
-    '2025-10-02 15:42:00'
+    '2024-10-02 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     'c6c972aa-a8fb-4fdb-ae85-9c07dbccf255'::uuid,
@@ -12640,7 +12508,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     45,
-    '2025-10-02 17:41:00'
+    '2024-10-02 17:41:00'
 );
 INSERT INTO SOLD VALUES (
     '2f9a412c-8a49-4fa8-b99a-1bc6845927a2'::uuid,
@@ -12651,7 +12519,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     167,
-    '2025-10-02 13:31:00'
+    '2024-10-02 13:31:00'
 );
 INSERT INTO SOLD VALUES (
     '589a0282-f70c-4081-ba20-11512ee5cd62'::uuid,
@@ -12662,7 +12530,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     288,
-    '2025-10-02 16:22:00'
+    '2024-10-02 16:22:00'
 );
 INSERT INTO SOLD VALUES (
     '3ce0b941-0b1f-472e-911f-b74cb7e84702'::uuid,
@@ -12673,7 +12541,7 @@ INSERT INTO SOLD VALUES (
     1,
     12.0,
     215,
-    '2025-10-02 15:37:00'
+    '2024-10-02 15:37:00'
 );
 INSERT INTO SOLD VALUES (
     '10005bb0-bbce-4ed4-8978-f3470c260108'::uuid,
@@ -12684,7 +12552,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     176,
-    '2025-10-02 13:13:00'
+    '2024-10-02 13:13:00'
 );
 INSERT INTO SOLD VALUES (
     '89bdab7b-1ed3-4ccf-9423-0f61d8c3afea'::uuid,
@@ -12695,7 +12563,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     90,
-    '2025-10-02 18:57:00'
+    '2024-10-02 18:57:00'
 );
 INSERT INTO SOLD VALUES (
     'd239ca8c-b547-4c7c-a7bb-4994e0da4e5a'::uuid,
@@ -12706,7 +12574,7 @@ INSERT INTO SOLD VALUES (
     10,
     10.0,
     35,
-    '2025-10-02 19:03:00'
+    '2024-10-02 19:03:00'
 );
 INSERT INTO SOLD VALUES (
     'ca1b7d27-49e7-4c02-a2c9-3cb8143c022c'::uuid,
@@ -12717,7 +12585,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     131,
-    '2025-10-03 15:33:00'
+    '2024-10-03 15:33:00'
 );
 INSERT INTO SOLD VALUES (
     '8f677e9b-0742-45b3-9057-6cf02b831e2b'::uuid,
@@ -12728,7 +12596,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     217,
-    '2025-10-03 19:22:00'
+    '2024-10-03 19:22:00'
 );
 INSERT INTO SOLD VALUES (
     '082c6837-53c1-4f8a-a77d-2e573519ace1'::uuid,
@@ -12739,7 +12607,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     207,
-    '2025-10-03 20:09:00'
+    '2024-10-03 20:09:00'
 );
 INSERT INTO SOLD VALUES (
     '0254445b-9cf6-44d2-baad-a992160d189c'::uuid,
@@ -12750,7 +12618,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     44,
-    '2025-10-03 20:13:00'
+    '2024-10-03 20:13:00'
 );
 INSERT INTO SOLD VALUES (
     '141b61bf-60e8-484b-bfc2-d029bc3c619f'::uuid,
@@ -12761,7 +12629,7 @@ INSERT INTO SOLD VALUES (
     1,
     50.0,
     166,
-    '2025-10-03 17:52:00'
+    '2024-10-03 17:52:00'
 );
 INSERT INTO SOLD VALUES (
     'c5418d93-e9ed-4275-a85c-a0f526380e41'::uuid,
@@ -12772,7 +12640,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     287,
-    '2025-10-03 13:22:00'
+    '2024-10-03 13:22:00'
 );
 INSERT INTO SOLD VALUES (
     'e747925e-c48c-478f-91af-61a1d2bdc971'::uuid,
@@ -12783,7 +12651,7 @@ INSERT INTO SOLD VALUES (
     18,
     12.0,
     197,
-    '2025-10-03 18:52:00'
+    '2024-10-03 18:52:00'
 );
 INSERT INTO SOLD VALUES (
     '8359c779-8809-47a1-b61d-c383d39299f1'::uuid,
@@ -12794,7 +12662,7 @@ INSERT INTO SOLD VALUES (
     2,
     8.0,
     174,
-    '2025-10-03 20:09:00'
+    '2024-10-03 20:09:00'
 );
 INSERT INTO SOLD VALUES (
     'b6cc19ee-b110-4784-8f6d-c60eb32d93fd'::uuid,
@@ -12805,7 +12673,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     88,
-    '2025-10-03 11:40:00'
+    '2024-10-03 11:40:00'
 );
 INSERT INTO SOLD VALUES (
     'ecd0f6f3-a288-41c8-b4a4-bd6df1924b93'::uuid,
@@ -12816,7 +12684,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     26,
-    '2025-10-03 11:09:00'
+    '2024-10-03 11:09:00'
 );
 INSERT INTO SOLD VALUES (
     '7b014663-0a75-4204-b24a-ba29bedbf7a7'::uuid,
@@ -12827,7 +12695,7 @@ INSERT INTO SOLD VALUES (
     11,
     250.0,
     120,
-    '2025-10-04 14:39:00'
+    '2024-10-04 14:39:00'
 );
 INSERT INTO SOLD VALUES (
     '48c1b2d6-f882-41e3-9249-8e0506102fd4'::uuid,
@@ -12838,7 +12706,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     201,
-    '2025-10-04 17:59:00'
+    '2024-10-04 17:59:00'
 );
 INSERT INTO SOLD VALUES (
     '91095d56-d3b9-4a27-a103-5c1ba08e8bb3'::uuid,
@@ -12849,7 +12717,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     201,
-    '2025-10-04 09:21:00'
+    '2024-10-04 09:21:00'
 );
 INSERT INTO SOLD VALUES (
     'cd7714d6-d101-4264-ad9f-b8577e31c042'::uuid,
@@ -12860,7 +12728,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     43,
-    '2025-10-04 18:25:00'
+    '2024-10-04 18:25:00'
 );
 INSERT INTO SOLD VALUES (
     '9b763179-f4d5-4d93-b555-bacbae727464'::uuid,
@@ -12871,7 +12739,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     157,
-    '2025-10-04 15:20:00'
+    '2024-10-04 15:20:00'
 );
 INSERT INTO SOLD VALUES (
     'e4640958-88bb-4c76-8c6a-c578d284f79a'::uuid,
@@ -12882,7 +12750,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     286,
-    '2025-10-04 19:21:00'
+    '2024-10-04 19:21:00'
 );
 INSERT INTO SOLD VALUES (
     '3483a711-5182-4c70-93ea-4b1c657b0f8c'::uuid,
@@ -12893,7 +12761,7 @@ INSERT INTO SOLD VALUES (
     19,
     12.0,
     178,
-    '2025-10-04 16:46:00'
+    '2024-10-04 16:46:00'
 );
 INSERT INTO SOLD VALUES (
     '60db10de-0e0e-4ad4-988f-cebdd124bc86'::uuid,
@@ -12904,7 +12772,7 @@ INSERT INTO SOLD VALUES (
     18,
     8.0,
     156,
-    '2025-10-04 20:44:00'
+    '2024-10-04 20:44:00'
 );
 INSERT INTO SOLD VALUES (
     '1374ad84-4ddc-4f4e-8475-454a69b72349'::uuid,
@@ -12915,7 +12783,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     86,
-    '2025-10-04 18:31:00'
+    '2024-10-04 18:31:00'
 );
 INSERT INTO SOLD VALUES (
     '1759439a-0bc1-4bf4-a4cd-106b4523e35d'::uuid,
@@ -12926,7 +12794,7 @@ INSERT INTO SOLD VALUES (
     10,
     10.0,
     16,
-    '2025-10-04 17:04:00'
+    '2024-10-04 17:04:00'
 );
 INSERT INTO SOLD VALUES (
     'e29bafc5-640f-4496-a434-3071ed39c979'::uuid,
@@ -12937,7 +12805,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     108,
-    '2025-10-05 20:45:00'
+    '2024-10-05 20:45:00'
 );
 INSERT INTO SOLD VALUES (
     '7daeda1c-3955-47d1-b422-81bf60db6a2c'::uuid,
@@ -12948,7 +12816,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     184,
-    '2025-10-05 16:52:00'
+    '2024-10-05 16:52:00'
 );
 INSERT INTO SOLD VALUES (
     '5beeb380-bf11-4500-b18c-c4c4971aeed1'::uuid,
@@ -12959,7 +12827,7 @@ INSERT INTO SOLD VALUES (
     11,
     50.0,
     146,
-    '2025-10-05 13:12:00'
+    '2024-10-05 13:12:00'
 );
 INSERT INTO SOLD VALUES (
     '22debc81-bf25-41e4-9aa6-8e08b91c8b02'::uuid,
@@ -12970,7 +12838,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     284,
-    '2025-10-05 17:12:00'
+    '2024-10-05 17:12:00'
 );
 INSERT INTO SOLD VALUES (
     '8b6f8ea8-25bb-4bbf-8e07-c474a8219c9a'::uuid,
@@ -12981,7 +12849,7 @@ INSERT INTO SOLD VALUES (
     19,
     12.0,
     159,
-    '2025-10-05 19:51:00'
+    '2024-10-05 19:51:00'
 );
 INSERT INTO SOLD VALUES (
     '445c5574-be2b-4cbf-93aa-3313117f4dca'::uuid,
@@ -12992,7 +12860,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     139,
-    '2025-10-05 09:40:00'
+    '2024-10-05 09:40:00'
 );
 INSERT INTO SOLD VALUES (
     '4ccbd56a-f83a-49f7-b397-95bd817620b4'::uuid,
@@ -13003,7 +12871,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     84,
-    '2025-10-05 12:37:00'
+    '2024-10-05 12:37:00'
 );
 INSERT INTO SOLD VALUES (
     '0a0a3053-b326-402c-be8b-c2e765715da1'::uuid,
@@ -13014,7 +12882,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     99,
-    '2025-10-06 12:21:00'
+    '2024-10-06 12:21:00'
 );
 INSERT INTO SOLD VALUES (
     '43b9e74e-58d8-427b-a6bb-3068556fb36f'::uuid,
@@ -13025,7 +12893,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     166,
-    '2025-10-06 18:38:00'
+    '2024-10-06 18:38:00'
 );
 INSERT INTO SOLD VALUES (
     'b866fcf0-2f85-4546-be4e-3786f99dfe80'::uuid,
@@ -13036,7 +12904,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     197,
-    '2025-10-06 18:40:00'
+    '2024-10-06 18:40:00'
 );
 INSERT INTO SOLD VALUES (
     'e520fa0c-2764-4613-a82b-419154532f89'::uuid,
@@ -13047,7 +12915,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     42,
-    '2025-10-06 18:10:00'
+    '2024-10-06 18:10:00'
 );
 INSERT INTO SOLD VALUES (
     '6b4fdda7-733c-4eda-95ff-3c8b0ee1434b'::uuid,
@@ -13058,7 +12926,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     136,
-    '2025-10-06 12:09:00'
+    '2024-10-06 12:09:00'
 );
 INSERT INTO SOLD VALUES (
     '586c7755-5dfd-4278-90c5-deb9407a3df0'::uuid,
@@ -13069,7 +12937,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     282,
-    '2025-10-06 20:05:00'
+    '2024-10-06 20:05:00'
 );
 INSERT INTO SOLD VALUES (
     '02541632-7911-4e58-a33d-e975e4bd5973'::uuid,
@@ -13080,7 +12948,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     139,
-    '2025-10-06 19:24:00'
+    '2024-10-06 19:24:00'
 );
 INSERT INTO SOLD VALUES (
     'a3f711dc-f83a-4545-accb-b995a4f766ce'::uuid,
@@ -13091,7 +12959,7 @@ INSERT INTO SOLD VALUES (
     13,
     8.0,
     126,
-    '2025-10-06 13:11:00'
+    '2024-10-06 13:11:00'
 );
 INSERT INTO SOLD VALUES (
     '71bc5237-3c2f-4115-b420-939777f91c23'::uuid,
@@ -13102,7 +12970,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     82,
-    '2025-10-06 20:46:00'
+    '2024-10-06 20:46:00'
 );
 INSERT INTO SOLD VALUES (
     '1ed4e38e-4106-41b1-9576-6c6e8db113ad'::uuid,
@@ -13113,7 +12981,7 @@ INSERT INTO SOLD VALUES (
     11,
     10.0,
     5,
-    '2025-10-06 16:21:00'
+    '2024-10-06 16:21:00'
 );
 INSERT INTO SOLD VALUES (
     'cf667436-c70d-437b-b7d6-4bf0b27407b7'::uuid,
@@ -13124,7 +12992,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     90,
-    '2025-10-07 10:35:00'
+    '2024-10-07 10:35:00'
 );
 INSERT INTO SOLD VALUES (
     '755d91e1-66ae-4121-af4d-bfdfd777e800'::uuid,
@@ -13135,7 +13003,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     148,
-    '2025-10-07 13:14:00'
+    '2024-10-07 13:14:00'
 );
 INSERT INTO SOLD VALUES (
     'ca13f005-d0c9-4ae9-b339-1bb17df25872'::uuid,
@@ -13146,7 +13014,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     192,
-    '2025-10-07 13:06:00'
+    '2024-10-07 13:06:00'
 );
 INSERT INTO SOLD VALUES (
     'a19ca724-7845-40f8-880d-22c8824e5b1e'::uuid,
@@ -13157,7 +13025,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     41,
-    '2025-10-07 18:48:00'
+    '2024-10-07 18:48:00'
 );
 INSERT INTO SOLD VALUES (
     '9fa9c652-9783-4856-9196-972431554c92'::uuid,
@@ -13168,7 +13036,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     126,
-    '2025-10-07 19:24:00'
+    '2024-10-07 19:24:00'
 );
 INSERT INTO SOLD VALUES (
     '8b49a92d-b213-4a6e-8cbe-70b7eb996a9e'::uuid,
@@ -13179,7 +13047,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     281,
-    '2025-10-07 11:40:00'
+    '2024-10-07 11:40:00'
 );
 INSERT INTO SOLD VALUES (
     '2e4cb0c9-7a5b-4a7a-b303-7634e6c74236'::uuid,
@@ -13190,7 +13058,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     114,
-    '2025-10-07 09:56:00'
+    '2024-10-07 09:56:00'
 );
 INSERT INTO SOLD VALUES (
     '812d7a0a-1e6d-4fb8-a4ac-730663444c43'::uuid,
@@ -13201,7 +13069,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     118,
-    '2025-10-07 17:17:00'
+    '2024-10-07 17:17:00'
 );
 INSERT INTO SOLD VALUES (
     'caf1d8c6-e52e-4075-8487-8f9982cb7dd1'::uuid,
@@ -13212,7 +13080,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     81,
-    '2025-10-07 11:32:00'
+    '2024-10-07 11:32:00'
 );
 INSERT INTO SOLD VALUES (
     '826d9792-2d04-4efc-b5f8-f6fc33f6d138'::uuid,
@@ -13223,7 +13091,7 @@ INSERT INTO SOLD VALUES (
     5,
     10.0,
     0,
-    '2025-10-07 15:39:00'
+    '2024-10-07 15:39:00'
 );
 INSERT INTO SOLD VALUES (
     '1b9ab6f9-6722-40dc-8b23-85492ad9ab86'::uuid,
@@ -13234,7 +13102,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     84,
-    '2025-10-08 20:30:00'
+    '2024-10-08 20:30:00'
 );
 INSERT INTO SOLD VALUES (
     '5467d71b-047b-4fcc-834c-53bc82b95f70'::uuid,
@@ -13245,7 +13113,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     136,
-    '2025-10-08 16:46:00'
+    '2024-10-08 16:46:00'
 );
 INSERT INTO SOLD VALUES (
     'bc87077d-4b49-4365-bdb2-d7b8598cced7'::uuid,
@@ -13256,7 +13124,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     189,
-    '2025-10-08 14:04:00'
+    '2024-10-08 14:04:00'
 );
 INSERT INTO SOLD VALUES (
     'e1429d2a-37a2-4866-b55e-b19d5f2448b6'::uuid,
@@ -13267,7 +13135,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     40,
-    '2025-10-08 09:31:00'
+    '2024-10-08 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     'b6fdba14-62a3-48bc-b51a-82470593d812'::uuid,
@@ -13278,7 +13146,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     120,
-    '2025-10-08 20:26:00'
+    '2024-10-08 20:26:00'
 );
 INSERT INTO SOLD VALUES (
     '029f5140-ba70-4bac-9ff3-64612234d77c'::uuid,
@@ -13289,7 +13157,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     279,
-    '2025-10-08 09:57:00'
+    '2024-10-08 09:57:00'
 );
 INSERT INTO SOLD VALUES (
     '01d42823-69c7-402c-905f-2aaf185f4c74'::uuid,
@@ -13300,7 +13168,7 @@ INSERT INTO SOLD VALUES (
     16,
     12.0,
     98,
-    '2025-10-08 14:49:00'
+    '2024-10-08 14:49:00'
 );
 INSERT INTO SOLD VALUES (
     '9f06e6f6-cc88-4d53-ad5d-af7b9805c4f2'::uuid,
@@ -13311,7 +13179,7 @@ INSERT INTO SOLD VALUES (
     1,
     8.0,
     117,
-    '2025-10-08 19:47:00'
+    '2024-10-08 19:47:00'
 );
 INSERT INTO SOLD VALUES (
     '20b22dff-35df-4d56-9796-718a9c236158'::uuid,
@@ -13322,7 +13190,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     80,
-    '2025-10-08 15:22:00'
+    '2024-10-08 15:22:00'
 );
 INSERT INTO SOLD VALUES (
     'b189d91f-3920-4cfd-95d7-280bd2c822ee'::uuid,
@@ -13333,7 +13201,7 @@ INSERT INTO SOLD VALUES (
     17,
     25.0,
     119,
-    '2025-10-09 15:27:00'
+    '2024-10-09 15:27:00'
 );
 INSERT INTO SOLD VALUES (
     'b15391b9-43f5-40dc-b0e5-e97194d20028'::uuid,
@@ -13344,7 +13212,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     187,
-    '2025-10-09 19:39:00'
+    '2024-10-09 19:39:00'
 );
 INSERT INTO SOLD VALUES (
     'be4eca58-fc87-4f7d-bbe0-c35a3dfb989d'::uuid,
@@ -13355,7 +13223,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     39,
-    '2025-10-09 16:15:00'
+    '2024-10-09 16:15:00'
 );
 INSERT INTO SOLD VALUES (
     '02bca1dc-2151-4218-9972-8b1a017adc7d'::uuid,
@@ -13366,7 +13234,7 @@ INSERT INTO SOLD VALUES (
     11,
     50.0,
     109,
-    '2025-10-09 14:45:00'
+    '2024-10-09 14:45:00'
 );
 INSERT INTO SOLD VALUES (
     'd7e88303-dc42-43d0-8f68-fe6ed7f93e32'::uuid,
@@ -13377,7 +13245,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     277,
-    '2025-10-09 13:36:00'
+    '2024-10-09 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     'add2d793-7317-42cd-8f58-bfca385f5265'::uuid,
@@ -13388,7 +13256,7 @@ INSERT INTO SOLD VALUES (
     8,
     8.0,
     109,
-    '2025-10-09 16:49:00'
+    '2024-10-09 16:49:00'
 );
 INSERT INTO SOLD VALUES (
     '01a5dfe1-ae6a-42f5-b121-72927d6f40e6'::uuid,
@@ -13399,7 +13267,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     78,
-    '2025-10-09 13:22:00'
+    '2024-10-09 13:22:00'
 );
 INSERT INTO SOLD VALUES (
     'f190ac6e-bfdf-4f9e-80ef-f3907306944b'::uuid,
@@ -13410,7 +13278,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     78,
-    '2025-10-10 17:06:00'
+    '2024-10-10 17:06:00'
 );
 INSERT INTO SOLD VALUES (
     '75fe68cf-d75f-4b54-93de-ae06101ab1ad'::uuid,
@@ -13421,7 +13289,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     103,
-    '2025-10-10 13:36:00'
+    '2024-10-10 13:36:00'
 );
 INSERT INTO SOLD VALUES (
     'f7d08a3c-f41f-438b-b74d-889f44235059'::uuid,
@@ -13432,7 +13300,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     103,
-    '2025-10-10 16:15:00'
+    '2024-10-10 16:15:00'
 );
 INSERT INTO SOLD VALUES (
     '954c734b-b28e-4c57-80ea-e9d86a5c60c3'::uuid,
@@ -13443,7 +13311,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     275,
-    '2025-10-10 17:55:00'
+    '2024-10-10 17:55:00'
 );
 INSERT INTO SOLD VALUES (
     'edc986a1-fb85-4ea1-9878-d4dda02ad4c0'::uuid,
@@ -13454,7 +13322,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     73,
-    '2025-10-10 19:58:00'
+    '2024-10-10 19:58:00'
 );
 INSERT INTO SOLD VALUES (
     'e63c8db6-4ed0-449f-9334-b73b2ba63651'::uuid,
@@ -13465,7 +13333,7 @@ INSERT INTO SOLD VALUES (
     12,
     8.0,
     97,
-    '2025-10-10 11:52:00'
+    '2024-10-10 11:52:00'
 );
 INSERT INTO SOLD VALUES (
     'bc48c4c6-fab5-4e6b-992a-ae1a09509e78'::uuid,
@@ -13476,7 +13344,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     76,
-    '2025-10-10 16:50:00'
+    '2024-10-10 16:50:00'
 );
 INSERT INTO SOLD VALUES (
     '49b49b2a-5152-4506-b51d-a0a86deda0b1'::uuid,
@@ -13487,7 +13355,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     89,
-    '2025-10-11 14:37:00'
+    '2024-10-11 14:37:00'
 );
 INSERT INTO SOLD VALUES (
     '197ce3f0-8d24-4766-8d0b-86e26e7cfb18'::uuid,
@@ -13498,7 +13366,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     180,
-    '2025-10-11 18:04:00'
+    '2024-10-11 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     'ffb56f45-ac6d-4f82-84d7-3e698411d746'::uuid,
@@ -13509,7 +13377,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     38,
-    '2025-10-11 19:34:00'
+    '2024-10-11 19:34:00'
 );
 INSERT INTO SOLD VALUES (
     'fdd36d91-61f5-43c6-b4cf-a08ce8e7ec95'::uuid,
@@ -13520,7 +13388,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     95,
-    '2025-10-11 09:28:00'
+    '2024-10-11 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     'f299a046-a183-46fd-b96f-12cd43a32c06'::uuid,
@@ -13531,7 +13399,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     273,
-    '2025-10-11 16:10:00'
+    '2024-10-11 16:10:00'
 );
 INSERT INTO SOLD VALUES (
     'c08efe1d-5d7e-4a29-994e-9721644b8986'::uuid,
@@ -13542,7 +13410,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     50,
-    '2025-10-11 11:49:00'
+    '2024-10-11 11:49:00'
 );
 INSERT INTO SOLD VALUES (
     'f7e514a5-124e-4d66-89a4-c3500698050d'::uuid,
@@ -13553,7 +13421,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     83,
-    '2025-10-11 10:05:00'
+    '2024-10-11 10:05:00'
 );
 INSERT INTO SOLD VALUES (
     '6f5c13d8-3cfe-450a-998e-7aefab753b85'::uuid,
@@ -13564,7 +13432,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     74,
-    '2025-10-11 15:30:00'
+    '2024-10-11 15:30:00'
 );
 INSERT INTO SOLD VALUES (
     'ee8858f9-67c6-433f-9993-c660899079e5'::uuid,
@@ -13575,7 +13443,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     68,
-    '2025-10-12 18:11:00'
+    '2024-10-12 18:11:00'
 );
 INSERT INTO SOLD VALUES (
     '91c001b6-2026-457d-a596-09dd3b94f484'::uuid,
@@ -13586,7 +13454,7 @@ INSERT INTO SOLD VALUES (
     23,
     25.0,
     66,
-    '2025-10-12 17:29:00'
+    '2024-10-12 17:29:00'
 );
 INSERT INTO SOLD VALUES (
     '03c7bb68-a325-4f19-b173-4b7e8e9c1fe9'::uuid,
@@ -13597,7 +13465,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     174,
-    '2025-10-12 15:02:00'
+    '2024-10-12 15:02:00'
 );
 INSERT INTO SOLD VALUES (
     'eff44c00-4bf0-4137-a8c7-2d0706878c37'::uuid,
@@ -13608,7 +13476,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     37,
-    '2025-10-12 15:42:00'
+    '2024-10-12 15:42:00'
 );
 INSERT INTO SOLD VALUES (
     'f41f88bc-1a47-47ba-9192-835c318e55a5'::uuid,
@@ -13619,7 +13487,7 @@ INSERT INTO SOLD VALUES (
     12,
     50.0,
     83,
-    '2025-10-12 12:05:00'
+    '2024-10-12 12:05:00'
 );
 INSERT INTO SOLD VALUES (
     '0b241054-ebae-4a2a-90f0-688728a48cf5'::uuid,
@@ -13630,7 +13498,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     27,
-    '2025-10-12 20:59:00'
+    '2024-10-12 20:59:00'
 );
 INSERT INTO SOLD VALUES (
     'efda6d8d-5c5e-4b42-b4c0-ab38793da924'::uuid,
@@ -13641,7 +13509,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     69,
-    '2025-10-12 10:52:00'
+    '2024-10-12 10:52:00'
 );
 INSERT INTO SOLD VALUES (
     '41dcafee-1ab4-4692-85e6-2d144e41da5d'::uuid,
@@ -13652,7 +13520,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     72,
-    '2025-10-12 14:31:00'
+    '2024-10-12 14:31:00'
 );
 INSERT INTO SOLD VALUES (
     '894853c5-9989-4ac1-8825-1ca0541d7393'::uuid,
@@ -13663,7 +13531,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     52,
-    '2025-10-13 16:39:00'
+    '2024-10-13 16:39:00'
 );
 INSERT INTO SOLD VALUES (
     'e02d01ee-0ca9-4c3e-a165-702d461cabe8'::uuid,
@@ -13674,7 +13542,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     169,
-    '2025-10-13 19:26:00'
+    '2024-10-13 19:26:00'
 );
 INSERT INTO SOLD VALUES (
     'c560a762-8c20-4cc5-970f-d78e5f918367'::uuid,
@@ -13685,7 +13553,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     36,
-    '2025-10-13 10:58:00'
+    '2024-10-13 10:58:00'
 );
 INSERT INTO SOLD VALUES (
     'e4b4df17-a7fe-4e09-97b0-b71979ebf04e'::uuid,
@@ -13696,7 +13564,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     81,
-    '2025-10-13 09:46:00'
+    '2024-10-13 09:46:00'
 );
 INSERT INTO SOLD VALUES (
     '066f3711-6cea-4fc5-943c-ccbd240d5fa5'::uuid,
@@ -13707,7 +13575,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     6,
-    '2025-10-13 19:39:00'
+    '2024-10-13 19:39:00'
 );
 INSERT INTO SOLD VALUES (
     '69cd48db-0567-4991-927f-ccafb9223185'::uuid,
@@ -13718,7 +13586,7 @@ INSERT INTO SOLD VALUES (
     17,
     8.0,
     52,
-    '2025-10-13 09:48:00'
+    '2024-10-13 09:48:00'
 );
 INSERT INTO SOLD VALUES (
     '62863015-5a12-4537-8be6-81de114860eb'::uuid,
@@ -13729,7 +13597,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     70,
-    '2025-10-13 16:19:00'
+    '2024-10-13 16:19:00'
 );
 INSERT INTO SOLD VALUES (
     'a66bfdc9-8ae0-41f7-ad3d-5c31e5944628'::uuid,
@@ -13740,7 +13608,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     62,
-    '2025-10-14 16:59:00'
+    '2024-10-14 16:59:00'
 );
 INSERT INTO SOLD VALUES (
     'd8ee2134-ff9d-4aa4-9224-ddd9b550ddee'::uuid,
@@ -13751,7 +13619,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     167,
-    '2025-10-14 14:42:00'
+    '2024-10-14 14:42:00'
 );
 INSERT INTO SOLD VALUES (
     'e7abc743-4181-4f47-9a9d-8e17abee27cb'::uuid,
@@ -13762,7 +13630,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     75,
-    '2025-10-14 13:23:00'
+    '2024-10-14 13:23:00'
 );
 INSERT INTO SOLD VALUES (
     'f8046043-58d3-496e-b612-6e817daac566'::uuid,
@@ -13773,7 +13641,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     272,
-    '2025-10-14 19:09:00'
+    '2024-10-14 19:09:00'
 );
 INSERT INTO SOLD VALUES (
     '2be4be14-a4c3-411b-8953-69863e5622e3'::uuid,
@@ -13784,7 +13652,7 @@ INSERT INTO SOLD VALUES (
     6,
     12.0,
     0,
-    '2025-10-14 11:32:00'
+    '2024-10-14 11:32:00'
 );
 INSERT INTO SOLD VALUES (
     '84e92d20-7715-43ad-a2de-94337f7cadc3'::uuid,
@@ -13795,7 +13663,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     42,
-    '2025-10-14 19:15:00'
+    '2024-10-14 19:15:00'
 );
 INSERT INTO SOLD VALUES (
     '10edf44f-d7d9-4b5a-bd38-fff514375626'::uuid,
@@ -13806,7 +13674,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     68,
-    '2025-10-14 19:46:00'
+    '2024-10-14 19:46:00'
 );
 INSERT INTO SOLD VALUES (
     'b4f8aa24-4705-43b3-8f96-7921add2cf88'::uuid,
@@ -13817,7 +13685,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     54,
-    '2025-10-15 15:12:00'
+    '2024-10-15 15:12:00'
 );
 INSERT INTO SOLD VALUES (
     '7ec56814-277f-4750-a4bb-b5e2bfe5d12f'::uuid,
@@ -13828,7 +13696,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     39,
-    '2025-10-15 11:08:00'
+    '2024-10-15 11:08:00'
 );
 INSERT INTO SOLD VALUES (
     '9842c8f3-1217-4bbf-9d68-b819441388de'::uuid,
@@ -13839,7 +13707,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     161,
-    '2025-10-15 14:15:00'
+    '2024-10-15 14:15:00'
 );
 INSERT INTO SOLD VALUES (
     '5f237aa4-3206-4074-a356-c65f66b30ffe'::uuid,
@@ -13850,7 +13718,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     35,
-    '2025-10-15 15:03:00'
+    '2024-10-15 15:03:00'
 );
 INSERT INTO SOLD VALUES (
     '9aeaaf2d-5ef5-411c-87fc-7daac987883a'::uuid,
@@ -13861,7 +13729,7 @@ INSERT INTO SOLD VALUES (
     7,
     50.0,
     68,
-    '2025-10-15 14:44:00'
+    '2024-10-15 14:44:00'
 );
 INSERT INTO SOLD VALUES (
     '2bf8241e-c802-4455-ab9f-d74750ae101f'::uuid,
@@ -13872,7 +13740,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     399,
-    '2025-10-15 10:43:00'
+    '2024-10-15 10:43:00'
 );
 INSERT INTO SOLD VALUES (
     '0d3ec052-eef2-4d05-b20d-a4258cc87231'::uuid,
@@ -13883,7 +13751,7 @@ INSERT INTO SOLD VALUES (
     17,
     12.0,
     363,
-    '2025-10-15 12:30:00'
+    '2024-10-15 12:30:00'
 );
 INSERT INTO SOLD VALUES (
     'f13e4047-95ab-45ae-b08f-039a7b6499cd'::uuid,
@@ -13894,7 +13762,7 @@ INSERT INTO SOLD VALUES (
     14,
     8.0,
     28,
-    '2025-10-15 12:25:00'
+    '2024-10-15 12:25:00'
 );
 INSERT INTO SOLD VALUES (
     '57949860-af96-4fa4-9790-d09e485dfa91'::uuid,
@@ -13905,7 +13773,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     67,
-    '2025-10-15 11:46:00'
+    '2024-10-15 11:46:00'
 );
 INSERT INTO SOLD VALUES (
     '733acb0e-21a7-460b-8f09-e26166b000d8'::uuid,
@@ -13916,7 +13784,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     52,
-    '2025-10-16 11:47:00'
+    '2024-10-16 11:47:00'
 );
 INSERT INTO SOLD VALUES (
     '0c072e4a-545f-4cd4-9376-df0a9dd4450f'::uuid,
@@ -13927,7 +13795,7 @@ INSERT INTO SOLD VALUES (
     16,
     25.0,
     23,
-    '2025-10-16 11:09:00'
+    '2024-10-16 11:09:00'
 );
 INSERT INTO SOLD VALUES (
     '2c620c2a-5b59-4174-86c8-16be32780c3b'::uuid,
@@ -13938,7 +13806,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     156,
-    '2025-10-16 20:28:00'
+    '2024-10-16 20:28:00'
 );
 INSERT INTO SOLD VALUES (
     '676ef07e-730d-4249-bfd6-7d1f6e10a0d1'::uuid,
@@ -13949,7 +13817,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     34,
-    '2025-10-16 17:43:00'
+    '2024-10-16 17:43:00'
 );
 INSERT INTO SOLD VALUES (
     '6b054667-724c-40e5-baea-df55cf4a9ec2'::uuid,
@@ -13960,7 +13828,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     62,
-    '2025-10-16 12:18:00'
+    '2024-10-16 12:18:00'
 );
 INSERT INTO SOLD VALUES (
     'c24046c4-8e12-4759-85a1-f05bcb8077a7'::uuid,
@@ -13971,7 +13839,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     397,
-    '2025-10-16 10:35:00'
+    '2024-10-16 10:35:00'
 );
 INSERT INTO SOLD VALUES (
     '4cb232df-f371-4668-91d7-b33a994399c4'::uuid,
@@ -13982,7 +13850,7 @@ INSERT INTO SOLD VALUES (
     23,
     12.0,
     340,
-    '2025-10-16 12:45:00'
+    '2024-10-16 12:45:00'
 );
 INSERT INTO SOLD VALUES (
     '82e8d8b8-46f7-4f71-845a-4095ee4b9cc1'::uuid,
@@ -13993,7 +13861,7 @@ INSERT INTO SOLD VALUES (
     10,
     8.0,
     18,
-    '2025-10-16 19:20:00'
+    '2024-10-16 19:20:00'
 );
 INSERT INTO SOLD VALUES (
     'ab893198-62cd-4775-a5ab-18f54308f4fe'::uuid,
@@ -14004,7 +13872,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     65,
-    '2025-10-16 12:12:00'
+    '2024-10-16 12:12:00'
 );
 INSERT INTO SOLD VALUES (
     '62fbae3e-7330-4dfb-9dd9-1ec4dc6a5e8a'::uuid,
@@ -14015,7 +13883,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     47,
-    '2025-10-17 15:36:00'
+    '2024-10-17 15:36:00'
 );
 INSERT INTO SOLD VALUES (
     '83b6c4df-fa4a-4e17-8ae3-4fdc25848877'::uuid,
@@ -14026,7 +13894,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     11,
-    '2025-10-17 13:25:00'
+    '2024-10-17 13:25:00'
 );
 INSERT INTO SOLD VALUES (
     'b5be0b4c-a4a5-4cb6-b475-018bf6ac0760'::uuid,
@@ -14037,7 +13905,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     151,
-    '2025-10-17 14:39:00'
+    '2024-10-17 14:39:00'
 );
 INSERT INTO SOLD VALUES (
     'e2491e02-a9a8-4bcb-a2c7-1586ac39678c'::uuid,
@@ -14048,7 +13916,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     52,
-    '2025-10-17 10:56:00'
+    '2024-10-17 10:56:00'
 );
 INSERT INTO SOLD VALUES (
     '3ea9dfff-abcd-44b4-a84c-a5aa2cf451f2'::uuid,
@@ -14059,7 +13927,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     396,
-    '2025-10-17 16:37:00'
+    '2024-10-17 16:37:00'
 );
 INSERT INTO SOLD VALUES (
     'e5159cad-1df9-4d41-9d82-9fba2c253ce0'::uuid,
@@ -14070,7 +13938,7 @@ INSERT INTO SOLD VALUES (
     15,
     12.0,
     325,
-    '2025-10-17 09:16:00'
+    '2024-10-17 09:16:00'
 );
 INSERT INTO SOLD VALUES (
     'e6642077-af72-4625-9c5c-02a612049758'::uuid,
@@ -14081,7 +13949,7 @@ INSERT INTO SOLD VALUES (
     11,
     8.0,
     7,
-    '2025-10-17 18:09:00'
+    '2024-10-17 18:09:00'
 );
 INSERT INTO SOLD VALUES (
     '959697b1-9453-473f-983f-5ad70e0c7a14'::uuid,
@@ -14092,7 +13960,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     63,
-    '2025-10-17 15:41:00'
+    '2024-10-17 15:41:00'
 );
 INSERT INTO SOLD VALUES (
     '31b44698-55bd-41af-9bbf-38c24960d693'::uuid,
@@ -14103,7 +13971,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     45,
-    '2025-10-18 17:57:00'
+    '2024-10-18 17:57:00'
 );
 INSERT INTO SOLD VALUES (
     'ee44d4c7-2858-47ee-8672-491f89ba6ce7'::uuid,
@@ -14114,7 +13982,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     0,
-    '2025-10-18 13:03:00'
+    '2024-10-18 13:03:00'
 );
 INSERT INTO SOLD VALUES (
     '9be762b6-c229-411d-92d2-996b7a05b4db'::uuid,
@@ -14125,7 +13993,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     144,
-    '2025-10-18 20:56:00'
+    '2024-10-18 20:56:00'
 );
 INSERT INTO SOLD VALUES (
     '43be1fc3-0b7a-49d7-809d-660d447ab2ee'::uuid,
@@ -14136,7 +14004,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     33,
-    '2025-10-18 20:37:00'
+    '2024-10-18 20:37:00'
 );
 INSERT INTO SOLD VALUES (
     '672b15d0-8930-443d-a9d7-e1754191b17e'::uuid,
@@ -14147,7 +14015,7 @@ INSERT INTO SOLD VALUES (
     15,
     50.0,
     37,
-    '2025-10-18 17:10:00'
+    '2024-10-18 17:10:00'
 );
 INSERT INTO SOLD VALUES (
     '17110038-de1f-4ef9-8ffd-df62887b19a9'::uuid,
@@ -14158,7 +14026,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     394,
-    '2025-10-18 19:11:00'
+    '2024-10-18 19:11:00'
 );
 INSERT INTO SOLD VALUES (
     'e655c606-f530-4e59-aaff-7b25cac54cfd'::uuid,
@@ -14169,7 +14037,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     305,
-    '2025-10-18 20:07:00'
+    '2024-10-18 20:07:00'
 );
 INSERT INTO SOLD VALUES (
     '2d6a03ea-36ab-45e3-8df4-795b9ced7f5d'::uuid,
@@ -14180,7 +14048,7 @@ INSERT INTO SOLD VALUES (
     7,
     8.0,
     0,
-    '2025-10-18 11:48:00'
+    '2024-10-18 11:48:00'
 );
 INSERT INTO SOLD VALUES (
     '4a9a16f4-8a62-44f2-8853-333f89a1315f'::uuid,
@@ -14191,7 +14059,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     61,
-    '2025-10-18 13:51:00'
+    '2024-10-18 13:51:00'
 );
 INSERT INTO SOLD VALUES (
     '4a0d6f94-704b-42d8-843d-6a1b415e51d2'::uuid,
@@ -14202,7 +14070,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     139,
-    '2025-10-19 10:38:00'
+    '2024-10-19 10:38:00'
 );
 INSERT INTO SOLD VALUES (
     '00466920-d148-4ec3-b077-0bcc7de4cbcd'::uuid,
@@ -14213,7 +14081,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     32,
-    '2025-10-19 12:23:00'
+    '2024-10-19 12:23:00'
 );
 INSERT INTO SOLD VALUES (
     '07aff280-f620-4558-b3dc-e9ee32c1ba86'::uuid,
@@ -14224,7 +14092,7 @@ INSERT INTO SOLD VALUES (
     13,
     50.0,
     24,
-    '2025-10-19 13:20:00'
+    '2024-10-19 13:20:00'
 );
 INSERT INTO SOLD VALUES (
     '7c03679a-b168-44fe-875b-fe58888e079b'::uuid,
@@ -14235,7 +14103,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     392,
-    '2025-10-19 16:25:00'
+    '2024-10-19 16:25:00'
 );
 INSERT INTO SOLD VALUES (
     '8ec98a6e-9a3b-4d73-b2f9-c390a4a98760'::uuid,
@@ -14246,7 +14114,7 @@ INSERT INTO SOLD VALUES (
     31,
     12.0,
     274,
-    '2025-10-19 13:06:00'
+    '2024-10-19 13:06:00'
 );
 INSERT INTO SOLD VALUES (
     '7e5c8840-18ce-463c-bd19-c736ac76b5a4'::uuid,
@@ -14257,7 +14125,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     58,
-    '2025-10-19 12:47:00'
+    '2024-10-19 12:47:00'
 );
 INSERT INTO SOLD VALUES (
     '0d7e8abe-ad5e-4d74-9a42-df629ca8fcae'::uuid,
@@ -14268,7 +14136,7 @@ INSERT INTO SOLD VALUES (
     2,
     250.0,
     43,
-    '2025-10-20 16:19:00'
+    '2024-10-20 16:19:00'
 );
 INSERT INTO SOLD VALUES (
     '9efc3465-f6c9-44aa-9021-86d4e03d023e'::uuid,
@@ -14279,7 +14147,7 @@ INSERT INTO SOLD VALUES (
     18,
     25.0,
     262,
-    '2025-10-20 09:31:00'
+    '2024-10-20 09:31:00'
 );
 INSERT INTO SOLD VALUES (
     '85e17823-d54e-4bd2-8fc5-8371ad045269'::uuid,
@@ -14290,7 +14158,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     135,
-    '2025-10-20 10:25:00'
+    '2024-10-20 10:25:00'
 );
 INSERT INTO SOLD VALUES (
     'c8dd0d5e-f0a9-4bea-8a7e-a7dc0db56e14'::uuid,
@@ -14301,7 +14169,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     31,
-    '2025-10-20 13:07:00'
+    '2024-10-20 13:07:00'
 );
 INSERT INTO SOLD VALUES (
     '1640882b-cb2a-411b-842d-4002d15c54ec'::uuid,
@@ -14312,7 +14180,7 @@ INSERT INTO SOLD VALUES (
     13,
     50.0,
     11,
-    '2025-10-20 18:46:00'
+    '2024-10-20 18:46:00'
 );
 INSERT INTO SOLD VALUES (
     'a90ae5d9-b523-4781-a0d4-22c3b3fe6580'::uuid,
@@ -14323,7 +14191,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     391,
-    '2025-10-20 15:37:00'
+    '2024-10-20 15:37:00'
 );
 INSERT INTO SOLD VALUES (
     '5922a743-0ef7-43d8-87f8-515841ca5092'::uuid,
@@ -14334,7 +14202,7 @@ INSERT INTO SOLD VALUES (
     24,
     12.0,
     250,
-    '2025-10-20 12:13:00'
+    '2024-10-20 12:13:00'
 );
 INSERT INTO SOLD VALUES (
     '52efad37-15fe-4612-b471-d8a6aabbf437'::uuid,
@@ -14345,7 +14213,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     55,
-    '2025-10-20 13:56:00'
+    '2024-10-20 13:56:00'
 );
 INSERT INTO SOLD VALUES (
     'c60c24a3-75a6-423d-aade-d0b4d30718cf'::uuid,
@@ -14356,7 +14224,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     34,
-    '2025-10-21 14:34:00'
+    '2024-10-21 14:34:00'
 );
 INSERT INTO SOLD VALUES (
     'cc19eea2-040f-4602-ad38-de3bf3886dff'::uuid,
@@ -14367,7 +14235,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     243,
-    '2025-10-21 18:42:00'
+    '2024-10-21 18:42:00'
 );
 INSERT INTO SOLD VALUES (
     '2f2354c8-d264-4df3-a634-c6941a654d14'::uuid,
@@ -14378,7 +14246,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     134,
-    '2025-10-21 15:15:00'
+    '2024-10-21 15:15:00'
 );
 INSERT INTO SOLD VALUES (
     '790446ba-0213-46e4-a573-3e74093c0212'::uuid,
@@ -14389,7 +14257,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     30,
-    '2025-10-21 12:00:00'
+    '2024-10-21 12:00:00'
 );
 INSERT INTO SOLD VALUES (
     '1f106eaa-e4d8-4e94-8639-0413c1223833'::uuid,
@@ -14400,7 +14268,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     3,
-    '2025-10-21 14:02:00'
+    '2024-10-21 14:02:00'
 );
 INSERT INTO SOLD VALUES (
     '98e33098-758a-4853-b6db-1477ff7bd4bf'::uuid,
@@ -14411,7 +14279,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     390,
-    '2025-10-21 10:34:00'
+    '2024-10-21 10:34:00'
 );
 INSERT INTO SOLD VALUES (
     'e097a915-c431-42ec-aa9c-045a087afafb'::uuid,
@@ -14422,7 +14290,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     230,
-    '2025-10-21 13:40:00'
+    '2024-10-21 13:40:00'
 );
 INSERT INTO SOLD VALUES (
     'a1bb5131-0ad1-444d-ba8e-fe02f5793579'::uuid,
@@ -14433,7 +14301,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     53,
-    '2025-10-21 19:01:00'
+    '2024-10-21 19:01:00'
 );
 INSERT INTO SOLD VALUES (
     'f7f45c74-a820-461c-b387-32dcfaf9367c'::uuid,
@@ -14444,7 +14312,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     25,
-    '2025-10-22 14:12:00'
+    '2024-10-22 14:12:00'
 );
 INSERT INTO SOLD VALUES (
     '8b9932b9-4051-4f81-ba73-6c3bb5da2fa3'::uuid,
@@ -14455,7 +14323,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     231,
-    '2025-10-22 15:40:00'
+    '2024-10-22 15:40:00'
 );
 INSERT INTO SOLD VALUES (
     '3e87ea69-ef97-4f54-ab87-fd290aa45e60'::uuid,
@@ -14466,7 +14334,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     129,
-    '2025-10-22 13:31:00'
+    '2024-10-22 13:31:00'
 );
 INSERT INTO SOLD VALUES (
     '9a8af053-0ccd-455e-a76a-b8dab5b627ff'::uuid,
@@ -14477,7 +14345,7 @@ INSERT INTO SOLD VALUES (
     3,
     50.0,
     0,
-    '2025-10-22 19:02:00'
+    '2024-10-22 19:02:00'
 );
 INSERT INTO SOLD VALUES (
     'a66d1550-a532-4a40-ab67-644123f84ca7'::uuid,
@@ -14488,7 +14356,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     388,
-    '2025-10-22 14:07:00'
+    '2024-10-22 14:07:00'
 );
 INSERT INTO SOLD VALUES (
     '88f2ee87-402f-44f6-95b4-65156b33af91'::uuid,
@@ -14499,7 +14367,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     210,
-    '2025-10-22 12:59:00'
+    '2024-10-22 12:59:00'
 );
 INSERT INTO SOLD VALUES (
     '5ef3f684-42d8-4dfa-9fd8-2bb822b0e8aa'::uuid,
@@ -14510,7 +14378,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     51,
-    '2025-10-22 10:23:00'
+    '2024-10-22 10:23:00'
 );
 INSERT INTO SOLD VALUES (
     '46fffabd-e402-42ce-8383-b045016b3a03'::uuid,
@@ -14521,7 +14389,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     17,
-    '2025-10-23 20:06:00'
+    '2024-10-23 20:06:00'
 );
 INSERT INTO SOLD VALUES (
     '8aaf9b81-10b9-4a73-886c-717fd9d84ef3'::uuid,
@@ -14532,7 +14400,7 @@ INSERT INTO SOLD VALUES (
     11,
     25.0,
     220,
-    '2025-10-23 10:21:00'
+    '2024-10-23 10:21:00'
 );
 INSERT INTO SOLD VALUES (
     '3502c990-0949-46a3-8373-6eecfc4ffa02'::uuid,
@@ -14543,7 +14411,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     126,
-    '2025-10-23 11:48:00'
+    '2024-10-23 11:48:00'
 );
 INSERT INTO SOLD VALUES (
     '6df6199c-4386-4902-8a09-dac73e889df8'::uuid,
@@ -14554,7 +14422,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     29,
-    '2025-10-23 19:00:00'
+    '2024-10-23 19:00:00'
 );
 INSERT INTO SOLD VALUES (
     '6e162c92-4e73-4962-b8b9-0e48c69685ee'::uuid,
@@ -14565,7 +14433,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     387,
-    '2025-10-23 14:00:00'
+    '2024-10-23 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     'f9da5f05-d685-41e7-be55-d21be8acfbe3'::uuid,
@@ -14576,7 +14444,7 @@ INSERT INTO SOLD VALUES (
     25,
     12.0,
     185,
-    '2025-10-23 10:50:00'
+    '2024-10-23 10:50:00'
 );
 INSERT INTO SOLD VALUES (
     '35d3a31a-e7ba-4870-9695-801292a2fbf3'::uuid,
@@ -14587,7 +14455,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     49,
-    '2025-10-23 20:50:00'
+    '2024-10-23 20:50:00'
 );
 INSERT INTO SOLD VALUES (
     '43cbd2bf-9264-4b5c-b304-e455a9659132'::uuid,
@@ -14598,7 +14466,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     162,
-    '2025-10-24 15:10:00'
+    '2024-10-24 15:10:00'
 );
 INSERT INTO SOLD VALUES (
     'ce01488b-f6b5-4873-9127-033b2e8d9cae'::uuid,
@@ -14609,7 +14477,7 @@ INSERT INTO SOLD VALUES (
     19,
     25.0,
     201,
-    '2025-10-24 18:04:00'
+    '2024-10-24 18:04:00'
 );
 INSERT INTO SOLD VALUES (
     '5321c5e6-9120-4bb7-a678-f6b9b2df8e9e'::uuid,
@@ -14620,7 +14488,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     121,
-    '2025-10-24 09:28:00'
+    '2024-10-24 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     '597378d0-a892-40d0-a60b-98026b0ebd6a'::uuid,
@@ -14631,7 +14499,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     385,
-    '2025-10-24 09:19:00'
+    '2024-10-24 09:19:00'
 );
 INSERT INTO SOLD VALUES (
     'f87af461-d9c1-4369-a337-3ab5bfb30fff'::uuid,
@@ -14642,7 +14510,7 @@ INSERT INTO SOLD VALUES (
     19,
     12.0,
     166,
-    '2025-10-24 09:26:00'
+    '2024-10-24 09:26:00'
 );
 INSERT INTO SOLD VALUES (
     '4a6aee94-c5e0-4323-898e-58df89fdd5cc'::uuid,
@@ -14653,7 +14521,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     47,
-    '2025-10-24 18:00:00'
+    '2024-10-24 18:00:00'
 );
 INSERT INTO SOLD VALUES (
     'afedeba1-ac04-47b9-a6bd-2e80a0a8752c'::uuid,
@@ -14664,7 +14532,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     154,
-    '2025-10-25 19:53:00'
+    '2024-10-25 19:53:00'
 );
 INSERT INTO SOLD VALUES (
     'a783508b-bd43-4db5-ae9e-6c190c56421e'::uuid,
@@ -14675,7 +14543,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     177,
-    '2025-10-25 11:05:00'
+    '2024-10-25 11:05:00'
 );
 INSERT INTO SOLD VALUES (
     '05cdf643-b45e-4d49-83ad-ec09c40d2c06'::uuid,
@@ -14686,7 +14554,7 @@ INSERT INTO SOLD VALUES (
     2,
     30.0,
     119,
-    '2025-10-25 11:35:00'
+    '2024-10-25 11:35:00'
 );
 INSERT INTO SOLD VALUES (
     'ba41cc5a-2f38-4f7d-aab6-2d542db1a6ae'::uuid,
@@ -14697,7 +14565,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     28,
-    '2025-10-25 11:31:00'
+    '2024-10-25 11:31:00'
 );
 INSERT INTO SOLD VALUES (
     'ac8b322b-3099-448c-864b-946b7b641b9b'::uuid,
@@ -14708,7 +14576,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     290,
-    '2025-10-25 12:41:00'
+    '2024-10-25 12:41:00'
 );
 INSERT INTO SOLD VALUES (
     '8b3dafd8-bbe9-477d-bc07-0ee8d50ebf2b'::uuid,
@@ -14719,7 +14587,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     383,
-    '2025-10-25 19:05:00'
+    '2024-10-25 19:05:00'
 );
 INSERT INTO SOLD VALUES (
     '7859cad6-0960-4919-b178-3415754fde24'::uuid,
@@ -14730,7 +14598,7 @@ INSERT INTO SOLD VALUES (
     30,
     12.0,
     136,
-    '2025-10-25 20:28:00'
+    '2024-10-25 20:28:00'
 );
 INSERT INTO SOLD VALUES (
     '5b45f981-05ba-4468-926f-ccd67388d628'::uuid,
@@ -14741,7 +14609,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     45,
-    '2025-10-25 18:41:00'
+    '2024-10-25 18:41:00'
 );
 INSERT INTO SOLD VALUES (
     'abfd4cb4-a084-41ec-83eb-b26494e033e5'::uuid,
@@ -14752,7 +14620,7 @@ INSERT INTO SOLD VALUES (
     13,
     250.0,
     141,
-    '2025-10-26 12:01:00'
+    '2024-10-26 12:01:00'
 );
 INSERT INTO SOLD VALUES (
     'bc9ca794-d6be-4a99-bd44-ddb93727e73a'::uuid,
@@ -14763,7 +14631,7 @@ INSERT INTO SOLD VALUES (
     24,
     25.0,
     153,
-    '2025-10-26 20:43:00'
+    '2024-10-26 20:43:00'
 );
 INSERT INTO SOLD VALUES (
     '6685909d-dd67-4120-a015-8cf9a4103bf6'::uuid,
@@ -14774,7 +14642,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     112,
-    '2025-10-26 19:38:00'
+    '2024-10-26 19:38:00'
 );
 INSERT INTO SOLD VALUES (
     '22d3449a-a158-4c83-a9df-61235b87ffb5'::uuid,
@@ -14785,7 +14653,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     27,
-    '2025-10-26 11:42:00'
+    '2024-10-26 11:42:00'
 );
 INSERT INTO SOLD VALUES (
     '7733e3ad-a413-4db2-8ba5-d5d5267abac4'::uuid,
@@ -14796,7 +14664,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     282,
-    '2025-10-26 10:17:00'
+    '2024-10-26 10:17:00'
 );
 INSERT INTO SOLD VALUES (
     'b3410309-a264-4546-beeb-890c977f2d2e'::uuid,
@@ -14807,7 +14675,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     382,
-    '2025-10-26 12:49:00'
+    '2024-10-26 12:49:00'
 );
 INSERT INTO SOLD VALUES (
     'cdc7e096-947e-46cc-afdf-2e6b943d9587'::uuid,
@@ -14818,7 +14686,7 @@ INSERT INTO SOLD VALUES (
     33,
     12.0,
     103,
-    '2025-10-26 09:01:00'
+    '2024-10-26 09:01:00'
 );
 INSERT INTO SOLD VALUES (
     '2ee13dbf-481f-42d2-a981-282fe6c7a739'::uuid,
@@ -14829,7 +14697,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     43,
-    '2025-10-26 10:16:00'
+    '2024-10-26 10:16:00'
 );
 INSERT INTO SOLD VALUES (
     'b1f39770-dabf-4a5c-91ae-3c83eb460e34'::uuid,
@@ -14840,7 +14708,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     133,
-    '2025-10-27 12:03:00'
+    '2024-10-27 12:03:00'
 );
 INSERT INTO SOLD VALUES (
     '4fdcd9a3-cf51-42d9-a56e-3816ec0bab4c'::uuid,
@@ -14851,7 +14719,7 @@ INSERT INTO SOLD VALUES (
     25,
     25.0,
     128,
-    '2025-10-27 11:52:00'
+    '2024-10-27 11:52:00'
 );
 INSERT INTO SOLD VALUES (
     'd62fa2cc-e3d6-41bd-9027-aeafcc6b5dc3'::uuid,
@@ -14862,7 +14730,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     106,
-    '2025-10-27 09:10:00'
+    '2024-10-27 09:10:00'
 );
 INSERT INTO SOLD VALUES (
     '2c95e5e3-1215-496e-adcb-007e3260c192'::uuid,
@@ -14873,7 +14741,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     26,
-    '2025-10-27 16:28:00'
+    '2024-10-27 16:28:00'
 );
 INSERT INTO SOLD VALUES (
     '24dd3517-be9f-4f55-8f8e-20ec14cc07dd'::uuid,
@@ -14884,7 +14752,7 @@ INSERT INTO SOLD VALUES (
     12,
     50.0,
     270,
-    '2025-10-27 15:14:00'
+    '2024-10-27 15:14:00'
 );
 INSERT INTO SOLD VALUES (
     '16329120-531d-44db-beeb-cb3951c2f89e'::uuid,
@@ -14895,7 +14763,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     381,
-    '2025-10-27 16:13:00'
+    '2024-10-27 16:13:00'
 );
 INSERT INTO SOLD VALUES (
     '9cfa6fbd-d759-46b8-a5e8-d3da4685db77'::uuid,
@@ -14906,7 +14774,7 @@ INSERT INTO SOLD VALUES (
     27,
     12.0,
     76,
-    '2025-10-27 09:35:00'
+    '2024-10-27 09:35:00'
 );
 INSERT INTO SOLD VALUES (
     '9b372427-c290-4434-984c-61ea92d3d89c'::uuid,
@@ -14917,7 +14785,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     42,
-    '2025-10-27 12:52:00'
+    '2024-10-27 12:52:00'
 );
 INSERT INTO SOLD VALUES (
     'ad3bb5b4-953f-4083-b5ad-96a7f10d275c'::uuid,
@@ -14928,7 +14796,7 @@ INSERT INTO SOLD VALUES (
     1,
     250.0,
     132,
-    '2025-10-28 13:45:00'
+    '2024-10-28 13:45:00'
 );
 INSERT INTO SOLD VALUES (
     'cac85f52-bb54-4256-a621-99176e8115a8'::uuid,
@@ -14939,7 +14807,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     116,
-    '2025-10-28 12:44:00'
+    '2024-10-28 12:44:00'
 );
 INSERT INTO SOLD VALUES (
     'aa03b34f-7a57-408b-8f53-6cff7ee295da'::uuid,
@@ -14950,7 +14818,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     103,
-    '2025-10-28 14:48:00'
+    '2024-10-28 14:48:00'
 );
 INSERT INTO SOLD VALUES (
     'a208ebdf-71e9-4a8f-80a4-12f87992e59c'::uuid,
@@ -14961,7 +14829,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     264,
-    '2025-10-28 14:24:00'
+    '2024-10-28 14:24:00'
 );
 INSERT INTO SOLD VALUES (
     '7dc37744-b1a5-416d-815e-a439de188ca1'::uuid,
@@ -14972,7 +14840,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     380,
-    '2025-10-28 17:05:00'
+    '2024-10-28 17:05:00'
 );
 INSERT INTO SOLD VALUES (
     '3006f3eb-1234-4fc8-bf4f-50c0cb8774ee'::uuid,
@@ -14983,7 +14851,7 @@ INSERT INTO SOLD VALUES (
     21,
     12.0,
     55,
-    '2025-10-28 14:53:00'
+    '2024-10-28 14:53:00'
 );
 INSERT INTO SOLD VALUES (
     '0c249c58-fabc-419f-9cdb-9ac820306cb6'::uuid,
@@ -14994,7 +14862,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     41,
-    '2025-10-28 15:24:00'
+    '2024-10-28 15:24:00'
 );
 INSERT INTO SOLD VALUES (
     '40657ab9-fade-49a5-b9f7-8a1804ac82d3'::uuid,
@@ -15005,7 +14873,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     211,
-    '2025-10-28 10:44:00'
+    '2024-10-28 10:44:00'
 );
 INSERT INTO SOLD VALUES (
     '4b67ba11-75b4-4375-a280-67e7c2319c21'::uuid,
@@ -15016,7 +14884,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     125,
-    '2025-10-29 13:57:00'
+    '2024-10-29 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     'c7f5eeb8-40d4-4516-8498-c7aadc7f3f11'::uuid,
@@ -15027,7 +14895,7 @@ INSERT INTO SOLD VALUES (
     15,
     25.0,
     101,
-    '2025-10-29 13:07:00'
+    '2024-10-29 13:07:00'
 );
 INSERT INTO SOLD VALUES (
     'bde21c93-8538-406a-a62e-a3911c33a716'::uuid,
@@ -15038,7 +14906,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     98,
-    '2025-10-29 10:42:00'
+    '2024-10-29 10:42:00'
 );
 INSERT INTO SOLD VALUES (
     'c978fba7-2c4c-4967-a53f-f744f21aa65a'::uuid,
@@ -15049,7 +14917,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     254,
-    '2025-10-29 10:44:00'
+    '2024-10-29 10:44:00'
 );
 INSERT INTO SOLD VALUES (
     '59a6e8b5-0b54-4e25-92fd-6b43a6553a0a'::uuid,
@@ -15060,7 +14928,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     378,
-    '2025-10-29 20:33:00'
+    '2024-10-29 20:33:00'
 );
 INSERT INTO SOLD VALUES (
     '12e7c85f-f6f6-4544-8304-220e079899ef'::uuid,
@@ -15071,7 +14939,7 @@ INSERT INTO SOLD VALUES (
     20,
     12.0,
     35,
-    '2025-10-29 17:50:00'
+    '2024-10-29 17:50:00'
 );
 INSERT INTO SOLD VALUES (
     '55eaef62-d045-471c-a40a-836a51c13583'::uuid,
@@ -15082,7 +14950,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     40,
-    '2025-10-29 15:46:00'
+    '2024-10-29 15:46:00'
 );
 INSERT INTO SOLD VALUES (
     '6a5366ae-59ca-44d7-85c7-90748248e1e9'::uuid,
@@ -15093,7 +14961,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     204,
-    '2025-10-29 17:51:00'
+    '2024-10-29 17:51:00'
 );
 INSERT INTO SOLD VALUES (
     'e290164e-7163-4b24-a95a-a7cd6cda316c'::uuid,
@@ -15104,7 +14972,7 @@ INSERT INTO SOLD VALUES (
     10,
     25.0,
     91,
-    '2025-10-30 17:37:00'
+    '2024-10-30 17:37:00'
 );
 INSERT INTO SOLD VALUES (
     '18785fbb-bf04-4d9a-ad50-076e5076dd76'::uuid,
@@ -15115,7 +14983,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     93,
-    '2025-10-30 12:32:00'
+    '2024-10-30 12:32:00'
 );
 INSERT INTO SOLD VALUES (
     '0a915a8c-8cc6-4bc2-bf6a-edcf8e21e67f'::uuid,
@@ -15126,7 +14994,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     25,
-    '2025-10-30 17:57:00'
+    '2024-10-30 17:57:00'
 );
 INSERT INTO SOLD VALUES (
     '867fbc4d-d024-4f3d-be7d-3ba893707853'::uuid,
@@ -15137,7 +15005,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     244,
-    '2025-10-30 18:28:00'
+    '2024-10-30 18:28:00'
 );
 INSERT INTO SOLD VALUES (
     'faf91011-3441-4d54-b93d-a9e787e3139b'::uuid,
@@ -15148,7 +15016,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     376,
-    '2025-10-30 10:47:00'
+    '2024-10-30 10:47:00'
 );
 INSERT INTO SOLD VALUES (
     'a7671b46-032d-4d46-9fe7-2660be251b1d'::uuid,
@@ -15159,7 +15027,7 @@ INSERT INTO SOLD VALUES (
     22,
     12.0,
     13,
-    '2025-10-30 09:18:00'
+    '2024-10-30 09:18:00'
 );
 INSERT INTO SOLD VALUES (
     '2c80b34a-56ad-424b-acfc-8ccb1ab561f9'::uuid,
@@ -15170,7 +15038,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     38,
-    '2025-10-30 16:29:00'
+    '2024-10-30 16:29:00'
 );
 INSERT INTO SOLD VALUES (
     '6294c6fc-43fe-4079-ae10-f61424212fcd'::uuid,
@@ -15181,7 +15049,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     197,
-    '2025-10-30 15:43:00'
+    '2024-10-30 15:43:00'
 );
 INSERT INTO SOLD VALUES (
     '4ee4041f-ba23-4469-b58e-8936b19cf502'::uuid,
@@ -15192,7 +15060,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     120,
-    '2025-10-31 09:46:00'
+    '2024-10-31 09:46:00'
 );
 INSERT INTO SOLD VALUES (
     '01d2c7b9-d68e-4284-afd3-6c8e8cd5a888'::uuid,
@@ -15203,7 +15071,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     79,
-    '2025-10-31 13:04:00'
+    '2024-10-31 13:04:00'
 );
 INSERT INTO SOLD VALUES (
     'f7f80d5b-b0b9-4005-baa9-241624802446'::uuid,
@@ -15214,7 +15082,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     88,
-    '2025-10-31 16:09:00'
+    '2024-10-31 16:09:00'
 );
 INSERT INTO SOLD VALUES (
     '125beb16-ab74-4ce7-8258-a96ffbc43af9'::uuid,
@@ -15225,7 +15093,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     24,
-    '2025-10-31 13:50:00'
+    '2024-10-31 13:50:00'
 );
 INSERT INTO SOLD VALUES (
     'd6303af9-69b7-4e4c-9e35-fd0aca264a64'::uuid,
@@ -15236,7 +15104,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     236,
-    '2025-10-31 11:05:00'
+    '2024-10-31 11:05:00'
 );
 INSERT INTO SOLD VALUES (
     'fac333bb-e907-45ef-9951-86b3894bf449'::uuid,
@@ -15247,7 +15115,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     375,
-    '2025-10-31 19:23:00'
+    '2024-10-31 19:23:00'
 );
 INSERT INTO SOLD VALUES (
     '4a2ec805-8c66-47bb-87c3-b57f16332e9d'::uuid,
@@ -15258,7 +15126,7 @@ INSERT INTO SOLD VALUES (
     13,
     12.0,
     0,
-    '2025-10-31 12:18:00'
+    '2024-10-31 12:18:00'
 );
 INSERT INTO SOLD VALUES (
     '2c9f4703-a92b-4a57-8b3e-cb19ba829833'::uuid,
@@ -15269,7 +15137,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     189,
-    '2025-10-31 20:36:00'
+    '2024-10-31 20:36:00'
 );
 INSERT INTO SOLD VALUES (
     '9c6808da-09b8-4f60-840b-8d2a0387c1c7'::uuid,
@@ -15280,7 +15148,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     82,
-    '2025-11-01 11:54:00'
+    '2024-11-01 11:54:00'
 );
 INSERT INTO SOLD VALUES (
     'f35163a8-4b1d-403e-ad11-c632f7fe43b3'::uuid,
@@ -15291,7 +15159,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     23,
-    '2025-11-01 10:24:00'
+    '2024-11-01 10:24:00'
 );
 INSERT INTO SOLD VALUES (
     'f80242df-d0a8-43a0-b110-8829652428c9'::uuid,
@@ -15302,7 +15170,7 @@ INSERT INTO SOLD VALUES (
     13,
     50.0,
     223,
-    '2025-11-01 20:09:00'
+    '2024-11-01 20:09:00'
 );
 INSERT INTO SOLD VALUES (
     '5c4a1721-fbcf-4306-b380-810a9d410cf6'::uuid,
@@ -15313,7 +15181,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     373,
-    '2025-11-01 20:00:00'
+    '2024-11-01 20:00:00'
 );
 INSERT INTO SOLD VALUES (
     '2ec257e9-81a4-4e0c-8cd9-c46793a819ce'::uuid,
@@ -15324,7 +15192,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     36,
-    '2025-11-01 20:38:00'
+    '2024-11-01 20:38:00'
 );
 INSERT INTO SOLD VALUES (
     'f12a57dd-ee5d-4b42-b494-8c02ecf7b146'::uuid,
@@ -15335,7 +15203,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     180,
-    '2025-11-01 16:10:00'
+    '2024-11-01 16:10:00'
 );
 INSERT INTO SOLD VALUES (
     'cbe7992f-3ef1-4007-8d12-f917a6210e06'::uuid,
@@ -15346,7 +15214,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     113,
-    '2025-11-02 13:56:00'
+    '2024-11-02 13:56:00'
 );
 INSERT INTO SOLD VALUES (
     'fa6d81b7-4651-4564-a816-7ed394c70daf'::uuid,
@@ -15357,7 +15225,7 @@ INSERT INTO SOLD VALUES (
     20,
     25.0,
     59,
-    '2025-11-02 12:32:00'
+    '2024-11-02 12:32:00'
 );
 INSERT INTO SOLD VALUES (
     'a56fb67b-0d73-4da3-a72b-822267e77fee'::uuid,
@@ -15368,7 +15236,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     77,
-    '2025-11-02 16:27:00'
+    '2024-11-02 16:27:00'
 );
 INSERT INTO SOLD VALUES (
     'd876296f-f5a5-4536-961a-af96a171834a'::uuid,
@@ -15379,7 +15247,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     22,
-    '2025-11-02 18:18:00'
+    '2024-11-02 18:18:00'
 );
 INSERT INTO SOLD VALUES (
     '19627f46-4911-471d-b792-99a22c374c1a'::uuid,
@@ -15390,7 +15258,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     213,
-    '2025-11-02 11:00:00'
+    '2024-11-02 11:00:00'
 );
 INSERT INTO SOLD VALUES (
     'e708daf8-0a0a-49be-835d-4f51b48015d3'::uuid,
@@ -15401,7 +15269,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     371,
-    '2025-11-02 12:24:00'
+    '2024-11-02 12:24:00'
 );
 INSERT INTO SOLD VALUES (
     '624808d1-4f80-4a89-b059-a5c5cfb1dc47'::uuid,
@@ -15412,7 +15280,7 @@ INSERT INTO SOLD VALUES (
     3,
     15.0,
     33,
-    '2025-11-02 19:37:00'
+    '2024-11-02 19:37:00'
 );
 INSERT INTO SOLD VALUES (
     '9ed9a9b4-e1dc-40cc-a430-04febedd8b38'::uuid,
@@ -15423,7 +15291,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     172,
-    '2025-11-02 16:57:00'
+    '2024-11-02 16:57:00'
 );
 INSERT INTO SOLD VALUES (
     'fbc13ccd-1d2d-4637-b039-47b357465d45'::uuid,
@@ -15434,7 +15302,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     104,
-    '2025-11-03 12:21:00'
+    '2024-11-03 12:21:00'
 );
 INSERT INTO SOLD VALUES (
     '32f8a34e-0d2a-4581-a4da-51797670c3e4'::uuid,
@@ -15445,7 +15313,7 @@ INSERT INTO SOLD VALUES (
     20,
     25.0,
     39,
-    '2025-11-03 12:53:00'
+    '2024-11-03 12:53:00'
 );
 INSERT INTO SOLD VALUES (
     'dfadf12c-95b2-4522-8463-c70b0651c5d0'::uuid,
@@ -15456,7 +15324,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     72,
-    '2025-11-03 10:47:00'
+    '2024-11-03 10:47:00'
 );
 INSERT INTO SOLD VALUES (
     '50885ab0-ee0a-49d2-a678-99934dbbca27'::uuid,
@@ -15467,7 +15335,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     21,
-    '2025-11-03 17:26:00'
+    '2024-11-03 17:26:00'
 );
 INSERT INTO SOLD VALUES (
     '0e3a6c55-2a04-4036-8726-ee2fe30931cb'::uuid,
@@ -15478,7 +15346,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     205,
-    '2025-11-03 10:54:00'
+    '2024-11-03 10:54:00'
 );
 INSERT INTO SOLD VALUES (
     'e81592df-314b-4f93-8ced-cd2906c22dda'::uuid,
@@ -15489,7 +15357,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     369,
-    '2025-11-03 14:54:00'
+    '2024-11-03 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     '93caccaf-add9-4325-adc8-6573338b69a7'::uuid,
@@ -15500,7 +15368,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     32,
-    '2025-11-03 18:46:00'
+    '2024-11-03 18:46:00'
 );
 INSERT INTO SOLD VALUES (
     'f7d58e32-ecb2-4f9f-82ca-940f9baff06a'::uuid,
@@ -15511,7 +15379,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     164,
-    '2025-11-03 16:25:00'
+    '2024-11-03 16:25:00'
 );
 INSERT INTO SOLD VALUES (
     '63ae567c-6fe7-40a6-8906-c46731e82880'::uuid,
@@ -15522,7 +15390,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     95,
-    '2025-11-04 11:22:00'
+    '2024-11-04 11:22:00'
 );
 INSERT INTO SOLD VALUES (
     '79f7aee0-4450-4fb0-8243-a50dee55fd01'::uuid,
@@ -15533,7 +15401,7 @@ INSERT INTO SOLD VALUES (
     13,
     25.0,
     26,
-    '2025-11-04 09:28:00'
+    '2024-11-04 09:28:00'
 );
 INSERT INTO SOLD VALUES (
     '88124c09-234f-42f9-8115-c0cfb8ba6534'::uuid,
@@ -15544,7 +15412,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     68,
-    '2025-11-04 13:57:00'
+    '2024-11-04 13:57:00'
 );
 INSERT INTO SOLD VALUES (
     '6c4fd0aa-5190-4db2-8e37-110d63ef2599'::uuid,
@@ -15555,7 +15423,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     20,
-    '2025-11-04 10:14:00'
+    '2024-11-04 10:14:00'
 );
 INSERT INTO SOLD VALUES (
     'a42e45e9-575e-4b73-aa0c-2087ab58ca6c'::uuid,
@@ -15566,7 +15434,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     368,
-    '2025-11-04 10:18:00'
+    '2024-11-04 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     '5dcc8e8e-3895-4009-9d19-930618d7a637'::uuid,
@@ -15577,7 +15445,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     30,
-    '2025-11-04 16:24:00'
+    '2024-11-04 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     '73727741-b4f8-43b2-8a37-03e1e628e8ef'::uuid,
@@ -15588,7 +15456,7 @@ INSERT INTO SOLD VALUES (
     6,
     10.0,
     158,
-    '2025-11-04 20:58:00'
+    '2024-11-04 20:58:00'
 );
 INSERT INTO SOLD VALUES (
     '1c35fd79-632d-46de-937d-979e48f5c129'::uuid,
@@ -15599,7 +15467,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     86,
-    '2025-11-05 15:04:00'
+    '2024-11-05 15:04:00'
 );
 INSERT INTO SOLD VALUES (
     '9a4f8795-dda7-48a5-bb80-f093b5bdb44b'::uuid,
@@ -15610,7 +15478,7 @@ INSERT INTO SOLD VALUES (
     14,
     25.0,
     12,
-    '2025-11-05 20:46:00'
+    '2024-11-05 20:46:00'
 );
 INSERT INTO SOLD VALUES (
     'a840165d-0012-4a28-98ec-cca247f0c2b6'::uuid,
@@ -15621,7 +15489,7 @@ INSERT INTO SOLD VALUES (
     3,
     30.0,
     65,
-    '2025-11-05 20:00:00'
+    '2024-11-05 20:00:00'
 );
 INSERT INTO SOLD VALUES (
     '4b994a1a-9dbd-43fb-8eba-d53ef9f3cb13'::uuid,
@@ -15632,7 +15500,7 @@ INSERT INTO SOLD VALUES (
     10,
     50.0,
     195,
-    '2025-11-05 11:46:00'
+    '2024-11-05 11:46:00'
 );
 INSERT INTO SOLD VALUES (
     '88722b76-8df7-401a-bb9d-393e2dffc2ca'::uuid,
@@ -15643,7 +15511,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     367,
-    '2025-11-05 16:38:00'
+    '2024-11-05 16:38:00'
 );
 INSERT INTO SOLD VALUES (
     '1ebc0fcb-7c73-4bbf-85fb-711ac9ec2e60'::uuid,
@@ -15654,7 +15522,7 @@ INSERT INTO SOLD VALUES (
     5,
     10.0,
     153,
-    '2025-11-05 09:26:00'
+    '2024-11-05 09:26:00'
 );
 INSERT INTO SOLD VALUES (
     'b2926fc7-547f-4c4f-91b0-c704c0472361'::uuid,
@@ -15665,7 +15533,7 @@ INSERT INTO SOLD VALUES (
     8,
     250.0,
     78,
-    '2025-11-06 13:11:00'
+    '2024-11-06 13:11:00'
 );
 INSERT INTO SOLD VALUES (
     '8d29f6d5-c648-422e-868f-80a30b2972a6'::uuid,
@@ -15676,7 +15544,7 @@ INSERT INTO SOLD VALUES (
     12,
     25.0,
     0,
-    '2025-11-06 18:26:00'
+    '2024-11-06 18:26:00'
 );
 INSERT INTO SOLD VALUES (
     'f9c09d71-3d9c-4f2a-aaec-c6c3254eddef'::uuid,
@@ -15687,7 +15555,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     61,
-    '2025-11-06 13:25:00'
+    '2024-11-06 13:25:00'
 );
 INSERT INTO SOLD VALUES (
     'c2bdf8fe-b17d-4aaa-8003-f705c6fa085d'::uuid,
@@ -15698,7 +15566,7 @@ INSERT INTO SOLD VALUES (
     11,
     50.0,
     184,
-    '2025-11-06 12:00:00'
+    '2024-11-06 12:00:00'
 );
 INSERT INTO SOLD VALUES (
     '5d0d27dd-47b3-4c8a-8476-06a65794aa8f'::uuid,
@@ -15709,7 +15577,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     29,
-    '2025-11-06 20:07:00'
+    '2024-11-06 20:07:00'
 );
 INSERT INTO SOLD VALUES (
     '764e36c2-0cd3-48bc-8c99-3ffc7b1742de'::uuid,
@@ -15720,7 +15588,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     146,
-    '2025-11-06 16:08:00'
+    '2024-11-06 16:08:00'
 );
 INSERT INTO SOLD VALUES (
     '2b059b1d-4bc2-40c1-bab6-e2ab340bbac1'::uuid,
@@ -15731,7 +15599,7 @@ INSERT INTO SOLD VALUES (
     5,
     250.0,
     73,
-    '2025-11-07 19:38:00'
+    '2024-11-07 19:38:00'
 );
 INSERT INTO SOLD VALUES (
     'a58fb65a-36d1-401c-bfe2-aa23f38a98d5'::uuid,
@@ -15742,7 +15610,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     19,
-    '2025-11-07 13:00:00'
+    '2024-11-07 13:00:00'
 );
 INSERT INTO SOLD VALUES (
     '15d63bf2-a1a2-4048-837c-8fbe0da29aac'::uuid,
@@ -15753,7 +15621,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     178,
-    '2025-11-07 17:34:00'
+    '2024-11-07 17:34:00'
 );
 INSERT INTO SOLD VALUES (
     'adda23d4-3901-428a-8add-ecc1ed86a524'::uuid,
@@ -15764,7 +15632,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     365,
-    '2025-11-07 20:41:00'
+    '2024-11-07 20:41:00'
 );
 INSERT INTO SOLD VALUES (
     'e87707fd-d5d4-4241-9353-cb2ecbc4b84d'::uuid,
@@ -15775,7 +15643,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     27,
-    '2025-11-07 12:54:00'
+    '2024-11-07 12:54:00'
 );
 INSERT INTO SOLD VALUES (
     '23d0a295-c556-4415-a7eb-f9f885c1dbd3'::uuid,
@@ -15786,7 +15654,7 @@ INSERT INTO SOLD VALUES (
     10,
     10.0,
     136,
-    '2025-11-07 20:36:00'
+    '2024-11-07 20:36:00'
 );
 INSERT INTO SOLD VALUES (
     '17da392b-8c53-4f42-8e06-2050f415e8d5'::uuid,
@@ -15797,7 +15665,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     63,
-    '2025-11-08 14:30:00'
+    '2024-11-08 14:30:00'
 );
 INSERT INTO SOLD VALUES (
     'ce262b27-b14e-4334-813b-615af0fb7d9c'::uuid,
@@ -15808,7 +15676,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     57,
-    '2025-11-08 14:31:00'
+    '2024-11-08 14:31:00'
 );
 INSERT INTO SOLD VALUES (
     '1ecc5584-9e2f-474f-ac6a-6e8013f4f95f'::uuid,
@@ -15819,7 +15687,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     176,
-    '2025-11-08 16:56:00'
+    '2024-11-08 16:56:00'
 );
 INSERT INTO SOLD VALUES (
     '6d83fefa-8609-4ba2-a24c-f8b35fdd352c'::uuid,
@@ -15830,7 +15698,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     363,
-    '2025-11-08 11:10:00'
+    '2024-11-08 11:10:00'
 );
 INSERT INTO SOLD VALUES (
     'fa5449f6-22a8-45b6-b228-1d3ba83b87b4'::uuid,
@@ -15841,7 +15709,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     25,
-    '2025-11-08 19:14:00'
+    '2024-11-08 19:14:00'
 );
 INSERT INTO SOLD VALUES (
     '2ce1ff9b-a5b5-44cc-b643-d924a1e2e6fe'::uuid,
@@ -15852,7 +15720,7 @@ INSERT INTO SOLD VALUES (
     1,
     10.0,
     135,
-    '2025-11-08 16:13:00'
+    '2024-11-08 16:13:00'
 );
 INSERT INTO SOLD VALUES (
     '22cda7a4-b2b2-4a50-918b-7f2e77bf70b3'::uuid,
@@ -15863,7 +15731,7 @@ INSERT INTO SOLD VALUES (
     12,
     250.0,
     51,
-    '2025-11-09 10:55:00'
+    '2024-11-09 10:55:00'
 );
 INSERT INTO SOLD VALUES (
     '65b3e97d-839f-44de-8f5d-a965c2c4457f'::uuid,
@@ -15874,7 +15742,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     50,
-    '2025-11-09 17:31:00'
+    '2024-11-09 17:31:00'
 );
 INSERT INTO SOLD VALUES (
     '3be69939-3bd0-4e0a-b676-cfbbe916609a'::uuid,
@@ -15885,7 +15753,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     18,
-    '2025-11-09 09:19:00'
+    '2024-11-09 09:19:00'
 );
 INSERT INTO SOLD VALUES (
     'f4654cdf-c03c-4a74-bd74-eb2ff5111c2d'::uuid,
@@ -15896,7 +15764,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     174,
-    '2025-11-09 18:46:00'
+    '2024-11-09 18:46:00'
 );
 INSERT INTO SOLD VALUES (
     '30c8c08c-82f7-4377-b17d-28aa0e560674'::uuid,
@@ -15907,7 +15775,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     362,
-    '2025-11-09 14:54:00'
+    '2024-11-09 14:54:00'
 );
 INSERT INTO SOLD VALUES (
     'c9f4baa3-8acb-4c21-9a73-d0810292ad50'::uuid,
@@ -15918,7 +15786,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     24,
-    '2025-11-09 14:00:00'
+    '2024-11-09 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     '528a9df8-5f1e-4612-9647-d7e8bc27ed5b'::uuid,
@@ -15929,7 +15797,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     123,
-    '2025-11-09 10:18:00'
+    '2024-11-09 10:18:00'
 );
 INSERT INTO SOLD VALUES (
     'eda9574e-8ed5-4bdd-b958-6f6beb6d8eea'::uuid,
@@ -15940,7 +15808,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     41,
-    '2025-11-10 10:48:00'
+    '2024-11-10 10:48:00'
 );
 INSERT INTO SOLD VALUES (
     '85a7bf27-e543-49dd-95c3-c7a5b8ce8be9'::uuid,
@@ -15951,7 +15819,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     165,
-    '2025-11-10 11:19:00'
+    '2024-11-10 11:19:00'
 );
 INSERT INTO SOLD VALUES (
     '1a1b0059-74d6-4260-80ce-047a7a85e836'::uuid,
@@ -15962,7 +15830,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     360,
-    '2025-11-10 18:02:00'
+    '2024-11-10 18:02:00'
 );
 INSERT INTO SOLD VALUES (
     'dcbd2f7a-5d10-42bf-8214-3c60d1a227f9'::uuid,
@@ -15973,7 +15841,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     22,
-    '2025-11-10 15:56:00'
+    '2024-11-10 15:56:00'
 );
 INSERT INTO SOLD VALUES (
     '26607970-447c-415d-8c47-2a87a202b2c4'::uuid,
@@ -15984,7 +15852,7 @@ INSERT INTO SOLD VALUES (
     12,
     10.0,
     111,
-    '2025-11-10 16:20:00'
+    '2024-11-10 16:20:00'
 );
 INSERT INTO SOLD VALUES (
     '965f8549-22c1-4a2e-9686-3bf33e245045'::uuid,
@@ -15995,7 +15863,7 @@ INSERT INTO SOLD VALUES (
     10,
     250.0,
     31,
-    '2025-11-11 16:24:00'
+    '2024-11-11 16:24:00'
 );
 INSERT INTO SOLD VALUES (
     '0cba2d14-6893-4f3d-9a97-6438dbda87b5'::uuid,
@@ -16006,7 +15874,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     45,
-    '2025-11-11 15:28:00'
+    '2024-11-11 15:28:00'
 );
 INSERT INTO SOLD VALUES (
     'ac4c01f9-7336-4a3a-af66-c3a36f905d0c'::uuid,
@@ -16017,7 +15885,7 @@ INSERT INTO SOLD VALUES (
     9,
     50.0,
     156,
-    '2025-11-11 10:04:00'
+    '2024-11-11 10:04:00'
 );
 INSERT INTO SOLD VALUES (
     '3869a92f-3591-4eb5-a647-f8f520fe36d3'::uuid,
@@ -16028,7 +15896,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     359,
-    '2025-11-11 12:04:00'
+    '2024-11-11 12:04:00'
 );
 INSERT INTO SOLD VALUES (
     '1a0043cc-cff6-4101-8e60-4373b034cf8c'::uuid,
@@ -16039,7 +15907,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     21,
-    '2025-11-11 12:41:00'
+    '2024-11-11 12:41:00'
 );
 INSERT INTO SOLD VALUES (
     '9ac9e560-a824-4270-90ab-c5a3eda4f853'::uuid,
@@ -16050,7 +15918,7 @@ INSERT INTO SOLD VALUES (
     8,
     10.0,
     103,
-    '2025-11-11 17:25:00'
+    '2024-11-11 17:25:00'
 );
 INSERT INTO SOLD VALUES (
     '2fdb08ed-0070-46ab-a11d-5766e9c7de08'::uuid,
@@ -16061,7 +15929,7 @@ INSERT INTO SOLD VALUES (
     9,
     250.0,
     22,
-    '2025-11-12 16:14:00'
+    '2024-11-12 16:14:00'
 );
 INSERT INTO SOLD VALUES (
     '0ff221bc-ba17-4630-a34e-38383e972e64'::uuid,
@@ -16072,7 +15940,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     44,
-    '2025-11-12 10:28:00'
+    '2024-11-12 10:28:00'
 );
 INSERT INTO SOLD VALUES (
     '7016a11e-d80b-4e2b-9866-b4bec637848d'::uuid,
@@ -16083,7 +15951,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     358,
-    '2025-11-12 12:45:00'
+    '2024-11-12 12:45:00'
 );
 INSERT INTO SOLD VALUES (
     'a665ab10-304e-44fb-9789-5d23bd31d98a'::uuid,
@@ -16094,7 +15962,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     20,
-    '2025-11-12 13:26:00'
+    '2024-11-12 13:26:00'
 );
 INSERT INTO SOLD VALUES (
     '8e2f7590-d9ae-483f-a3f8-d2d2324f9b6e'::uuid,
@@ -16105,7 +15973,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     94,
-    '2025-11-12 11:29:00'
+    '2024-11-12 11:29:00'
 );
 INSERT INTO SOLD VALUES (
     'a852b837-771c-46cf-bd3d-873d0cf95c9d'::uuid,
@@ -16116,7 +15984,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     16,
-    '2025-11-13 17:59:00'
+    '2024-11-13 17:59:00'
 );
 INSERT INTO SOLD VALUES (
     '453c96a8-a285-460a-898c-9295d7f7cfe9'::uuid,
@@ -16127,7 +15995,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     40,
-    '2025-11-13 13:24:00'
+    '2024-11-13 13:24:00'
 );
 INSERT INTO SOLD VALUES (
     '146d026f-d661-44fe-b85f-d9fcf55e4b88'::uuid,
@@ -16138,7 +16006,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     148,
-    '2025-11-13 15:47:00'
+    '2024-11-13 15:47:00'
 );
 INSERT INTO SOLD VALUES (
     '2a522bde-1e29-46df-9282-b6c70cf8e607'::uuid,
@@ -16149,7 +16017,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     357,
-    '2025-11-13 18:53:00'
+    '2024-11-13 18:53:00'
 );
 INSERT INTO SOLD VALUES (
     '6286a718-1446-4ef0-9abb-9197fcedea98'::uuid,
@@ -16160,7 +16028,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     19,
-    '2025-11-13 18:47:00'
+    '2024-11-13 18:47:00'
 );
 INSERT INTO SOLD VALUES (
     '8babc029-e0ce-4662-a49c-4d9094974cfc'::uuid,
@@ -16171,7 +16039,7 @@ INSERT INTO SOLD VALUES (
     7,
     10.0,
     87,
-    '2025-11-13 13:42:00'
+    '2024-11-13 13:42:00'
 );
 INSERT INTO SOLD VALUES (
     '7010dea0-18df-446b-bc23-adc19cf9e6a1'::uuid,
@@ -16182,7 +16050,7 @@ INSERT INTO SOLD VALUES (
     6,
     250.0,
     10,
-    '2025-11-14 14:44:00'
+    '2024-11-14 14:44:00'
 );
 INSERT INTO SOLD VALUES (
     '709f72bb-1d2f-47df-ac04-b0c212c35482'::uuid,
@@ -16193,7 +16061,7 @@ INSERT INTO SOLD VALUES (
     5,
     30.0,
     35,
-    '2025-11-14 11:18:00'
+    '2024-11-14 11:18:00'
 );
 INSERT INTO SOLD VALUES (
     '014b9332-9920-43c4-904c-fc4d91f8f864'::uuid,
@@ -16204,7 +16072,7 @@ INSERT INTO SOLD VALUES (
     6,
     50.0,
     142,
-    '2025-11-14 16:40:00'
+    '2024-11-14 16:40:00'
 );
 INSERT INTO SOLD VALUES (
     'da5188d4-d331-42cc-ad2c-795bea4549d3'::uuid,
@@ -16215,7 +16083,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     356,
-    '2025-11-14 18:35:00'
+    '2024-11-14 18:35:00'
 );
 INSERT INTO SOLD VALUES (
     'e70c5404-c244-43c3-b8e3-34884def1fb6'::uuid,
@@ -16226,7 +16094,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     17,
-    '2025-11-14 13:34:00'
+    '2024-11-14 13:34:00'
 );
 INSERT INTO SOLD VALUES (
     'ec92638a-98a3-4b09-a248-c2ee9cf300df'::uuid,
@@ -16237,7 +16105,7 @@ INSERT INTO SOLD VALUES (
     7,
     250.0,
     3,
-    '2025-11-15 18:52:00'
+    '2024-11-15 18:52:00'
 );
 INSERT INTO SOLD VALUES (
     '67720ac4-0bf1-4aba-b266-6d1b286cc0ab'::uuid,
@@ -16248,7 +16116,7 @@ INSERT INTO SOLD VALUES (
     1,
     30.0,
     34,
-    '2025-11-15 12:28:00'
+    '2024-11-15 12:28:00'
 );
 INSERT INTO SOLD VALUES (
     '22b7634c-2560-44f7-9f20-85f3e3406ce2'::uuid,
@@ -16259,7 +16127,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     17,
-    '2025-11-15 14:40:00'
+    '2024-11-15 14:40:00'
 );
 INSERT INTO SOLD VALUES (
     '4565645b-4bdf-4df7-9cb2-2632e007f074'::uuid,
@@ -16270,7 +16138,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     354,
-    '2025-11-15 19:01:00'
+    '2024-11-15 19:01:00'
 );
 INSERT INTO SOLD VALUES (
     '8bdf7631-c704-4fed-9f9f-0ae9237826d9'::uuid,
@@ -16281,7 +16149,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     15,
-    '2025-11-15 10:33:00'
+    '2024-11-15 10:33:00'
 );
 INSERT INTO SOLD VALUES (
     '2d6d3dd8-34e7-4c5f-86dd-9360597f0bcf'::uuid,
@@ -16292,7 +16160,7 @@ INSERT INTO SOLD VALUES (
     9,
     10.0,
     78,
-    '2025-11-15 14:00:00'
+    '2024-11-15 14:00:00'
 );
 INSERT INTO SOLD VALUES (
     'f855a9a1-85b1-4430-abcc-b12f0c467a1b'::uuid,
@@ -16303,7 +16171,7 @@ INSERT INTO SOLD VALUES (
     3,
     250.0,
     0,
-    '2025-11-16 18:55:00'
+    '2024-11-16 18:55:00'
 );
 INSERT INTO SOLD VALUES (
     '3d0cfb03-4275-4ddc-b76e-8f9a0e1fac1c'::uuid,
@@ -16314,7 +16182,7 @@ INSERT INTO SOLD VALUES (
     6,
     30.0,
     28,
-    '2025-11-16 09:34:00'
+    '2024-11-16 09:34:00'
 );
 INSERT INTO SOLD VALUES (
     '9ae4c7ff-ab4c-4368-91d1-84808f0db49c'::uuid,
@@ -16325,7 +16193,7 @@ INSERT INTO SOLD VALUES (
     2,
     120.0,
     15,
-    '2025-11-16 18:42:00'
+    '2024-11-16 18:42:00'
 );
 INSERT INTO SOLD VALUES (
     'f590ce4d-9690-4142-b91e-8bdde9dad454'::uuid,
@@ -16336,7 +16204,7 @@ INSERT INTO SOLD VALUES (
     2,
     50.0,
     140,
-    '2025-11-16 14:25:00'
+    '2024-11-16 14:25:00'
 );
 INSERT INTO SOLD VALUES (
     'b96f2725-f8f8-4ca0-bc61-99d66414049c'::uuid,
@@ -16347,7 +16215,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     352,
-    '2025-11-16 14:50:00'
+    '2024-11-16 14:50:00'
 );
 INSERT INTO SOLD VALUES (
     '34cf062e-2b1b-4086-9320-6ec4d77a2dbe'::uuid,
@@ -16358,7 +16226,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     14,
-    '2025-11-16 13:47:00'
+    '2024-11-16 13:47:00'
 );
 INSERT INTO SOLD VALUES (
     '2d6a6ddb-e678-45fc-a483-b1ee14bd3d97'::uuid,
@@ -16369,7 +16237,7 @@ INSERT INTO SOLD VALUES (
     13,
     10.0,
     65,
-    '2025-11-16 17:38:00'
+    '2024-11-16 17:38:00'
 );
 INSERT INTO SOLD VALUES (
     '16f6b409-8f8a-4d29-9994-c8519d502ff7'::uuid,
@@ -16380,7 +16248,7 @@ INSERT INTO SOLD VALUES (
     7,
     30.0,
     21,
-    '2025-11-17 12:03:00'
+    '2024-11-17 12:03:00'
 );
 INSERT INTO SOLD VALUES (
     '18a20437-f8f0-4a0b-868b-527872dce161'::uuid,
@@ -16391,7 +16259,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     14,
-    '2025-11-17 11:02:00'
+    '2024-11-17 11:02:00'
 );
 INSERT INTO SOLD VALUES (
     'ba44a11c-dd27-4b03-91a6-1b409e8c13b9'::uuid,
@@ -16402,7 +16270,7 @@ INSERT INTO SOLD VALUES (
     8,
     50.0,
     132,
-    '2025-11-17 19:04:00'
+    '2024-11-17 19:04:00'
 );
 INSERT INTO SOLD VALUES (
     '2d17ed5a-a645-4b84-b1a0-6e65354a476e'::uuid,
@@ -16413,7 +16281,7 @@ INSERT INTO SOLD VALUES (
     2,
     35.0,
     350,
-    '2025-11-17 12:26:00'
+    '2024-11-17 12:26:00'
 );
 INSERT INTO SOLD VALUES (
     '93340ed7-6b45-4689-9e50-2c9e1b188359'::uuid,
@@ -16424,7 +16292,7 @@ INSERT INTO SOLD VALUES (
     1,
     15.0,
     13,
-    '2025-11-17 14:55:00'
+    '2024-11-17 14:55:00'
 );
 INSERT INTO SOLD VALUES (
     'b572cbfb-7d99-4e8b-aa6a-ae2c78b2d6d8'::uuid,
@@ -16435,7 +16303,7 @@ INSERT INTO SOLD VALUES (
     4,
     30.0,
     17,
-    '2025-11-18 15:16:00'
+    '2024-11-18 15:16:00'
 );
 INSERT INTO SOLD VALUES (
     'b0497e23-03a0-44d5-8962-619d260dec3c'::uuid,
@@ -16446,7 +16314,7 @@ INSERT INTO SOLD VALUES (
     1,
     120.0,
     13,
-    '2025-11-18 09:21:00'
+    '2024-11-18 09:21:00'
 );
 INSERT INTO SOLD VALUES (
     'af0699a2-22b0-44e9-9c01-cf70ac816f91'::uuid,
@@ -16457,7 +16325,7 @@ INSERT INTO SOLD VALUES (
     11,
     50.0,
     121,
-    '2025-11-18 17:21:00'
+    '2024-11-18 17:21:00'
 );
 INSERT INTO SOLD VALUES (
     'fb6fd337-e3d7-45e4-adbb-e6998be38308'::uuid,
@@ -16468,7 +16336,7 @@ INSERT INTO SOLD VALUES (
     1,
     35.0,
     349,
-    '2025-11-18 10:42:00'
+    '2024-11-18 10:42:00'
 );
 INSERT INTO SOLD VALUES (
     '4e664dbd-b59d-4507-bc1a-b5835f14e67a'::uuid,
@@ -16479,7 +16347,7 @@ INSERT INTO SOLD VALUES (
     2,
     15.0,
     11,
-    '2025-11-18 12:14:00'
+    '2024-11-18 12:14:00'
 );
 INSERT INTO SOLD VALUES (
     '0f563486-dd06-412b-9b4e-4d7255a92eda'::uuid,
@@ -16490,8 +16358,8 @@ INSERT INTO SOLD VALUES (
     10,
     10.0,
     55,
-    '2025-11-18 11:09:00'
+    '2024-11-18 11:09:00'
 );
 
 -- Sales data generation complete
--- Period: 2025-05-18 to 2025-11-18
+-- Period: 2024-05-18 to 2024-11-18

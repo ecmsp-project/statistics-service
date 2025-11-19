@@ -348,4 +348,62 @@ public class StatisticsService {
             return stockRemaining;
         }
     }
+
+    /**
+     * Get all available variants that have statistical data (sales or deliveries)
+     * @return List of variant information DTOs
+     */
+    public List<VariantInfoDTO> getAvailableVariants() {
+        log.info("Fetching available variants with statistical data");
+
+        // Get all distinct variants from SOLD table
+        List<Object[]> distinctVariants = soldRepository.findDistinctVariants();
+
+        // Get variants with delivery data
+        List<UUID> variantsWithStock = deliveryRepository.findDistinctVariantIds();
+        Set<UUID> stockVariantSet = new HashSet<>(variantsWithStock);
+
+        // Get last sale dates
+        List<Object[]> lastSaleDates = soldRepository.findLastSaleDates();
+        Map<UUID, LocalDateTime> lastSaleDateMap = lastSaleDates.stream()
+                .collect(Collectors.toMap(
+                        row -> (UUID) row[0],
+                        row -> (LocalDateTime) row[1]
+                ));
+
+        // Get current stock levels
+        List<Object[]> currentStocks = soldRepository.findCurrentStockLevels();
+        Map<UUID, Integer> currentStockMap = currentStocks.stream()
+                .collect(Collectors.toMap(
+                        row -> (UUID) row[0],
+                        row -> (Integer) row[1]
+                ));
+
+        // Build variant info DTOs
+        List<VariantInfoDTO> result = new ArrayList<>();
+
+        for (Object[] row : distinctVariants) {
+            UUID variantId = (UUID) row[0];
+            UUID productId = (UUID) row[1];
+            String productName = (String) row[2];
+
+            VariantInfoDTO dto = VariantInfoDTO.builder()
+                    .variantId(variantId)
+                    .productId(productId)
+                    .productName(productName)
+                    .hasSalesData(true) // We got it from SOLD table
+                    .hasStockData(stockVariantSet.contains(variantId))
+                    .lastSaleDate(lastSaleDateMap.get(variantId))
+                    .currentStock(currentStockMap.get(variantId))
+                    .build();
+
+            result.add(dto);
+        }
+
+        // Sort by product name
+        result.sort(Comparator.comparing(VariantInfoDTO::getProductName));
+
+        log.info("Found {} variants with statistical data", result.size());
+        return result;
+    }
 }
